@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>右键弹出菜单</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+  <link id="easyuiTheme" rel="stylesheet" href="_js/easyLib/themes/default/easyui.css" type="text/css"></link>
+  <script type="text/javascript" src="_js/easyLib/jquery.min.js" charset="UTF-8"></script>
+  <script type="text/javascript" src="_js/easyLib/jquery.easyui.min.js" charset="UTF-8"></script>
+  <script type="text/javascript" src="_js/easyLib/locale/easyui-lang-zh_CN.js" charset="UTF-8"></script>
+  <script type="text/javascript">
+   $(function(){
+	//菜单事件
+  	$('#layout_center_tabsMenu').menu({
+			onClick : function(item) {
+				var type = $(item.target).attr('type');
+				if (type === 'refresh') {
+					alert('刷新')
+				}
+				if (type === 'close') {
+					
+					alert('关闭')
+				}
+				if (type === 'baidu') {
+					
+					window.open("http://www.baidu.com");
+				}
+			}
+		});
+		//绑定事件
+		$(document).bind('contextmenu',function(e){
+				e.preventDefault();
+				$('#layout_center_tabsMenu').menu('show', {
+					left : e.pageX,
+					top : e.pageY
+				});
+			});
+		
+  
+  }) 
+  </script>
+  </head>
+  
+  <body>
+    <button id="bt" name="bt" value="右键弹出菜单">右键弹出菜单</button>
+    <div id="layout_center_tabsMenu" style="width: 120px;display:none;">
+	<div type="refresh">刷新</div>
+	<div class="menu-sep"></div>
+	<div type="close">关闭</div>
+	<div type="baidu">打开百度</div>
+	<div type="closeAll">关闭所有</div>
+	</div>
+  </body>
+</html>

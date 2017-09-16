@@ -1,0 +1,8 @@
+. 创建好 domain 类后, 可以 通过测试 来存储和获得用户
+
+  domain 类创建好之后, 会在 /test/unit/com/grailsinaction/UserTest.groovy 下创建一个单元测试的外形。如果想要一个集成测试, 让测试和数据库一起运行. 可以通过下面的命令来创建集成测试.
+
+  例如   User 类(domain类), 对应的集成测试  创建 命令如下:
+
+  grails create-integration-test com.grailsinaction.UserIntegration
+

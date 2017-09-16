@@ -1,0 +1,49 @@
+. 1. append() 方式
+
+     这种方式其实是添加到选择元素的后面， 而不是选择元素里面的尾部
+
+   
+                      var strr = "<tr><td>O, this is a test!</td></tr>"
+                        strr = "<div>"
+                        for (var j = 10; j < 20; j ++ ) {
+                            strr +="<tr><td>" + j + " | " + json2[j].stockcode + "</td><td>";
+                            strr += "<a href=\"${prefix}" + json2[j].reportulr + " target=\"view_windows\">";
+                            strr +=  json2[j].reportname + " | " + json2[j].releaseddate;
+                            strr += "</a></td></br /><br /> </tr>";
+                        }
+                        strr += "</div>"
+                        alert(strr);
+                        $("#omgtest").append(strr);
+                        alert($("#omgtest").html());
+
+    注意: 最后一句话，是输出选择元素的html 内容， 会发现其内容没有添加的那部分内容。
+
+    另外，由于添加的内容不再选择器的里面， 所以最好包含在一个新的<div>里面， 否则会出现显示格式的问题。 同时， 也可以更好的样式化该<div>
+
+    而且，动态添加的内容， 通过查看页面的源码是看不到的。 可以起到安全作用。
+
+. jquery 新建的元素事件绑定问题  
+
+  参见:
+
+      http://www.cnblogs.com/linzheng/archive/2010/10/17/1853568.html
+
+      http://blog.csdn.net/huaishuming/article/details/9979229
+
+  在JQuery 事件处理中 新建的元素，无法触发对应的事件， 原因是没有绑定。 可以人工绑定事件。
+
+  比较好的办法是 删除 元素前， 先克隆一个该元素， 然后再删除， 最后创建该元素的时候，直接用克隆的元素添加到目标位置即可。 由于克隆的元素本身就保留有原来的事件绑定， 所以增加后， 事件绑定仍然有效。 
+
+  大致代码如下:
+
+                        var ttt= $("#Aaaa").clone(true);
+                        $("#Aaaa").remove();
+.....
+
+                         $("#omgtest").append(strr);
+                        ttt.appendTo($("#omgtest"));
+
+  这种应用场景是 显示查询内容的时候， 不是一次显示， 而是多次显示， 每次都是提示是否显示更多， 如果点击， 则自动显示更多的查询内容。
+
+
+  

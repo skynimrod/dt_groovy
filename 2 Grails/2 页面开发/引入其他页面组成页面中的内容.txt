@@ -1,0 +1,4 @@
+
+
+<iframe id="i_bottom" border=0 narginwidth=0 marginheight=0  src="../bottom.htm" height='260' width="960" frameBorder=0 scrolling=no vspace=0></iframe>
+这句话就是在当前页面的指定位置， 放置了目标页面 bottom.htm

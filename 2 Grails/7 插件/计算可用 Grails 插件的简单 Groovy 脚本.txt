@@ -1,0 +1,10 @@
+. 注意， 下面的这些代码 在2.4.2 中不能正常运行，关键是addr 是无效的URL. 
+
+def addr = "http://plugins.grails.org/.plugin-meta/plugins-list.xml"
+def plugins = new XmlSlurper().parse(addr)
+def count = 0
+plugins.plugin.each{
+  println it.@name
+  count++
+}
+println "Total number of plugins: ${count}"

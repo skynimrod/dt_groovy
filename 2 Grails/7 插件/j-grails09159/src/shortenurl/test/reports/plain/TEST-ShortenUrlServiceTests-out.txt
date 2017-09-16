@@ -1,0 +1,5 @@
+--Output from testTinyUrl--
+--Output from testIsGd--
+--Output from testIsGdWithBadUrl--
+ERROR (ShortenUrlService): An error occurred: http://is.gd/api.php?longurl=IAmNotAValidUrl
+500 : Internal Server Error

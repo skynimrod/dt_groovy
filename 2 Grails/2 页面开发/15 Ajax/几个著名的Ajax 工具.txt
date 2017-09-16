@@ -1,0 +1,23 @@
+. 1. Dojo
+
+     dojotookit.org
+
+. 2. JQuery
+
+     jquery.com
+
+. 3. MochiKit
+
+     mochikit.com
+
+     众多"Pythonic"的JavaScript 库之一
+
+.4. Prototype
+
+    prototypejs.org
+
+    源自Ruby on Rails 框架
+
+.5. Yahoo! User Interface(YUI)
+
+    developer.yahoo.com/yui

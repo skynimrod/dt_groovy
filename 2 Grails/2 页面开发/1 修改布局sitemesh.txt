@@ -1,0 +1,77 @@
+. 前面的内容可以轻松的创建一个可以连接数据库的web应用,  不过缺点是 显示出来的页面还是带有Grails Logo 的页面。 说明主要使用的还是演示内容。 下面来进行修改
+
+. 核心就是 维护 "视图和布局"
+
+  1. 如果没有进行内容修改, 那么grails 使用的是./layoutsmain.gsp 中的相关设定来显示对应的信息. 
+
+  2. 指定的布局格式
+
+     在对应control名称的目录下面
+
+. grails 使用sitemesh 框架来进行网页布局和修饰。
+
+  配置sitemesh :
+
+      views\layouts\main.gsp
+
+  关键是 要用sitemesh 的标签.
+
+  参见:
+
+        http://www.kuqin.com/grails-doc-1.0/guide/single.html   
+
+  启动布局:
+
+   1. 最简单的方法就是在视图中添加 meta 标签:
+
+      <html>
+          <head>
+	       <title>An Example Page</title>
+               <meta name="layout" content="main"></meta>
+          </head>
+          <body>This is my content!</body>
+      </html>
+
+      这种情况下, 一个名为grails-app/views/layouts/main.gsp 将被用于布局这个页面.
+
+      加入， 我们使用来自早前部分的布局, 输入看上去像下面这样:
+
+      <html>
+          <head>
+               <title>An Example Page</title>
+          </head>
+          <body onload="">
+               <div class="menu"><!--my common menu goes here--></menu>
+                    <div class="body">
+	 				This is my content!
+                    </div>
+               </div>
+           </body>
+      </html>
+
+  2. 布局规约
+
+     第二种关联布局的方法是使用"布局规约", 假如你有个这样的控制器:
+
+     class BookController {
+           def list = { ... }
+     }
+
+     你可以创建一个名为 grails-app/views/layouts/book.gsp 的布局, 根据规约, 它将被应用于BookController 的所有视图中.
+
+     换句话说, 你可以创建一个名为 grails-app/views/layouts/book/list.gsp 的布局, 它将只被应用于BookController中的list 操作。
+     如果你同时使用了以上提到的两种布局的话, 那当list 操作被执行的时候, 将根据优先级的顺序来使用布局.
+
+  3. 内联布局
+
+     通过 applyLayout 标签 Grails 同样支持 Sitemesh 的内联布局概念.  applylayout标签 可以被用于应用一个布局 到一个模板, URL 或者 内容的任意部分.  事实上, 通过"decorating" 你的模板允许你更进一步的积木化 你的视图结构
+
+     一些使用示例如下:
+
+     <g:applyLayout name="myLayout" tmplate="bookTemplate" collection="${books}"/>
+     <g:applyLayout name="myLayout" url="http://ww.google.com"/>   
+     <g:applyLayout name="myLayout">
+         The content to apply a layout to 
+     </g:applyLayout>
+
+. 

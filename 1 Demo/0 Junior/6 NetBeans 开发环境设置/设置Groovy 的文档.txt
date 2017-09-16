@@ -1,0 +1,5 @@
+. 工具-> 选项 -> Groovy -> Groovy 文档：
+
+   E:\1 RunEnv\1.2 Groovy\groovy-docs-2.3.1\groovy-2.3.1\html
+
+  注意， 要选择html 目录， 不然其他目录都会提示找不到文档目录. 

@@ -1,0 +1,267 @@
+. grails 使用 log4j 插件实现的日志功能
+
+  参见:
+ 
+       http://grails.github.io/grails-doc/2.4.2/guide/conf.html#logging              (Grails 2.4.2 中是5.1.2章节)
+
+       http://logging.apache.org/log4j/2.x/      log4j 的官方网站
+
+       http://blog.csdn.net/azheng270/article/details/2173430/
+
+. log4j 的配置参见 config.groovy 中的部分
+
+  参见:  
+   
+      http://adventure.iteye.com/blog/376607  
+
+. grails 可以为不同的包下面的代码指定不同的日志级别，例如:
+
+  log4j = {
+    // 设置控制器和GSP页面的级别为error
+    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+           'org.codehaus.groovy.grails.web.pages' //  GSP
+
+    // 设置插件中的日志级别为warn
+    warn   'org.codehaus.groovy.grails.plugins'
+ }
+
+. 定义自己的Appender
+
+  Grails默认的Appender是把日志输出到控制台
+
+  appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+  }
+
+  log4j支持很多种类型的appender,比如:JDBC,Console,File,rollingFile
+
+  log4j的appender还支持多种日志输出格式：Xml，Html,simple,pattern
+
+  具体可以参考log4j的文档:
+
+       http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Appender.html
+       http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Layout.html
+
+  一般常用的appender是每天产生1个日志文件，配置如下：
+  appenders {
+         appender new org.apache.log4j.DailyRollingFileAppender(name:"dailyAppender",layout:pattern(conversionPattern: '%c{2} %m%n'),fileName:"e:\\grails.log",datePattern:"'.'yyyy-MM-dd")
+   }
+
+   我们还可以定义多个appender，并为不同的级别的日志指定不同的appender，如:
+
+   log4j = {
+       appenders {
+            appender new org.apache.log4j.DailyRollingFileAppender(name:"dailyAppender",layout:pattern(conversionPattern: '%c{2} %m%n'),fileName:"e:\\grails.log",datePattern:"'.'yyyy-MM-dd")
+            console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+       }
+
+       // error级别的日志采用dailyAppender记录到文件中
+       error  dailyAppender:'org.codehaus.groovy.grails.web.servlet',  //  controllers
+                            'org.codehaus.groovy.grails.web.pages' //  GSP
+
+      // warn级别的日志则使用stdout直接输出到控制台
+       warn   stdout:'org.codehaus.groovy.grails.plugins'
+  }
+
+. 定义Root Logger
+     
+    虽然我们可以定义多个appender,并且为不同的级别指定不同的appender，但一般我们希望只定义1个appender，
+所有日志的输出都使用这个appender，这个时候就需要用到root logger了。
+
+    appenders {
+         appender new org.apache.log4j.DailyRollingFileAppender(name:"dailyAppender",layout:pattern(conversionPattern: '%c{2} %m%n'),fileName:"e:\\grails.log",datePattern:"'.'yyyy-MM-dd")
+    }
+
+    root{
+        error 'dailyAppender'
+        additivity = true
+    }
+
+==================================================
+
+. 1. 日志级别
+
+    off
+
+    fatal
+
+    error
+
+    warn
+
+    info
+
+    debug
+
+    trace
+
+    all
+
+. 2. 配置日志
+
+    前面描述差不多， 略
+
+. 3. Root Logger
+
+     这部分就是指定日志文件名称与位置
+
+     缺省是error 级别， 所有信息都直接输出到console中 (stdout 是C 后台实现的)， 可以如下进行定制:
+
+     log4j = {
+         root {
+             info()
+         }
+         …
+     }
+
+     上面就是指定 root  日志级别是info
+
+     log4j = {
+         appenders {
+             file name:'file', file:'/var/logs/mylog.log'
+         }
+         root {
+             debug 'stdout', 'file'      
+         }
+     }
+  
+    这儿指定root 日志级别是 debug, 有2个日志输出， 一个是stdout, 另一个是文件，日志位置: /var/logs/mylog.log
+
+    对于高级用户而言， 可以如下配置:
+
+    log4j = { root ->
+        root.level = org.apache.log4j.Level.DEBUG
+         …
+    }
+
+    ====
+
+    log4j = {
+    appenders {
+        rollingFile name: "myAppender",
+                    maxFileSize: 1024,
+                    file: "/tmp/logs/myApp.log"
+    }
+}
+     
+
+   ===
+
+   import org.apache.log4j.*
+
+log4j = {
+    appenders {
+        appender new RollingFileAppender(
+                name: "myAppender",
+                maxFileSize: 1024,
+                file: "/tmp/logs/myApp.log")
+    }
+}
+
+. 指定配置
+
+  error myAppender:      "grails.app.controllers.BookController",
+      myFileAppender:  ["grails.app.controllers.BookController",
+                        "grails.app.services.BookService"],
+      rollingFile:     "grails.app.controllers.BookController"
+
+. 定制 layouts
+
+  log4j = {
+    appenders {
+        console name: "customAppender",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+    }
+}
+
+
+
+log4j = {
+    appenders {
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+    }
+}
+
+
+
+===
+
+   error myAppender:      "grails.app.controllers.BookController"
+debug myFileAppender:  "grails.app.controllers.BookController"
+fatal rollingFile:     "grails.app.controllers.BookController"
+
+===
+    appenders {
+        dailyFile name:'infolog', maxFileSize: 1024,file:'d:/smms/logs/test.log',datePattern:"'.'yyyy:MM:dd"
+        rollingFile name:'errlog',maxFileSize: 1024, file:'d:/smms/logs/err.log'
+    }
+
+   datePattern 的设置似乎无效。。。。
+
+   另外， 每天产生的日志名称如何带日期及时间信息？？
+
+   layout:pattern(conversionPattern: '%c{2} %m%n')  如何设置才有效？？
+===
+
+一个较完整的例子
+
+log4j = {
+    appenders {
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+
+        environments {
+            production {
+                rollingFile name: "myAppender", maxFileSize: 1024,
+                            file: "/tmp/logs/myApp.log"
+            }
+        }
+    }
+
+    root {
+        //…
+    }
+
+    // other shared config
+    info "grails.app.controller"
+
+    environments {
+        production {
+            // Override previous setting for 'grails.app.controller'
+            error "grails.app.controllers"
+        }
+    }
+}
+
+. 完整堆栈跟踪   Full stacktraces
+
+  用来处理异常出现的时候.
+ 
+  error stdout: "StackTrace"
+
+  log4j = {
+    appenders {
+        rollingFile name: "stacktrace", maxFileSize: 1024,
+                    file: "/var/tmp/logs/myApp-stacktrace.log"
+    }
+}
+
+  如果不想要堆栈信息在日志中， 可以如下:
+
+  log4j = {
+    appenders {
+        'null' name: "stacktrace"
+    }
+}
+
+. 使用例子:
+
+log.info "Configuration data source"
+
+try {
+    ..
+}
+catch (Exception e) {
+    log.error "Error: ${e.message}", e
+}

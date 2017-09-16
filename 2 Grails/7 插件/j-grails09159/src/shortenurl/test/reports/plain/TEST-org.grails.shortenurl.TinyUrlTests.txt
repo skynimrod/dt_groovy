@@ -1,0 +1,10 @@
+Testsuite: org.grails.shortenurl.TinyUrlTests
+Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.682 sec
+------------- Standard Output ---------------
+--Output from testShorten--
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+--Output from testShorten--
+------------- ---------------- ---------------
+
+Testcase: testShorten took 0.681 sec

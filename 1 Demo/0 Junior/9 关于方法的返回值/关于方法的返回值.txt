@@ -1,0 +1,9 @@
+. Groovy 非常强大， 不用特殊定义返回值， 只需要在方法内部直接return 变量即可， 例如:
+
+    def testmethod() {
+        def maps = ["hello":"world","first":"1-st"]
+        return maps
+    }
+
+
+   一旦调用上面的方法， 就会返回一个哈希表， 太方便了. 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+  <testsuite errors="0" failures="0" hostname="scott-davis2s-macbook-pro.local" id="0" name="ShortenUrlServiceTests" package="" tests="3" time="3.146" timestamp="2009-08-19T19:20:26">
+      <properties />
+
+      <testcase classname="ShortenUrlServiceTests" name="testTinyUrl" time="1.438" />
+
+      <testcase classname="ShortenUrlServiceTests" name="testIsGd" time="1.087" />
+
+      <testcase classname="ShortenUrlServiceTests" name="testIsGdWithBadUrl" time="0.618" />
+
+      <system-out><![CDATA[--Output from testTinyUrl--
+--Output from testIsGd--
+--Output from testIsGdWithBadUrl--
+ERROR (ShortenUrlService): An error occurred: http://is.gd/api.php?longurl=IAmNotAValidUrl
+500 : Internal Server Error
+]]></system-out>
+
+      <system-err><![CDATA[--Output from testTinyUrl--
+--Output from testIsGd--
+--Output from testIsGdWithBadUrl--
+]]></system-err>
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="scott-davis2s-macbook-pro.local" id="1" name="IsGdTests" package="org.grails.shortenurl" tests="2" time="1.371" timestamp="2009-08-19T19:20:35">
+      <properties />
+
+      <testcase classname="org.grails.shortenurl.IsGdTests" name="testShorten" time="0.75" />
+
+      <testcase classname="org.grails.shortenurl.IsGdTests" name="testBadUrl" time="0.599" />
+
+      <system-out><![CDATA[--Output from testShorten--
+--Output from testBadUrl--
+An error occurred: http://is.gd/api.php?longurl=IAmNotAValidUrl
+500 : Internal Server Error
+]]></system-out>
+
+      <system-err><![CDATA[--Output from testShorten--
+--Output from testBadUrl--
+]]></system-err>
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="scott-davis2s-macbook-pro.local" id="2" name="TinyUrlTests" package="org.grails.shortenurl" tests="1" time="0.682" timestamp="2009-08-19T19:20:37">
+      <properties />
+
+      <testcase classname="org.grails.shortenurl.TinyUrlTests" name="testShorten" time="0.681" />
+
+      <system-out><![CDATA[--Output from testShorten--
+]]></system-out>
+
+      <system-err><![CDATA[--Output from testShorten--
+]]></system-err>
+
+  </testsuite>
+</testsuites>

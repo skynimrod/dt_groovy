@@ -1,0 +1,18 @@
+Testsuite: ShortenUrlServiceTests
+Tests run: 3, Failures: 0, Errors: 0, Time elapsed: 3.146 sec
+------------- Standard Output ---------------
+--Output from testTinyUrl--
+--Output from testIsGd--
+--Output from testIsGdWithBadUrl--
+ERROR (ShortenUrlService): An error occurred: http://is.gd/api.php?longurl=IAmNotAValidUrl
+500 : Internal Server Error
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+--Output from testTinyUrl--
+--Output from testIsGd--
+--Output from testIsGdWithBadUrl--
+------------- ---------------- ---------------
+
+Testcase: testTinyUrl took 1.438 sec
+Testcase: testIsGd took 1.087 sec
+Testcase: testIsGdWithBadUrl took 0.618 sec

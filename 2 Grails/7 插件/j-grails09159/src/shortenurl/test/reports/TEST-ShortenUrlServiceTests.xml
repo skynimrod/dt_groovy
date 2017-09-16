@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" hostname="scott-davis2s-macbook-pro.local" name="ShortenUrlServiceTests" tests="3" time="3.146" timestamp="2009-08-19T19:20:26">
+  <properties />
+  <testcase classname="ShortenUrlServiceTests" name="testTinyUrl" time="1.438" />
+  <testcase classname="ShortenUrlServiceTests" name="testIsGd" time="1.087" />
+  <testcase classname="ShortenUrlServiceTests" name="testIsGdWithBadUrl" time="0.618" />
+  <system-out><![CDATA[--Output from testTinyUrl--
+--Output from testIsGd--
+--Output from testIsGdWithBadUrl--
+ERROR (ShortenUrlService): An error occurred: http://is.gd/api.php?longurl=IAmNotAValidUrl
+500 : Internal Server Error
+]]></system-out>
+  <system-err><![CDATA[--Output from testTinyUrl--
+--Output from testIsGd--
+--Output from testIsGdWithBadUrl--
+]]></system-err>
+</testsuite>

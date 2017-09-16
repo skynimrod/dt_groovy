@@ -1,0 +1,50 @@
+. groovy.lang.MissingMethodException: No signature of method: www.aqugen.com.FirstService.$() is applicable for argument types: (www.aqugen.com.FirstService$_$tt__procSZReportList_closure11) values: [www.aqugen.com.FirstService$_$tt__procSZReportList_closure11@82179c]
+Possible solutions: is(java.lang.Object), any(), use([Ljava.lang.Object;), any(groovy.lang.Closure), wait(), find()
+
+ 原因:
+
+                            println map2.getAt(j) + " : " + map[ ${map2.getAt(j)} ]
+
+   修改为:
+                            println map2.getAt(j) + " : " + map[ "${map2.getAt(j)}" ]
+
+   则没有错误了. 原因是 map 访问方式要求， 在中括号里的时候， 需要将键值作为字符串来处理。
+
+. groovy.lang.MissingMethodException: No signature of method: java.lang.Integer.–() is applicable for argument types: (java.lang.Integer) values: [114]
+Possible solutions: or(java.lang.Number), is(java.lang.Object), any(), abs(), div(java.lang.Character), div(java.lang.Number)
+   
+        int c, y, m, d 
+        c = 20
+        y = 15
+        m = 11
+        d = 25
+        int w
+        try {
+        w = round(13 * (m+1) / 5)
+        w = round(c/4) – 2*c + y + round(y/4) + 
+            round(13 * (m+1) / 5) + d – 1
+        } catch (Exception e) {
+            println "计算出异常"
+            println e
+        }
+
+ 上面的类型全部改成 long 也不行， 其中round() 实现如下:
+
+    // 取整， 与Math.round() 不同的是， 这儿的取整是舍弃所有的小数点后面部分， 返回整数
+    def round( num ) {
+        int n = Math.round(num) > num ? Math.round(num-1) : Math.round( num )
+    }
+  
+ 类型定义尝试过def, long 等， 都会出现上面的类似异常。
+
+ 解决办法:  非常奇怪， 就是重新写了一遍
+
+        try {
+        w = round(c/4) - 2 * c + y + round(y/4)+ round(13 * (m+1) / 5) + d -1
+        
+        //w = round(c/4) – 2*c + y + round(y/4) + round(13 * (m+1) / 5) + d – 1
+
+        。。。
+
+  将w 的计算部分重新写了一遍， 就可以通过了， 可能是原来的那一行有个空格是汉字的。。。。。
+

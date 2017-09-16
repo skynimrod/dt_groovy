@@ -1,0 +1,43 @@
+1. 关于返回值
+
+  如果在方法内部使用了Closure, 那么在该closure 里面的return 其实是该closure的返回值, 而不是该方法的返回值。
+
+  .each {  }  本身就是closure 操作.   这一点需要特别注意, 否则出了错也极难被发现。
+
+  如下面的例子:
+
+      def getItemOfObj( obj, xref, item, splitchars = "/" )  {
+        try {
+            def objcontent = getObjContent( obj, xref )
+            def tmp
+            def ret
+            
+            println "obj:" + objcontent + "item="+ item
+            if ( item.indexOf( "Font" ) == -1 ) {           // 不是Font的处理
+                tmp = objcontent.split( splitchars )        // 根据分隔符来拆分对象描述信息
+                tmp.each { it ->
+                    if ( it.indexOf( item ) != -1 ) {       // 如果包含目标item 则就是需要找的
+                        println "find it :" + it
+                        ret = it
+                        return ret      //  注意， 返回的内容是包含item 项名称本身的，因为
+                    }
+                    println "?????????"
+                }
+            } else {
+                println "这个不应该不执行。。。。"
+            }
+            println "如果正常， 不应该执行到这儿" + objcontent
+            return ""
+        } catch ( Exception e ) {
+            println "getItemOfObj()" + e 
+            return ""
+        }
+    }
+
+    上面的例子里面 tmp.each{} 虽然有return , 但是后面仍然被执行了， 执行结果如下:
+
+   find it :ToUnicode 50591 0 R
+?????????
+?????????
+如果正常， 不应该执行到这儿<</BaseFont/Arial/DescendantFonts 507 0 R/Encoding/Identity-H/Subtype/Type0/ToUnicode 50591 0 R/Type/Font>>
+

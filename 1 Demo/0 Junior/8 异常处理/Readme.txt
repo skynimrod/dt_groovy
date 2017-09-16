@@ -1,0 +1,8 @@
+. try {
+      ...
+  } catch ( Exception e ){
+     ...
+     println "≥ˆ“Ï≥£¡À "  
+     println  e
+
+  }

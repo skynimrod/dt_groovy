@@ -1,0 +1,48 @@
+.《Grails技术精解与Web开发实践》    宋友[等]编著. -- 北京 : 清华大学出版社, 2009. -- 246页 ; 26cm.
+
+     2009\TP311.56\sy\北区中文图书区
+
+. P36
+
+  Grails 提供的是hsqldb 数据库. 
+
+. P40
+
+  Grails 生成 Domain 的 CRUD 页面.
+
+  > grails generate-all Goods       (Goods 是Domain class 的类名)
+
+. P41   修改 显示页面.
+
+  grails\view\goods\list.gsp
+
+  <table>
+       <tbody>
+
+. P151   使用 GRAG 工具生成 Domain
+
+  GRAG(Grails Application Generator) 并不是Grails 框架的一部分, 它是一个用于生成 Grails Domain 类的工具.  它可以读取数据库中的表结构, 并根据 表结构生成 Domain类.  有了 GRAG 工具的帮助, 兼容旧数据库 不再是一件 麻烦的事情了. 
+
+  下载 GRAG: http://sourceforge.net/project/showfiles.php?group_id=230641
+
+             http://sourceforge.net/projects/grag/      似乎就到了2009年就没更新了 
+
+             http://www.oschina.net/p/grag/  
+
+  下载完成后解压即可使用.
+
+  windwos 平台下(假设 解压到D:\grag1.0) 运行 d:\grag1.0\bin\gui.bat
+
+  就会出现一个界面. 
+
+. P155 "开闭原则"
+
+  一个设计优秀的系统应该遵循着"开闭原则". 所谓"开闭原则", 指的是一个软件实体 应当 对 扩展开放, 对修改关闭.  也就是说, 在加入新的功能时, 应该避免修改现有部分. 面向对象的设计方法中, 会使用多台机制去实现开放. 在Java 世界中, 进行系统设计时通常会先将 业务逻辑抽象成一系列接口.  显然, 面向接口编程, 系统的可扩展性更好, 结构也更加清晰. 
+
+. P159   Spring DSL
+
+  类似于Spring 中配置 Beans 的 xml. 用来控制依赖注入.
+
+. P161   深入Controller
+
+  Grails 的MVC 

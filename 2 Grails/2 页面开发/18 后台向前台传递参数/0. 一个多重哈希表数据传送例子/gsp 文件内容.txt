@@ -1,0 +1,97 @@
+<!--
+  To change this license header, choose License Headers in Project Properties.
+  To change this template file, choose Tools | Templates
+  and open the template in the editor.
+-->
+
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<html>
+    <head>
+	<meta name="layout" content="test"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Sample title</title>
+    </head>
+    <body>
+        <g:form name="myForm" url="[action:'reportListProc',controller:'Homepage']">
+            <label for="startDate">${message(code:"smms.reportListProc.label.startdate")} </label>
+            <g:datePicker name="startDate" value="${new Date()}" precision="day"  relativeYears="[-2..7]"/>
+            <label for="endDate">${message(code:"smms.reportListProc.label.enddate")} </label>
+            <g:datePicker name="endDate" value="${new Date()}" precision="day"  relativeYears="[-2..7]"/>
+            <br />
+            <button type = "submit" name = "test" value="${message(code:'smms.button.cancel')}">
+                ${message(code:'smms.button.sure')}
+            </button>
+            <input type="submit" value="Say Hello"/>
+        </g:form>
+        <div id = "reportListResult"> 
+            
+           <g:each in="${reportMap}" status="i" var="report">
+               <p><h3>-${i}-${report?.key?.encodeAsHTML()}---${report?.value?.source?.encodeAsHTML()}---</h3></p>
+                <g:if test="${report?.value?.retcode == 200 }">
+                    <div>
+                        <tr>
+                          <td>source : ${report?.value?.source?.encodeAsHTML()} |
+                                total : ${report?.value?.total?.encodeAsHTML()} , date1: 
+                                ${report?.value?.date1Total?.encodeAsHTML()} , date2: 
+                                ${report?.value?.date2Total?.encodeAsHTML()} </td>
+                          <td>
+                              <p>first Report </p>
+                              <p>${report?.value?.first?.stockcode?.encodeAsHTML()} |
+                                ${report?.value?.first?.reportname?.encodeAsHTML()} | 
+                                ${report?.value?.first?.releaseddate?.encodeAsHTML()}</p>
+                              <p>${report?.value?.first?.reporturl?.encodeAsHTML()}</p>
+                          </td> 
+                          <td>
+                              <p>last Report</p>
+                              <p>${report?.value?.last?.stockcode?.encodeAsHTML()} |
+                                ${report?.value?.last?.reportname?.encodeAsHTML()} | 
+                                ${report?.value?.last?.releaseddate?.encodeAsHTML()} </p>
+                              <p>${report?.value?.last?.reporturl?.encodeAsHTML()}</p>
+                          </td> 
+                        </tr>
+                    </div>
+                </g:if>
+                <g:else>
+                    
+                </g:else>
+           </g:each>
+            <g:if test="${shmbRetmap1?.retcode == 200 }">
+                <div>
+                    <tr>
+                      <td>source : ${shmbRetmap1.source?.encodeAsHTML()} |
+                            total : ${shmbRetmap1.total?.encodeAsHTML()} , date1: 
+                            ${shmbRetmap1.date1Total?.encodeAsHTML()} , date2: 
+                            ${shmbRetmap1.date2Total?.encodeAsHTML()} </td>
+                      <td>
+                          <p>first Report </p>
+                          <p>stockcode:${shmbRetmap1.first?.stockcode?.encodeAsHTML()}</p>
+                          <p>${shmbRetmap1.first?.reportname?.encodeAsHTML()} |
+                              ${shmbRetmap1.first?.releaseddate?.encodeAsHTML()}</p>
+                          <p>${shmbRetmap1.first?.reporturl?.encodeAsHTML()}</p>
+                      </td> 
+                      <td>
+                          <p>last Report</p>
+                          <p>stockcode:${shmbRetmap1.last?.stockcode?.encodeAsHTML()}</p>
+                          <p>${shmbRetmap1.last?.reportname?.encodeAsHTML()}</p>
+                          <p>${shmbRetmap1.last?.reporturl?.encodeAsHTML()}</p>
+                          <p>${shmbRetmap1.last?.releaseddate?.encodeAsHTML()}</p>
+                      </td> 
+                    </tr>
+                </div>
+            </g:if>
+        </div>
+
+        <div>
+            <h1>Hello, i am here!</h1>
+            <g:each in="${mostMap}" status="i" var="reportmap1">
+                <p><h3>-${i}-${reportmap1?.key?.encodeAsHTML()}---</h3></p>
+                
+                <g:each in="${reportmap1?.value}" status="j" var="report1">
+                    <p><h4>-${j}-${report1?.value?.first?.stockcode?.encodeAsHTML()}---</h4></p>
+                </g:each>
+           </g:each>
+            
+        </div>
+    </body>
+</html>

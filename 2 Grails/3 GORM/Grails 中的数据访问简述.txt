@@ -1,0 +1,360 @@
+. 1. 首先， 先配置DataSource.groovy
+
+     在项目目录 "配置"下的 DataSource.groovy 文件.
+
+     修改2个位置:
+
+     ================第一个需要修改的位置 ===============
+          dataSource {
+              pooled = true
+              jmxExport = true
+              driverClassName = "com.mysql.jdbc.Driver"
+              username = "root"
+              password = "gPekin1"
+          }
+
+      这部分是配置数据驱动, 主要是JDBC 以及访问密码
+
+     ==============第二个需要修改的位置 ==================
+
+    // environment specific settings
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
+            //url = "jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+            url = "jdbc:mysql://127.0.0.1:3307/test_db"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            //url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+             url = "jdbc:mysql://127.0.0.1:3307/test_db"
+
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            //url = "jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+            url = "jdbc:mysql://127.0.0.1:3307/test_db"
+            properties {
+               // See http://grails.org/doc/latest/guide/conf.html#dataSource for documentation
+               jmxEnabled = true
+               initialSize = 5
+               maxActive = 50
+               minIdle = 5
+               maxIdle = 25
+               maxWait = 10000
+               maxAge = 10 * 60000
+               timeBetweenEvictionRunsMillis = 5000
+               minEvictableIdleTimeMillis = 60000
+               validationQuery = "SELECT 1"
+               validationQueryTimeout = 3
+               validationInterval = 15000
+               testOnBorrow = true
+               testWhileIdle = true
+               testOnReturn = false
+               jdbcInterceptors = "ConnectionState"
+               defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
+            }
+        }
+    }
+}
+
+   上面的部分， 关键是 datasource 部分的修改url，指定需要访问的数据库名，以及访问方式(开发的时候是否每次运行都清空对应的GORM 表及数据等等)
+
+    按理说“development”中设置  create-drop, 应该是GORM 类对应的表也在运行的时候删除后重建， 之前测试似乎也是这个结果， 但是后连就没有删除重建了， 奇怪。 不过如果表结构修改后， 老的表会删除， 重新建新表， 而且表内数据肯定会删除的。 
+
+. 2. 定义 GORM 类
+
+     注意， 限制中的字段名称要与 GORM 类中的字段名称一致， 有时候书写不一致， 会发生不易发现的错误，浪费调试时间。
+
+package grails_onlycontroller
+
+class SHME_2015_ReportListTbl {
+
+    static constraints = {
+        stockCode    maxSize:6, blank: false
+        stockName    maxSize:10, blank: false
+        reportURL    unique: true, blank: false
+        reportName   unique: true, blank: false
+        reportType   maxSize:4
+        flag1       maxSize:4
+        releasedDate blank: false
+        releasedTime blank: false
+        
+    }
+    
+    String  stockCode
+    String  stockName
+    String  reportURL
+    String  reportName
+    String  reportType
+    String  flag1
+    Date    releasedDate
+    Date    releasedTime
+}
+
+. 3. 在Controller 中访问 GORM
+
+    import 对应的 gorm 对象类(包括包名), 然后就可以直接访问了.
+
+    import grails_onlycontroller.User2
+
+    增加记录:
+
+        def u = new User2( userId:"user1",userName:"Adams", homepage:"http://news.sina.com.cn")
+        
+        u.save()   // 这种方式不会马上更新数据, 可以用 u.save(flush:true) 来马上更新添加的数据.
+    
+        /*
+        try {
+             p.save(flush: true)
+        }
+        catch (org.springframework.dao.DataIntegrityViolationException e) {
+            // deal with exception
+        }
+        */
+
+        //p.delete(flush: true)
+ 
+        /* 如果保存是验证数据非法,捕捉异常
+        try {
+              p.save(failOnError: true)
+        }
+        catch (ValidationException e) {
+              // deal with exception
+        }
+        */
+
+        def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63]
+        def person = new Person(bindingMap)
+        
+        // 验证数据是否正确
+        assert person.firstName == 'Peter'
+        assert person.lastName == 'Gabriel'
+        assert person.age == 63
+
+        person.save()
+
+        bindingMap = [firstName: 'Michael', lastName: 'Gabriel', age: 16]
+        person = new Person(bindingMap)
+        person.save()
+
+        // 上面添加了2条记录
+
+        上面这种方式有个问题， 就是必须字段全部对应， 如果缺少一个字段，那么添加记录就会失败。 ***** 一定注意map 中的字段名称一定要与GORM 类中的字段名称严格一致， 否则，数据操作不会成功， 但是也不会有任何错误提示。 
+
+        另外， Date 类型的字段操作也有问题， 尽量用String来替代。 Date 字段赋值似乎用“2015-07-13”格式也不能成功。 
+
+        def reportMap = [
+                stockCode:"000939",
+                reportURL:"finalpage/2015-07-09/1201265854.PDF",
+                reportName:"凯迪电力：董监高增持公司股份的变动公告",
+                reportType:"PDF",
+                flag1:"123",
+                releasedDate:"2015-07-09",
+                releasedTime:"2015-07-09 11:47"]
+        def report = new SHME_2015_ReportListTbl(reportMap)
+        report.save()
+
+        也可以按照下面的方式添加数据
+
+        def reportMap =[:]
+        reportMap["stockCode"] = "000939"                                    // 用双引号也可以
+        reportMap['reportURL'] = "finalpage/2015-07-09/1201265854.PDF"
+        reportMap['reportName'] = "凯迪电力：董监高增持公司股份的变动公告"
+        reportMap['reportType'] = "PDF"
+        reportMap['flag1'] = "123"
+        reportMap['releasedDate'] = "2015-07-09"
+        reportMap['releasedTime'] = "2015-07-09 11:47"
+        def report = new SHME_2015_ReportListTbl(reportMap)
+        report.save()
+        
+        assert report.reportType=="PDF" 
+
+        注意： 上面的方法的意义在于，处理数据时动态的添加数据。
+
+        def reportMap = [
+                "stockCode":"000939",
+                "reportURL":"finalpage/2015-07-09/1201265854.PDF",
+                "reportName":"凯迪电力：董监高增持公司股份的变动公告",
+                "reportType":"PDF",
+                "flag1":"123",
+                "releasedDate":"2015-07-09",
+                "releasedTime":"2015-07-09 11:47"]
+
+        def report = new SHME_2015_ReportListTbl(reportMap)
+        report.save()
+        
+        assert report.reportType=="PDF"
+
+          key 值加引号也可以添加数据
+
+        调试 map 类型的代码时， 可以用
+
+                println reportMap 
+
+        来显示整个map 的内容([key:value对])来查看。 有时候， 动态构建key 值的时候， 由于某个环节出错， 会造成key 不是目标key值， 就可以通过显示整个map 来进行查看
+
+       请注意，Groovy 映射中的键不必是 String。在这个示例中，name 看起来像一个变量，但是在幕后，Groovy 会将它变成 String。
+
+
+     def results = crit.scroll { maxResults(10) } def f = results.first() def l = results.last() def n = results.next() def p = results.previous()
+def future = results.scroll(10) def accountNumber = results.getLong('number')
+
+     查询结果集，可以用first(), last(), next() 等来访问。
+
+    删除记录:
+        
+        Person.executeUpdate("Delete Person where firstName=:fName",[fName:"Peter"])
+
+        注意上面的方式， where 条件中的数据， 是通过map 方式传递的.
+
+   修改记录与删除记录方式类似
+
+   查询记录:
+
+        //[persons:Person.list()]
+         
+        def query = Person.where {
+           firstName == "Peter"
+        }
+        def reportname= params.get("reportName")
+        
+        
+        [bart:query.find(),persons:Person.list(),rep:reportname]
+
+        注意， map 方式实际上是一种简写，用来表示查询gorm 的方式，以及存放结果变量.  而且这个变量可以在gsp 中用GString 来访问。
+        同时， 这个变量在 controller 中也可以访问. 
+
+        def mapab = [bart:query.find(),persons:Person.list(),rep:reportname,r1:SHME_2015_ReportListTbl.get(1)]
+        render(view:"index", model: mapab)
+
+        # r1:SHME_2015_ReportListTbl.get(1) 中的get(1) 可以换成 read(1)或者 load(1) ， 区别是 get(1) 可以修改数据， read(1) 只能的读取数据。 load(1) 并不是马上访问数据， 而是hibernate 集中访问。
+
+        ***************************
+        由于 GORM 的很多方法是用域类 的字段来构造的， 而且构造的时候会自动处理首字母大写， 其他字母小写，这样就要求域类的字段都用小写的字母。 
+
+        find() 似乎只能返回一条记录， 如果是多条就会提示如下错误：
+        org.hibernate.NonUniqueResultException: query did not return a unique result: 4
+
+        findByStockcode("600378") 似乎也只能返回一条记录， 如果是多条记录满足条件， 也不会提示错误， 只返回第一条。
+
+        r1:SHME_2015_ReportListTbl.findAllByStockcode("600378")  这次返回的是多条记录
+
+      ×××
+ 
+        方法表达式：
+ 
+            Book.findBy([Property][Comparator][Boolean Operator])?[Property][Comparator]
+
+        <g:each in="${r1}" status="i" var="trip1">
+            <tr>
+              <td>${i} | ${trip1.stockcode?.encodeAsHTML()}</td>
+              <td>${trip1.reportname?.encodeAsHTML()}</td> <br/>
+            </tr>
+       </g:each>
+
+       ${i} 是用来做计数用， 便于标记
+
+        变量的应用
+        <a href="http://www.cninfo.com.cn/${trip1.reporturl}">
+
+r1:SHME_2015_ReportListTbl.\
+         findAllByReportnameLikeOrReportnameLikeOrReportnameLikeOrReportnameLike\
+         ("%增持%","%非公开发行%","%员工持股%","%股权激励%",[ sort: "stockcode", order: "asc"] )
+       
+       ============ 备份的部分测试代码，部分是自定义标签， 还有遍历方法 =========
+        <h1>Every is a flatter!</h1>
+        <g:emoticon happy='true'><h2>Hi John </h2></g:emoticon>
+        <g:formatDate/>
+        <g:formatNumber number="1808"/>
+        
+        <g:each in = "${[1..2]}" status = "i" var ="trip">
+            <tr>
+                <td>Hello, ${trip}</td>
+            </tr>
+        </g:each>
+        
+        <g:each in="${bart}" status="i" var="trip">
+            <h5>hello World, ${rep}</h5>
+            <tr>
+              <td>${trip.firstName?.encodeAsHTML()}</td>
+              <td>${trip.lastName?.encodeAsHTML()}</td>
+            </tr>
+       </g:each>
+       
+   7.4.3 Criteria    复杂的查询语句， 传统SQL 的对象化表示， 比HQL 更加灵活
+
+    def c = Account.createCriteria()
+    def results = c {
+         between("balance", 500, 1000)
+         eq("branch", "London")
+         or {
+           like("holderFirstName", "Fred%")
+           like("holderFirstName", "Barney%")
+         }
+         maxResults(10)
+         order("holderLastName", "desc")
+    }
+
+
+   ++++++++++++++++  下面这个还没有调试通过
+
+  r1:SHME_2015_ReportListTbl.createCriteria() {
+                    or {
+                        like("reportname", "%增持%")
+                        like("reportname", "%非公开发行%")
+                    }
+                    order("stockcode", "asc")
+                }
+
+
+    7.4.5 Hibernate Query Language (HQL)
+
+    def results = Book.findAll("from Book as b where b.title like 'Lord of the%'")
+
+    但是在应用中就不行， 如下
+
+                    r1:SHME_2015_ReportListTbl.findAll("from SHME_2015_ReportListTbl as b" +
+                    "where b.reportname like :p1 ",
+                   [p1:"%增持%"] )
+
+
+org.codehaus.groovy.grails.orm.hibernate.exceptions.GrailsQueryException: Invalid query [from person as a where a.firstname like '%m%'] for domain class [class grails_onlycontroller.Person]
+
+                    persons:Person.findAll("from person as a where a.firstname like '%m%'"),
+
+     这种findAll() 的用法总是提示query 语句不对，奇怪了。
+
+. 关于锁定
+
+      为了防止同时修改等出现数据不一致问题， 可以锁定记录
+
+     def airport = Airport.get(10)
+     airport.lock() // lock for update
+     airport.name = "Heathrow"
+     airport.save()
+   
+     def airport = Airport.findByName("Heathrow", [lock: true])
+
+.还可以判断数据是否被修改  isDirty
+
+    def airport = Airport.get(10)
+    assert !airport.isDirty()
+    airport.properties = params
+    if (airport.isDirty()) {
+       // do something based on changed state
+    }
+
+    def airport = Airport.get(10)
+    assert !airport.isDirty()
+    airport.properties = params
+    if (airport.isDirty('name')) {
+        // do something based on changed name
+    }
+
+. 

@@ -1,0 +1,17 @@
+127.0.0.1 - - [30/Nov/2015:05:56:38 +0800] "GET / HTTP/1.1" 200 11418
+127.0.0.1 - - [30/Nov/2015:05:56:38 +0800] "GET /tomcat.css HTTP/1.1" 200 5926
+127.0.0.1 - - [30/Nov/2015:05:56:38 +0800] "GET /tomcat.png HTTP/1.1" 200 5103
+127.0.0.1 - - [30/Nov/2015:05:56:39 +0800] "GET /bg-nav.png HTTP/1.1" 200 1401
+127.0.0.1 - - [30/Nov/2015:05:56:39 +0800] "GET /bg-button.png HTTP/1.1" 200 713
+127.0.0.1 - - [30/Nov/2015:05:56:39 +0800] "GET /bg-upper.png HTTP/1.1" 200 3103
+127.0.0.1 - - [30/Nov/2015:05:56:39 +0800] "GET /bg-middle.png HTTP/1.1" 200 1918
+127.0.0.1 - - [30/Nov/2015:05:56:39 +0800] "GET /asf-logo.png HTTP/1.1" 200 17811
+127.0.0.1 - - [30/Nov/2015:05:56:39 +0800] "GET /favicon.ico HTTP/1.1" 200 21630
+127.0.0.1 - - [30/Nov/2015:05:56:46 +0800] "GET /manager/html HTTP/1.1" 401 2538
+127.0.0.1 - admin [30/Nov/2015:05:56:48 +0800] "GET /manager/html HTTP/1.1" 200 17738
+127.0.0.1 - admin [30/Nov/2015:05:56:48 +0800] "GET /manager/images/tomcat.gif HTTP/1.1" 200 2066
+127.0.0.1 - admin [30/Nov/2015:05:56:48 +0800] "GET /manager/images/asf-logo.gif HTTP/1.1" 200 7279
+127.0.0.1 - admin [30/Nov/2015:05:56:56 +0800] "POST /manager/html/stop?path=/Grails%5FOnlyController%2D0%2E1&org.apache.catalina.filters.CSRF_NONCE=6E1828B24DA91818AE8800E4667ADB0F HTTP/1.1" 200 17214
+127.0.0.1 - admin [30/Nov/2015:05:57:07 +0800] "POST /manager/html/undeploy?path=/Grails%5FOnlyController%2D0%2E1&org.apache.catalina.filters.CSRF_NONCE=7B0D0CF783625F7C0B5505050D2A927C HTTP/1.1" 200 15911
+127.0.0.1 - admin [30/Nov/2015:05:58:32 +0800] "POST /manager/html/upload?org.apache.catalina.filters.CSRF_NONCE=1B3FFCE5859E6FB4DE7AADF4D8F0C3FB HTTP/1.1" 200 17037
+127.0.0.1 - - [30/Nov/2015:05:58:32 +0800] "GET /favicon.ico HTTP/1.1" 200 21630

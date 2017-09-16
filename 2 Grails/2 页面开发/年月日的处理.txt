@@ -1,0 +1,9 @@
+. js 中年月日的处理
+
+   var today=new Date();
+		var day=today.getDate();
+		var month=today.getMonth()+1;
+		var year=today.getFullYear();    
+		month=month<10?"0"+month:month;
+		day=day<10?"0"+day:day;
+		var Mtime=year+"-"+month+"-"+day; 

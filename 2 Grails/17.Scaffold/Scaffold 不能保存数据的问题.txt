@@ -1,0 +1,28 @@
+. Create 数据（保存数据）的时候出现下面的错误
+
+
+  HTTP Status 404 - /SMMS/reportKeysTbl/save
+
+type Status report
+
+message /SMMS/reportKeysTbl/save
+
+description The requested resource is not available.
+
+ 源代码如下:
+
+import smms.ReportKeysTbl
+
+class ReportKeysController {
+
+    def scaffold = ReportKeysTbl
+    def index() { }
+}
+
+. 上面这个错误的关键原因是: 
+
+  scaffold 需要一个 与域类同名的控制器来作为容器创建对应的action/gsp.  所以上面的应用， 必须要重建一个ReportKeysTblCongtroller 的控制器， 可以没有任何内容。
+
+  这样就可以运行通过了。
+
+. 如果通过不是与域名同名的控制器调用scaffold, 而是通过某个controller的action, 则可能会出错， 因为缺少一个对应的gsp文件.

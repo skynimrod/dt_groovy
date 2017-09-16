@@ -1,0 +1,11 @@
+   1、在命令行下进入项目所在的根路径
+  
+   2、运行命令“grails-debug run-app”
+
+   3、在netbeans中设置连接调试器，设置端口为5005
+
+   4、设置断点开始调试吧
+
+. F8  “step  out”,  F7 "step in"
+
+. Ctrl + F8 设置/取消 断点

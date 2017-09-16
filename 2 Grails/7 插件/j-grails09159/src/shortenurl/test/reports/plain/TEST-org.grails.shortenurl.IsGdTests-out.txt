@@ -1,0 +1,4 @@
+--Output from testShorten--
+--Output from testBadUrl--
+An error occurred: http://is.gd/api.php?longurl=IAmNotAValidUrl
+500 : Internal Server Error

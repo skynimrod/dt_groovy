@@ -1,0 +1,13 @@
+. 参见:
+
+   http://www.blogjava.net/BlueSUN/archive/2007/03/10/103014.html
+
+. 在Eclipse IDE 中添加Groovy 插件
+
+  1. JDK 1.5 以上
+
+  2. eclipse+groovy plugin（支持Groovy 1.5.7）
+
+     打开eclipse， Help-> MarketPlace 中搜索 Groovy
+   
+     找到"Groovy/Grails Tools Suite (GGTS) for Eclipse Kepler(4.3) 3.5.1 Release"， 安装.

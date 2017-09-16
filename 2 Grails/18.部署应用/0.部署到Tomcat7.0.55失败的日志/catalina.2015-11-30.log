@@ -1,0 +1,78 @@
+十一月 30, 2015 5:54:39 上午 org.apache.catalina.core.AprLifecycleListener init
+信息: Loaded APR based Apache Tomcat Native library 1.1.31 using APR version 1.4.8.
+十一月 30, 2015 5:54:39 上午 org.apache.catalina.core.AprLifecycleListener init
+信息: APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+十一月 30, 2015 5:54:39 上午 org.apache.catalina.startup.SetAllPropertiesRule begin
+警告: [SetAllPropertiesRule]{Server/Service/Connector} Setting property 'URLEncoding' to 'utf-8' did not find a matching property.
+十一月 30, 2015 5:54:40 上午 org.apache.catalina.core.AprLifecycleListener initializeSSL
+信息: OpenSSL successfully initialized (OpenSSL 1.0.1h 5 Jun 2014)
+十一月 30, 2015 5:54:40 上午 org.apache.coyote.AbstractProtocol init
+信息: Initializing ProtocolHandler ["http-apr-8080"]
+十一月 30, 2015 5:54:41 上午 org.apache.coyote.AbstractProtocol init
+信息: Initializing ProtocolHandler ["ajp-apr-8009"]
+十一月 30, 2015 5:54:41 上午 org.apache.catalina.startup.Catalina load
+信息: Initialization processed in 2022 ms
+十一月 30, 2015 5:54:41 上午 org.apache.catalina.core.StandardService startInternal
+信息: Starting service Catalina
+十一月 30, 2015 5:54:41 上午 org.apache.catalina.core.StandardEngine startInternal
+信息: Starting Servlet Engine: Apache Tomcat/7.0.55
+十一月 30, 2015 5:54:41 上午 org.apache.catalina.startup.HostConfig deployWAR
+信息: Deploying web application archive C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\Grails_OnlyController-0.1.war
+十一月 30, 2015 5:54:52 上午 org.apache.catalina.startup.TaglibUriRule body
+信息: TLD skipped. URI: http://www.springframework.org/tags is already defined
+十一月 30, 2015 5:54:52 上午 org.apache.catalina.startup.TaglibUriRule body
+信息: TLD skipped. URI: http://www.springframework.org/tags/form is already defined
+十一月 30, 2015 5:55:15 上午 org.apache.catalina.startup.HostConfig deployWAR
+信息: Deployment of web application archive C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\Grails_OnlyController-0.1.war has finished in 34,219 ms
+十一月 30, 2015 5:55:15 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deploying web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\ROOT
+十一月 30, 2015 5:55:15 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deployment of web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\ROOT has finished in 94 ms
+十一月 30, 2015 5:55:15 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deploying web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\docs
+十一月 30, 2015 5:55:15 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deployment of web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\docs has finished in 78 ms
+十一月 30, 2015 5:55:15 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deploying web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\examples
+十一月 30, 2015 5:55:16 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deployment of web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\examples has finished in 703 ms
+十一月 30, 2015 5:55:16 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deploying web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\host-manager
+十一月 30, 2015 5:55:16 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deployment of web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\host-manager has finished in 78 ms
+十一月 30, 2015 5:55:16 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deploying web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\manager
+十一月 30, 2015 5:55:16 上午 org.apache.catalina.startup.HostConfig deployDirectory
+信息: Deployment of web application directory C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\manager has finished in 110 ms
+十一月 30, 2015 5:55:16 上午 org.apache.coyote.AbstractProtocol start
+信息: Starting ProtocolHandler ["http-apr-8080"]
+十一月 30, 2015 5:55:16 上午 org.apache.coyote.AbstractProtocol start
+信息: Starting ProtocolHandler ["ajp-apr-8009"]
+十一月 30, 2015 5:55:16 上午 org.apache.catalina.startup.Catalina start
+信息: Server startup in 35567 ms
+十一月 30, 2015 5:56:55 上午 org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+严重: The web application [/Grails_OnlyController-0.1] appears to have started a thread named [MySQL Statement Cancellation Timer] but has failed to stop it. This is very likely to create a memory leak.
+十一月 30, 2015 5:57:05 上午 org.apache.catalina.util.LifecycleBase stop
+信息: The stop() method was called on component [StandardEngine[Catalina].StandardHost[localhost].StandardContext[/Grails_OnlyController-0.1]] after stop() had already been called. The second call will be ignored.
+十一月 30, 2015 5:57:07 上午 org.apache.catalina.startup.HostConfig undeploy
+信息: Undeploying context [/Grails_OnlyController-0.1]
+十一月 30, 2015 5:57:34 上午 org.apache.catalina.startup.HostConfig deployWAR
+信息: Deploying web application archive C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\SMMS-0.1.war
+十一月 30, 2015 5:58:05 上午 org.apache.catalina.startup.TaglibUriRule body
+信息: TLD skipped. URI: http://www.springframework.org/tags is already defined
+十一月 30, 2015 5:58:05 上午 org.apache.catalina.startup.TaglibUriRule body
+信息: TLD skipped. URI: http://www.springframework.org/tags/form is already defined
+十一月 30, 2015 5:58:31 上午 org.apache.catalina.core.StandardContext startInternal
+严重: Error listenerStart
+十一月 30, 2015 5:58:31 上午 org.apache.catalina.core.StandardContext startInternal
+严重: Context [/SMMS-0.1] startup failed due to previous errors
+十一月 30, 2015 5:58:31 上午 org.apache.catalina.loader.WebappClassLoader clearReferencesJdbc
+严重: The web application [/SMMS-0.1] registered the JDBC driver [com.mysql.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+十一月 30, 2015 5:58:31 上午 org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+严重: The web application [/SMMS-0.1] appears to have started a thread named [PoolCleaner[9794523:1448834295765]] but has failed to stop it. This is very likely to create a memory leak.
+十一月 30, 2015 5:58:31 上午 org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+严重: The web application [/SMMS-0.1] appears to have started a thread named [MySQL Statement Cancellation Timer] but has failed to stop it. This is very likely to create a memory leak.
+十一月 30, 2015 5:58:31 上午 org.apache.catalina.loader.WebappClassLoader clearReferencesThreads
+严重: The web application [/SMMS-0.1] appears to have started a thread named [net.sf.ehcache.CacheManager@1dca65c] but has failed to stop it. This is very likely to create a memory leak.
+十一月 30, 2015 5:58:31 上午 org.apache.catalina.startup.HostConfig deployWAR
+信息: Deployment of web application archive C:\Program Files\Apache Software Foundation\apache-tomcat-7.0.55-windows-x86\apache-tomcat-7.0.55\webapps\SMMS-0.1.war has finished in 57,125 ms

@@ -1,0 +1,31 @@
+.GSP 标签中使用了中文, 但是显示是乱码
+
+ 1. 修改 GSP 文件中的编码为 GBK, GB2312 仍然没有作用
+
+    <%@ page contentType="text/html;charset=gb2312" %>
+
+    <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=GBK">
+      。。。。
+
+    修改了 config.groovy 中的以下设置编码仍然没有作用  (GBK, GB2312 都尝试过)
+
+      GSP setting 中
+ 
+      grails {
+            views {
+                  gsp {
+                        encoding = 'GBK'
+           。。。
+                  }
+             ...
+            }
+      }
+
+     //grails.converters.encoding = "UTF-8"
+     grails.converters.encoding = "GBK"
+
+ 2. 用notepad 打开 index.gsp  文件查看， 发现文件是utf-8 格式存储的。 关键是Web  Server  Tomcat 的编码方式 
+
+  暂时不解决中文显示问题， 先用英文显示。 至于数据中的中文， 由于是通过out 输出到页面的， 显示本身没有问题。

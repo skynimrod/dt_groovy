@@ -1,0 +1,1255 @@
+参见:
+
+    http://wenku.baidu.com/link?url=i1sLbwO4HN51lAkaMVMurawVDKnQff9kDN4yvBxAAmW48geHhOixCYJOlbAUt74nR1NvZQb6y8ZqLHbE2Nxg_wthoQTAt_T9hVoObGlkiVe
+
+. 1、在gsp页面里写注释，如果注释是中文的话，有时会出现gsp编译错误，可能跟中文字节有关系，解决办法：在中文注释后多加一个空格 
+
+. 2、grails如果要连接数据库，那grails开头的jar必须放在项目WEB-INF/lib里，其他jar可以放在web服务器的共享lib里  
+
+. 3、grails中的gorm在操作数据库是出错，但没有任何日志记录  
+
+. 4、grails服务类的文件名与类的名称必需一致，不然虽然编译通过，但grails内部封装时无法正确识别  
+
+. 5、grails工件的类名称，第一个字母必需大写 
+
+. 6、grails同类工件的类名称不能重名，即使包名称不一样，类名称相同，这种情况也是不行，在grails内部会解析出现问题 
+
+. 7、服务类经验：  
+
+    1）、grails服务类的名称，必须以Service结尾，不然在grails里无法正确识别。  
+
+    2）、服务类运行时是单件模式。  
+
+    3）、服务类默认是开启事务（数据库事务），如果没有用到数据库事务最好关闭事务，否则数据库连接可能占用过多，造成连接池里连接不够用。  
+
+         static transactional = false //禁用事务 
+
+. 8、配置使用经验：  
+
+    1）、把数据库配置、日志配置都放在外面，运行时载入，这样工程部署完还可以修改配置。
+
+        实现方法如下：修改Config.groovy  
+
+        grails.config.locations = ["classpath:config/spy.properties"          
+                                       ,"classpath:config/Log4jConfig.groovy"          
+                                       , "classpath:config/SystemConfig.groovy"          
+                                       , "classpath:config/DataSource.groovy"          
+                                       , "classpath:projectconfig/encode.properties"         
+                                   ]   
+
+        //spy.properties 配置必须放在 Log4jConfig.groovy 之前，否则Log4jConfig.groovy 的配置将被spy.properties里的日志配置覆盖    
+
+   2）、动态加载配置，在控制器里加入以下代码：  
+
+        def webBaseDir = ServletContextHolder.servletContext.getRealPath('/')  
+
+        def classdir = ApplicationHolder.application.isWarDeployed()?FilenameUtils.concat(webBaseDir,
+                  'WEB-INF/classes'):FilenameUtils.concat(webBaseDir, '../target/classes');  
+
+        def index ={forward(action:"reloadconfig") }   
+
+        def reloadconfig  = {   
+
+            //重新载入配置成功 
+
+        def config = grailsApplication.config     
+
+        def reload ={   
+
+            def locations = config.grails.config.locations    
+
+            locations.each {  
+
+                 if(it.startsWith('classpath:')){ 
+                       it = FilenameUtils.concat(classdir, it['classpath:'.length() .. -1]) 
+                       it = 'file:' + it  
+                 } 
+
+                 if(FilenameUtils.isExtension(it, 'properties')){  //properties文件   
+                       it = it.replace('file:', 'file:///')
+
+                       def pro = new Properties()    
+                       def proFile = new File(it)     
+                       if(proFile.exists()){    
+                            proFile.withInputStream { pro.load it }    
+                            config.merge(new ConfigSlurper().parse(pro)) 
+                       }
+                 }else{ //groovy文件  
+                       config.merge(new ConfigSlurper().parse(new URL(it)))
+                 }
+            }     
+            render "重新载入配置成功！ ${new Date()}"  
+       }   
+
+       def auth = config.control.auth  
+
+       if(auth){ //是否需要验证    
+           if(auth == params.auth){ //验证成功   
+               reload()   
+           }else{ //验证失败 
+               render '你无权做此操作！'    
+           }
+       }else{  
+               reload() 
+       }
+   } 
+
+. 9、使用_Events.groovy 把相关的配置在编译时就复制到指定的位置   
+
+     eventCompileStart = {
+
+          ant.copy(todir:"$classesDir/config", overwrite:true){fileset(dir:"config")}   
+          ant.copy(todir:"$classesDir/projectconfig", overwrite:true){fileset(dir:"projectconfig")}
+     } 
+
+. 10、在服务类编译好的class文件里，可以用记事本打开，查看里面的SQL语句。 
+
+. 11. 当域类很多时，每次启动更新数据库结构时会非常慢，可能把DataSource文件里的
+      dbCreate  = "update" // one of 'create', 'create-drop', 'update'
+
+      改成  dbCreate = "none", 启动时不对数据库做任何操作, 当需要更新数据库结构时再修改dbCreate = "update"
+
+. 12. 如果需要gsp 页面在运行时, 修改直接生效, 需要, 在Config.groovy 里加入 grails.gsp.enable.reload = true
+
+. 13. map 操作中, map << ["$var", value] 失败, 需要用 map <<[{var}, value] 或者 map.put(var, value)来代替：
+
+      def var = 'mykey'
+      def map = [:]
+      map << ["$var", value]    // 可以执行， 但是map.mykey 无法取值， 所以此方法不行
+      map << [(var), value]     // OK , 建议的方式
+
+      map.put( var, value)      // OK
+
+
+      ？？ 这个好像修正了， 起码Grails 2.4.2 (groovy 2.3.1)中可以
+
+      上面不能用的原因应该是GString 用法不对， 应该是 map << ["${var}", value] ???  还没有验证，回头有空验证下
+
+. 14. layout应用与搜索顺序：
+
+      1). gsp模板文件里指定的layout 比如: <meta name="layout" content="main" />
+      2). 在控制器里指定的layout 比如: static layout = 'main'
+      3). layouts/{ControlerName}/{ActionName}.gsp
+      4). layouts/{ControlerName}.gsp
+      5). layouts/application.gsp
+
+. 15. 服务类不要太多, 比较耗内存, Grails 启动时, 初始化也慢
+
+. 16. 在Grails 应用里, 根据类名称(包含包) 获取类型: 
+
+      Class.forName( parames.servicename,true, this.getClass().getClassLoader() )
+
+. 17. 根据类型获取 Spring 容器里的实例: grailsApplication.mainContext.getBean(type)
+
+      获取所有已经定义的bean 的名称数组:  grailsApplication.mainContext.beanDefinitionNames
+
+      Grails 内置的bean:
+
+      annotationHandlerAdapter,       annotationHandlerMapping,             classLoader, 
+      controllerHandlerMappings,      controllerToScaffoldedDomainClassMap, 
+convertersConfigurationInitializer,
+      customEditors,                  dataSource,                           dataSourceUnproxied,
+      dialectDetector,                entityInterceptor,                    errorsJsonMarshallerRegisterer,
+      errorsXmlMarshallerRegisterer,  eventTriggeringInterceptor,           exceptionHandler,  
+      filterInterceptor,              flushingRedirectEventListener,        
+grailsApplicationPostProcessor,                         grailsUrlMappingsHolder,        grailsUrlMappingsHolderBean,          groovyPageResourceLoader, 
+      groovyPagesTemplateEngine,      
+groovyPagesUriService,                gspTagLibraryLookup,
+      hibernateEventListeners,        hibernateProperties,                  jsonErrorsMarshaller,
+      jsonParsingParameterCreationListener,  
+jspTagLibraryResolver,         jspViewResolver,
+      lobHandlerDetector,             localeChangeInterceptor,              localeResolver, 
+      mainSimpleController,           messageSource,                        multipartResolver,
+      nativeJdbcExtractor,            openSessionInViewInterceptor,         
+      org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib,      
+      org.codehaus.groovy.grails.plugins.web.taglib.CountryTagLib，         
+      org.codehaus.groovy.grails.plugins.web.taglib.FormTagLib，            
+      org.codehaus.groovy.grails.plugins.web.taglib.FormatTagLib,
+      org.codehaus.groovy.grails.plugins.web.taglib.JavascriptTagLib, 
+      org.codehaus.groovy.grails.plugins.web.taglib.PluginTagLib，          
+      org.codehaus.groovy.grails.plugins.web.taglib.RenderTagLib,            
+      org.codehaus.groovy.grails.plugins.web.taglib.SitemeshTagLib,         
+      org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib,       
+      org.codehaus.groovy.grails.web.filters.JavascriptLibraryFilters,       
+      org.codehaus.groovy.grails.web.filters.JavascriptLibraryFiltersClass, 
+      org.springframework.aop.config.internalAutoProxyCreator,              
+      org.springframework.context.annotation.internalAutowiredAnnotationProcessor,
+      org.springframework.context.annotation.internalCommonAnnotationProcessor,
+      org.springframework.context.annotation.internalConfigurationAnnotationProcessor,
+      org.springframework.context.annotation.internalPersistenceAnnotationProcessor,
+      org.springframework.context.annotation.internalRequiredAnnotationProcessor,
+      org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0,
+      org.springframework.transaction.config.internalTransactionAdvisor,
+
+      org.springframework.transaction.interceptor.TransactionInterceptor#0,
+      persistenceInterceptor,         pluginManagerPostProcessor,           proxyHandler,
+
+      scaffoldedActionMap,            scaffoldingTemplateGenerator,         sessionFactory, shutdownHook,
+      simpleControllerHandlerAdapter, transactionManager, 
+                  transactionManagerPostProcessor,
+      urlMappingsTargetSource,        viewNameTranslator,                   xmlErrorsMarshaller,
+      xmlParsingParameterCreationListener
+
+. 18. 获取所有的服务类:
+
+      grailsApplication.getArtefacts("Service")
+
+. 19. 在Groovy 源包里的类, 如果设计成需要被继承的, 那边不能放在默认包下, 必须有包名称
+
+. 20. 在Groovy 源包里的类, 也可以调用域类的方法
+
+. 21. 动态调用类里的静态方法（即类可以用动态传参数）:
+     
+      def className = "GroovyClass1"
+      def type = Class.forName("info.$className", true,this.class.classLoader)
+      type.staticMethod('test')
+
+. 22. 因Groovy&Grails是增量编译的，有时侯会出现：现有的代码与已经编译的类不同步（当认为代码没有问题，而就是出错时，很有可能是这种情况），需要先清理，再编译或运行。
+
+. 
+23、域类的hasMany=[键:域类型]，其中“键”字符串不能太长，否则生成外键名称时，长度可能超过数据库里外键名称允许的长度
+
+. 
+24、web服务器的全局lib，与项目的WEB-INF/lib里不能同时存在slf4j-log4j12*.jar包
+
+. 25、grails由于域类、服务类多、加载的类多等关系，比较占perm内存，经常会内存溢出，需要修改jvm的perm内存配置。
+建议直接用OracleJRockit代替OracleJDK、JRE，直接解决问题无需下面设置，并提高性能。
+
+      在tomcat操作如下：需要在bin/catalina.sh (catalina.bat windows平台) 调整一下jvm的内存设置，即在注释后面加上下面一句话，该配置内存量大小，根据实际来调整 
+
+      catalina.bat： 
+
+
+      set JAVA_OPTS=-Xms128m -Xmx1300m -XX:PermSize=128m -XX:MaxPermSize=500m 
+
+      catalina.sh： 
+
+
+      JAVA_OPTS='-Xms128m -Xmx1300m -XX:PermSize=128m -XX:MaxPermSize=500m' 
+
+. 26、放在默认包里的类，无法被继承，也无法在控制器里调用，所以类都要放在包里  
+
+
+. 27、升级Grails版本时，可能出现一些插件升级不了，删除grails的项目缓存就可以，一般在用户目录的.grails/projects  
+
+. 
+28、当使用一些插件时，如auto-test,jms等做造成在开发环境（grails run-app）运行时，会无故自动编译，可以禁止自动编译 
+    
+     
+grails -Ddisable.auto.recompile=true run-app   
+
+
+. 30、用GORM批量（大量）维护数据时，性能相对与grovy.sql.Sql, jdbc 等慢很多。如果是主子表的话，用域类.addXXX()，GORM性能会急剧下降（不执行.save, ）。 建议用grovy.sql.Sql,  jdbc，直接数据库存储过程等高效方法。  
+
+
+. 31、在用File.setText('文件路径','utf-8') ，保存成utf-8格式，如果文件内容里没有，中文等字符的，他还会被保存成本地编码，非utf-8编码  
+
+
+. 32、Grails的JMS插件经验： 
+
+      1）、在Grails里使用jms插件时，在DataSource.groovy里必须配置数据源，否则会出下面错误：  
+
+        2011-03-16 20:38:50,571 [Main Thread] ERROR context.GrailsContextLoader  - Error executing bootstraps: Error creating bean with name 'handleJmsListenerContainer': Cannot resolve reference to bean 'handleJmsListenerAdapter' while setting bean property 'messageListener'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'handleJmsListenerAdapter': Cannot resolve reference to bean 'persistenceInterceptor' while setting bean property 'persistenceInterceptor'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException:  No bean named 'persistenceInterceptor' is defined  
+
+      2）、可以使用广播topic：   
+
+         sendJMSMessage(topic:"topic.test", 'hello')   
+
+      3）、在服务类与消息队列对接时，具备链接可靠性（即当Activemq停止，再启动，服务类会自动与消息队列对接），  
+          不管Activemq在本机，还是在远程都具备可靠性。如果使用了spring的jms连接池
+
+         (SingleConnectionFactory)，那就不具备可靠性（即运行过程中，Activemq挂了再恢复，Grails不会重新连接）。   
+
+      4）、在服务类里设置  static listenerCount = n ，无效，不能达到多线程倾听的效果。
+           需要在配置文件里如下设置才有效果： 
+
+           jms{ 
+    
+               containers {      
+                   info { 
+  
+                        meta { 
+
+                             parentBean = 'standardJmsListenerContainer'        
+                        } 
+   
+                        sessionTransacted = true 
+                     
+   concurrentConsumers = 5    //此句是关键，并发客户端数   
+                   }
+               }
+           
+    adapters {    
+                   info { 
+            
+            meta { 
+             
+                parentBean = 'standardJmsListenerAdapter' 
+                        }
+            
+            messageConverter = null // do no message conversion 
+                   }
+              }         
+          }
+
+      5）、.net用NMS向activemq发带属性的消息，在Grails里用JMS可以读出属性，如果再写入别的属性转发给别的队列，那么这些在Grails里写入的属性，无法读出。 
+
+          如果.net里NMS发的消息不带属性，那么在Grails再写入别的属性，在别的队列里是可以读出这些属性的。  
+
+      6）、相关的Beans：
+
+          jmsConnectionFactory         standardJmsListenerContainer        jmsService
+          infoJmsListenerContainer     new1JmsListenerAdapter   
+          standardJmsMessageConverter  infoJmsListenerAdapter              new1JmsListenerContainer
+          standardJmsTemplate          standardJmsListenerAdapter
+          grails.plugin.jms.JmsServiceServiceClass 
+
+          注：new1是服务类，info是在配置文件里配置的Container名称与Adapter名称  
+
+      7）、jms插件底层调用Spring JMS，所以有时可以去Spring JMS的查看api，同时看看插件的在线向导与api。 
+
+      8）、在调用sendJMSMessage方法，传发送内容参数时，如果是要发送文本消息（简单字符串），需要普通的String类型，不要用GString。即用单引，不要用双引。   
+
+           或把GString类型即“”后再.toString()变成 String类型。否则sendJMSMessage识别不了类型，被封装成ObjectMessage，而非TextMessage。  
+
+      9）、activemq自带的fileserver支持大文件，拿100M文件，在3台计算机上分别部署接收端、发送端、Activemq，测试正常
+
+          发送BlobJMSMessage:      
+
+          def standardJmsTemplate 
+
+          def sendBlob(){     
+
+              def bytes = new File('d:/test2.txt').bytes 
+          
+              standardJmsTemplate.send("queue.test.ttt",    
+                     { session-> 
+ 
+                          def inputStream = new ByteArrayInputStream(bytes)     
+                          def msg = session.createBlobMessage(inputStream);  
+    
+
+                          IOUtils.closeQuietly(inputStream)            
+                          return msg;
+                     } as MessageCreator );
+          }
+
+          =============================
+
+          接收BlobJMSMessage： 
+ 
+
+          def onMessage(messageObject) { 
+
+              def file = new File('c:/test2.txt') 
+              //if(file.exists()) file.delete() 
+
+              FileUtils.copyInputStreamToFile(messageObject.inputStream, file)  
+
+             //file << messageObject.inputStream 
+ 
+
+             messageObject.delete()  //删除fileserver等里残留的文件   
+ 
+ 
+             IOUtils.closeQuietly(messageObject.inputStream) 
+
+             return null   
+          }
+
+       10). Activemq相关经验参考 Activemq 经验；以及参考Activemq API Doc  
+
+       11）、在控制器里打印 jmsConnectionFactory 属性   
+
+             def jmsConnectionFactory      
+
+             def test5={  
+
+                 jmsConnectionFactory.properties.each {    println it    } 
+
+                 BlobTransferPolicy policy = jmsConnectionFactory.getBlobTransferPolicy();   
+                 println '--------------------------'    
+                 println policy.getUploadUrl()    
+                 println policy.getBrokerUploadUrl()  
+                 println policy.getDefaultUploadUrl()
+                 render 'ok'  
+            
+ } 
+
+. 33. 在Web服务器里部署多个Grails应用时，无法reload，不管在tomcat，还是 glassfish里。可以用取消部署，再部署操作来代替。 
+
+. 34、Grails应用启动的时候，在数据库无法连接时，会报下面的错误(glassfish v3.1)： 
+Error creating bean with name 'messageSource': Initialization of bean failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'transactionManager': Cannot resolve reference to bean 'sessionFactory' while setting bean property 'sessionFactory'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'sessionFactory': Cannot resolve reference to bean 'hibernateProperties' while setting bean property 'hibernateProperties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'hibernateProperties': Cannot resolve reference to bean 'dialectDetector' while setting bean property 'properties' with key [hibernate.dialect]; 
+
+. 35、数据库事务经验：  
+
+     1）、在Grails的服务类里使用groovy.sql.Sql 对象是不在Grails服务类的事务管理里面，需要 groovy.sql.Sql 对象单开事务，方法：.withTransaction{}
+
+     2）、Implementing transactions in Grails using Groovy SQL 。在服务类里的groovy.sql.Sql使用withTransaction 时，构造Sql 不能直接用DataSource 
+来构造，否则会出下面错误：
+
+         java.sql.SQLException: Connection is closed. 
+
+         正确写法如下： 
+   
+
+         static createSql(exec){ 
+   
+
+             def batchSize = ConfigurationHolder.config.batchSize
+             def _sql = new groovy.sql.Sql(_dataSource) 
+             def connection = _sql.createConnection()   
+             def sql 
+             try{ 
+
+                  sql = new groovy.sql.Sql(connection) 
+ 
+                  def coreInfo = [sql:sql, batchSize:batchSize]      
+                  sql.withTransaction{ 
+                       exec(coreInfo)
+                  } 
+             } 
+
+             finally{ 
+ 
+                  if(sql) sql.close() 
+             }
+         }
+    
+      3）、事务级别SERIALIZABLE，参见postgresql经验，可以并行查询，支持数据更新，但不能并发更新。下面是groovy.sql.Sql如何控制事务级别：  
+
+         a）、此时Sql对象使用的datasource连接池里的连接，所以使用完连接的级别再恢复到原先的级别，否则会影响别的代码使用连接（不能并发更新）。   
+
+         b）、在发送sql后不能再修改连接的事务级别，否则报错。  
+
+              static createSql(SERIALIZABLE = false , exec){
+
+                   def _sql = new groovy.sql.Sql(dataSource)   
+                   def connection = _sql.createConnection()   
+                   def sql, oldTransactionIsolation  
+
+                   try{   
+                       //println connection.getClass()     
+        
+                       oldTransactionIsolation = connection.transactionIsolation   
+                       //println "oldTransactionIsolation:$oldTransactionIsolation"   
+                       if(SERIALIZABLE) 
+                           connection.transactionIsolation =  java.sql.Connection.TRANSACTION_SERIALIZABLE  
+
+                       sql = new groovy.sql.Sql(connection)   
+
+                       def coreInfo = [sql:sql]    
+                       sql.withTransaction{ exec(coreInfo)    }
+                   }   
+                   finally{   
+                       if(connection){     
+                           if ( SERIALIZABLE )
+                               connection.transactionIsolation =  java.sql.Connection.TRANSACTION_READ_COMMITTED
+                           connection.close();  
+                       }
+                       if(sql) 
+                            sql.close()  
+                  }
+              } // createSql
+
+      4）、在一些主子表采集到数据库（都删除主子表，再添加）再从数据库生成xml，向这种应用生成xml的连接必须在事务级别SERIALIZABLE上，否则有可能生成的xml主节点里没有子节点的数据，原因是那时子表有可能在数据库里已经被删除数据了。
+
+.  36、下面代码如果a不用大挂号后面跟上.test，默认会调用a对象的test属性，如果想把.test显示出来，那么a对象必须用大挂号 class A{  def test = 'bbb' } 
+def a = new A() println "${a}.test"
+
+. 37. ??
+
+. 38、GSP模板，org.codehaus.groovy.grails.web.pages.GroovyPagesTemplateEngine的使用经验： 
+
+      1）groovyPagesTemplateEngine是多线程不安全的  
+  
+      2）使用此模板，grails的layout技术是有效的，layout是通过过滤器来实现的，<meta name="layout" content="main"/>。 
+
+        缺点：如果使用了layout技术，就不能生成完整的包含layout的静态页面，   除非用URL.getText('utf-8')，并替换content="main" 为 content=""。   效率低下，这点不如Freemarker，Freemarker可以生成带类似layout功能的完整的静态页面。  
+
+      3）在layout的gsp视图里的各种技术也是有效的，如国际化技术等。  
+
+      4）模板文件可以是本机的任何位置，任何扩展名
+
+      5）在模板里支持普通gsp视图的所有技术、标签 
+
+      6）内置gsp视图与使用groovyPagesTemplateEngine载入外部模板文件共同存在的重大缺点：  
+
+          在外面模板或gsp视图文件里写<% %>时，提示的错误定位行数不正确，提示的错误信息有时还不准，对调试带来的极大的难度。
+            
+          缓解上面的缺点，可以动态解析groovy脚本，并实例化调用（最好直接静态方法）。也可以使用groovyc 预先编译好的类放class目录里，有控制器注入到视图来调用。 
+
+      7）内置gsp视图与使用groovyPagesTemplateEngine载入外部模板文件共同存在的特点：
+
+            对与标签的错误提示与位置都是正确的。  
+
+      8）groovyPagesTemplateEngine只有在由http请求发起的线程，才能使用，grails 2.0 以上已经解决此问题，使用另外一个类grails.gsp.PageRenderer来代替。   
+
+         参考grails 2.0以上的 Page Rendering API 章节
+
+         grails.gsp.PageRenderer groovyPageRenderer     
+
+         void welcomeUser(User user) { 
+
+             def contents = groovyPageRenderer.render(view:"/emails/welcomeLetter", model:[user: user])    
+             sendEmail {   
+                 to user.email     
+                 body contents    
+             }  
+         }  
+      9）当使用了Grails的国际化技术时，当同时访问不同语言的同个页面时，在生成静态页面，会出现生成出来的多语言混乱（不同语言在同一个页面出现），  因为Grails的国际化技术使用的是Cookie来存储、区分不同语言的。
+
+         建议在这种场景下用自己的多语言方案来解决，比如自己解析语言的属性文件。  
+
+     10）方案参考：
+
+         用Freemarker代替Grails里的layout,模板Engine还是用groovyPagesTemplateEngine，再配合动态编译、调用groovy。  
+
+         这样可以生成完整的静态页面，且gsp里可以使用XmlSlurper、并行计算等特性   
+
+     11）、生成静态页面时不要使用Layout技术，那个使用通过回应在回应流里切入的，如果没有回应上下文就不能实现Layout。 
+
+         可以用2个gsp模拟layout生成静态页面，如一个GSP页面为Master主框架页面，里面有个变量，一个GSP页面为子页面，编译模板解析成字符串后，  把Master主框架页面里的那个变量替换掉。
+
+          使用方法： 
+
+          
+def groovyPagesTemplateEngine //在控制器或服务类里定义，可以自动注入 
+
+          在方法里如下写： 
+      
+          def templatefile 
+          
+synchronized(groovyPagesTemplateEngine){//同步      
+              templatefile = groovyPagesTemplateEngine.createTemplate(templateFile)   
+          } 
+
+          def output = new StringWriter() 
+
+          templatefile.make(bindings).writeTo(output) 
+
+. 
+39、使用groovyconsole运行脚本比groovy方便些，因为groovy每次都需要花很长时间初始化，而groovyconsole只在启动时初始化一次。  groovy支持参数， groovyconsole虽然不支持参数，但可以在脚本头部定义变量来代替参数。 
+
+      使用groovyc编译后的类，放在脚本的目录里，在groovyconsole里运行脚本时可以调用。 
+
+. 
+40、列表快捷方式操作bug：
+
+      如果列表里的元素是普通类型的可以用快捷方式操作列表，如果里面的元素是Map类型的不能用快捷方式操作。 
+
+      def list = [[3:'a',4:'b'],[5:'c',6:'d'],[7:'e',8:'f']]
+
+      
+list -= list[0] //在1.7.2，1.7.8,1.7.10存在bug，在1.8.0 已经修复这个bug， 1.7.3 - 1.7.7 之间未测试
+
+      list.remove(list[0]) //不管什么groovy版本都输出正确  
+
+. 
+41、除groovy.sql.sql.withBatch不支持参数化sql，其他的如groovy.sql.sql.rows , execute, executeUpdate 等都支持。即：
+
+ 
+       sql.executeUpdate "update PROJECT set url=$newUrl where name=$project" //正确 
+
+        //下面错误的 
+
+        sql.withBatch { stmt->  stmt.addBatch "update PROJECT set url=$newUrl where name=$project" //错误 } 
+
+. 
+42、在数据库正常运行，Grails运行后，dbcp连接池正常。这时当重启数据库后，在使用dbcp连接池的情况下，Grails无法再次连接数据库，需要重新一下Grails  
+
+. 43、BuildConfig.groovy 经验  
+
+    1)flatDir name:'myRepo', dirs:'/path/to/repo' 方式支持指定版本号以上（+），如compile 'commons-pool:commons-pool:1.5.6+'  
+      自定义的解析方式addArtifactPattern 不支持指定版本号以上（+），
+
+      libResolver.addArtifactPattern("${libbase}JavaResources/Lib/[organisation]/[artifact]-[revision].[ext]")  
+
+    2)更新jar包   
+
+      a)、configurations（build、compile）必须一样，不然可能会有问题  
+
+      b)、compile 'commons-io:commons-io:2.0.1' 中的第一个commons-io即ivy的[organisation]模式，此[organisation]必须与原先的名称一样  
+
+      c)、执行grails dependency-report 命令来验证jar的更新情况  
+
+    3)、logback（高性能的记录组件）无法用来代替Log4j，因为grails的log插件与log4j结合，无法脱离 
+
+    4)、hibernate 插件与指定的hibernate结合，无法手工更新  
+
+    5)、建立起自己的常用类库目录D:\JavaResources\Lib（window），/host/JavaResources/Lib（linux），在BuildConfig.groovy的repositories闭包的grailsHome()下，写如下方法指定到自己的常用类库 
+
+       def libResolver = new org.apache.ivy.plugins.resolver.FileSystemResolver()//定义解析器 
+  
+
+       //设置类库基目录 
+        
+       def libbase = System.getProperty("os.name").contains('Windows')? 'd:/' : '/host/'    
+  
+       //类库路径模式 
+        
+       libResolver.addArtifactPattern( 
+
+            "${libbase}JavaResources/Lib/[organisation]/[artifact]-[revision].[ext]")      
+
+       libResolver.name = "common-repository" //解析器名称 
+        
+       //libResolver.settings = ivySettings //grails 2.0后不能使用这句，这句也没有什么用         
+       resolver libResolver //添加类库解析器    
+   
+
+       //groovy类库路径模式 
+        
+       libResolver.addArtifactPattern( 
+       
+           "${libbase}JavaResources/Groovy/groovy/lib/[artifact]-[revision].[ext]") 
+ 
+       libResolver.name = "groovy-repository" //解析器名称 
+  
+ 
+       //libResolver.settings = ivySettings //grails 2.0后不能使用这句，这句也没有什么用  
+       resolver libResolver //添加类库解析器  
+    
+
+       //org.codehaus.groovy       
+       flatDir name:'org.codehaus.groovy', dirs:"${libbase}JavaResources/Groovy/groovy/embeddable/"  
+
+    6）、修改BuildConfig.groovy，把相关的配置在打包war时就复制到指定的位置   
+
+        grails.war.resources = { stagingDir, args ->    
+             copy(todir:"${stagingDir}/WEB-INF/classes/config/", overwrite:true){fileset(dir:"config")}   
+             copy(todir:"${stagingDir}/WEB-INF/classes/projectconfig/", overwrite:true){fileset(dir:"projectconfig")}   
+        } 
+  
+     7）、如果想让grails生成的war包，部署在glassfish里，把BuildConfig.groovy里加入以下语句  
+ 
+        grails.project.war.osgi.headers = false 
+
+     8）、在buildconfig.groovy 里在引用jdk，groovy ，groovy jdk 之外的其他类时, 因为那时其他都还没有载入。   
+
+        所以需要在buildconfig.groovy的dependencies闭包里，写上需要调用的包（provided），代码类似如下： 
+
+       //支持Eclipse环境下，在此文件使用
+
+
+       org.apache.ivy.plugins.resolver.FileSystemResolver 不显示即使编译错误  
+
+       provided 'org.apache.ivy:ivy:2.2.0'  
+  且包在buildconfig.groovy定义的库里必须要找的到，然后使用
+
+    9）刷新依赖
+ 
+    9）、使用SpringSource Tool Suite，在BuildConfig.groovy里定义加入了新包或升级了包，需要刷新一下依赖，否则在工程的图标上老显示错误，具体操作如下：  
+
+       在项目资源管理器鼠标右键项目->Grails Tools -> Refresh Dependencies  
+
+. 44、Grails 1.3.7 目前slf4j系列jar包能支持的最高版本为1.5.8。不能用1.5.8以上的版本，因为不兼容，如最新的1.6.1版本就不行。 
+
+. 45、日志系统经验：  
+
+    1）、Grails运行时不能直接删除log4jconfig.groovy里配置的日志文件，不然日志会无法写入该日志文件，除非重启。需要清空日志，可以打开文件删除内容。  
+
+         linux上如下操作： echo >日志文件名
+
+    2）、log4j的JDBCAppender与postgresql的配置代码如下:（已经在200个并发线程，每个线程记录400次日志的高压测试，没有问题。） 
+         jdbc(    
+               name:'montior',    
+               driver:'org.postgresql.Driver',    
+               URL:'jdbc:postgresql://localhost:5432/info', 
+               user:'postgres',    
+               password:'postgres',   
+               sql:"INSERT INTO info_montior (message, classtype, priority, log_date)values('[IRFO]:%m', '%c', '%p', to_timestamp('%d', 'YYYY-MM-DD HH24:MI:SS,MS'))"     
+         ) 
+
+         注意：[IRFO]改为模块代码   
+
+    3）、log4j的JDBCAppender与postgresql的配置出错，是不会报错，也不会向stdout输出配置错误信息，更不会记录日志到数据库
+
+    4）、log4j的SocketAppender配置    
+
+         //SocketAppender    
+         appender new org.apache.log4j.net.SocketAppender(    
+              name:'CHAINSAW_CLIENT',      
+              remoteHost:'localhost', //项目专用配置，配置日志查看服务端IP      
+              port:5003, //项目专用配置，5000系列端口，根据应用规划配置      
+              locationInfo:true 
+         )  
+
+    5）、参考Grails手册的配置部分里的日志配置Logging，以及IRFO2011的日志配置文件  
+
+    6）、log4j配置：  
+
+        a）'stdout' 控制是否要输出到标准输出，在IDE里是控制台，运行时跟应用服务器有关的文件里。
+
+        b）root的配置会被所有的已经配置的类别继承，其中appender（追加，原先的还存在，所以会造成多次重复输出日志，如果不想追加使用additivity: false见下面）  
+
+        c）root配置的日志级别，被覆盖  
+
+        d）常见的配置：   
+
+           log4j= { 
+                root{     
+ 
+                     //error 'file','jdbc', 'stdout', 'CHAINSAW_CLIENT'      
+                     error   'file', 'stdout' //没有配置类别的，默认的级别；所有类别在error以上都会输出日志，那可能会输出重复的两次        }     
+
+                //additivity: false 不从root继承appender。如果不写会造出多次重复日志输出，additivity: false只在配置appender时才使用     
+
+                info additivity: false, stdout: ["grails.app.controller.BookController", "grails.app.service.BookService"]                    //级别为info，只输出到stdout，不输出到file    
+
+                //info additivity: false, stdout: "grails.app.controller.BookController" 
+                //info additivity: false, stdout: "grails.app.service.BookService"     
+                //info "grails.app.controller.BookController", "grails.app.service.BookService" //只修改级别，appender从root继承。无需additivity: false    
+
+                //支持多个appender写法     
+                //info additivity: false, stdout: ["grails.app.controller.BookController", "grails.app.service.BookService"], file:["grails.app.controller.BookController"]     } 
+
+       e）grails抛出异常时会把异常的完整堆栈记录到stacktrace.log，很难看清楚。比较清楚的异常在配置的appender有显示，所以stacktrace.log没有用，可以禁用掉：  
+
+          log4j= {   
+               appenders {  
+                   'null' name: "stacktrace" //去掉完整的错误堆栈日志文件(堆栈太多看不清楚，没有什么意义)，stacktrace.log   
+               }
+          }
+
+. 
+46、Groovy转化成接口几种方式：  
+
+      a）、闭包方式：{} as 接口   
+
+      b）、Map方式：[方法1名称:闭包, 方法2名称:闭包] as 接口 
+
+. 47、获取网站根目录的绝对路径：
+
+      org.codehaus.groovy.grails.web.context.ServletContextHolder.servletContext.getRealPath('/')  
+
+. 
+49、在Grails1.3.7自带的groovy版本是1.7.8，可以把Groovy升级到1.7.10，但不能把他升级到1.8.0，存在不兼容，在1.8.0时删除了包org\codehaus\groovy\transform\powerassert\  升级运行时可能会报下面错误：
+
+      
+2011-05-18 01:46:31,670 [Thread-5] ERROR context.ContextLoader  - Context initialization failed org.springframework.beans.factory.access.BootstrapException: Error executing bootstraps; nested exception is org.codehaus.groovy.runtime.InvokerInvocationException:
+
+    java.lang.NoClassDefFoundError: org/codehaus/groovy/transform/powerassert/ValueRecorder  
+      
+    at 
+org.codehaus.groovy.grails.web.context.GrailsContextLoader.createWebApplicationContext(GrailsContextLoader.java:87) 
+    at 
+org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:197)  
+    at 
+org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:48) 
+    at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4701)  
+    at org.apache.catalina.core.StandardContext$1.call(StandardContext.java:5204)  
+    at org.apache.catalina.core.StandardContext$1.call(StandardContext.java:5199)  
+    at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)  
+    at java.util.concurrent.FutureTask.run(FutureTask.java:139)  
+    at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886) 
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:909)  
+    at java.lang.Thread.run(Thread.java:619)
+
+    Caused by: org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NoClassDefFoundError: org/codehaus/groovy/transform/powerassert/ValueRecorder  at grails.util.Environment.evaluateEnvironmentSpecificBlock(Environment.java:251)  
+
+    at grails.util.Environment.executeForEnvironment(Environment.java:244)  
+    at grails.util.Environment.executeForCurrentEnvironment(Environment.java:220) 
+    at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)  
+    at java.util.concurrent.FutureTask.run(FutureTask.java:138)  
+    at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)  
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)  
+
+    ... 
+
+    1 more
+
+    Caused by: java.lang.NoClassDefFoundError: org/codehaus/groovy/transform/powerassert/ValueRecorder  
+
+    at BootStrap$_closure1.doCall(BootStrap.groovy:9) 
+
+     ... 
+    
+    8 more 
+
+. 50、在resources.groovy里配置JMX  
+
+  1）、ObjectName(项目代码-目录:jmxservice=二级目录)需要在个项目配置不一样，否则会报以下错误：  
+
+       
+2011-05-17 11:23:51,172 [admin-thread-pool-4848(6)] ERROR context.ContextLoader  
+
+       - Context initialization failed 
+org.springframework.beans.factory.BeanCreationException:
+
+       Error creating bean with name 'exporter': 
+
+       Invocation of init method failed; nested exception is org.springframework.jmx.export.UnableToRegisterMBeanException: 
+
+       Unable to register MBean [de.stefanheintz.log.jmxservice.LoggingConfigImpl@b6485b2] with key 'de.stefanheintz.log:jmxservice=loggingConfiguration'; nested exception is javax.management.InstanceAlreadyExistsException: de.stefanheintz.log:jmxservice=loggingConfiguration
+
+       at com.sun.enterprise.web.WebModule.contextListenerStart(WebModule.java:534)  
+       at com.sun.enterprise.web.WebModule.start(WebModule.java:500)  
+       at com.sun.enterprise.web.WebContainer.loadWebModule(WebContainer.java:1980)  
+       at com.sun.enterprise.web.WebContainer.loadWebModule(WebContainer.java:1630)  
+       at com.sun.enterprise.web.WebApplication.start(WebApplication.java:100)  
+       at org.glassfish.internal.data.EngineRef.start(EngineRef.java:130)  
+       at org.glassfish.internal.data.ModuleInfo.start(ModuleInfo.java:269)  
+       at org.glassfish.internal.data.ApplicationInfo.start(ApplicationInfo.java:286)  
+       at com.sun.enterprise.v3.server.ApplicationLifecycle.deploy(ApplicationLifecycle.java:461)  
+       at com.sun.enterprise.v3.server.ApplicationLifecycle.deploy(ApplicationLifecycle.java:240)  
+       at org.glassfish.deployment.admin.DeployCommand.execute(DeployCommand.java:370)  
+       at 
+com.sun.enterprise.v3.admin.CommandRunnerImpl$1.execute(CommandRunnerImpl.java:355)  
+       at 
+com.sun.enterprise.v3.admin.CommandRunnerImpl.doCommand(CommandRunnerImpl.java:370)  
+       at 
+com.sun.enterprise.v3.admin.CommandRunnerImpl.doCommand(CommandRunnerImpl.java:1067)  
+       at 
+com.sun.enterprise.v3.admin.CommandRunnerImpl.access$1200(CommandRunnerImpl.java:96)  
+       at 
+com.sun.enterprise.v3.admin.CommandRunnerImpl$ExecutionContext.execute(CommandRunnerImpl.java:1247)  
+       at 
+com.sun.enterprise.v3.admin.CommandRunnerImpl$ExecutionContext.execute(CommandRunnerImpl.java:1235)  
+       at 
+org.glassfish.admingui.common.util.LocalDeploymentFacility$LocalDFCommandRunner.run(LocalDeploymentFacility.java:143)  
+       at 
+org.glassfish.deployment.client.AbstractDeploymentFacility.deploy(AbstractDeploymentFacility.java:406)  
+       at 
+org.glassfish.admingui.common.util.DeployUtil.invokeDeploymentFacility(DeployUtil.java:100)  
+       at org.glassfish.admingui.common.util.DeployUtil.deploy(DeployUtil.java:76)  
+       at 
+org.glassfish.admingui.common.handlers.DeploymentHandler.deploy(DeploymentHandler.java:191)  at com.sun.jsftemplating.layout.descriptors.handler.Handler.invoke(Handler.java:442)  
+       at 
+com.sun.jsftemplating.layout.descriptors.LayoutElementBase.dispatchHandlers(LayoutElementBase.java:420)  
+       at com.sun.jsftemplating.layout.descriptors.LayoutElementBase.dispatchHandlers(LayoutElementBase.java:394)  
+       at 
+com.sun.jsftemplating.layout.event.CommandActionListener.invokeCommandHandlers(CommandActionListener.java:150)  
+       at 
+com.sun.jsftemplating.layout.event.CommandActionListener.processAction(CommandActionListener.java:98)  
+       at javax.faces.event.ActionEvent.processListener(ActionEvent.java:88)  
+       at javax.faces.component.UIComponentBase.broadcast(UIComponentBase.java:769)  
+       at javax.faces.component.UICommand.broadcast(UICommand.java:300)  
+       at com.sun.webui.jsf.component.WebuiCommand.broadcast(WebuiCommand.java:166)  
+       at javax.faces.component.UIViewRoot.broadcastEvents(UIViewRoot.java:794)  
+       at javax.faces.component.UIViewRoot.processApplication(UIViewRoot.java:1259)  
+       at com.sun.faces.lifecycle.InvokeApplicationPhase.execute(InvokeApplicationPhase.java:81)  
+       at com.sun.faces.lifecycle.Phase.doPhase(Phase.java:101)  
+       at com.sun.faces.lifecycle.LifecycleImpl.execute(LifecycleImpl.java:118)  
+       at javax.faces.webapp.FacesServlet.service(FacesServlet.java:409)  
+       at com.sun.webui.jsf.util.UploadFilter.doFilter(UploadFilter.java:223)  
+       at com.sun.enterprise.web.WebPipeline.invoke(WebPipeline.java:96)  
+       at 
+com.sun.enterprise.web.PESessionLockingStandardPipeline.invoke(PESessionLockingStandardPipeline.java:91)  
+       at com.sun.enterprise.v3.services.impl.ContainerMapper.service(ContainerMapper.java:228)  
+       at com.sun.grizzly.http.ProcessorTask.invokeAdapter(ProcessorTask.java:822)  
+       at com.sun.grizzly.http.ProcessorTask.doProcess(ProcessorTask.java:719)  
+       at com.sun.grizzly.http.ProcessorTask.process(ProcessorTask.java:1013)  
+       at com.sun.grizzly.http.DefaultProtocolFilter.execute(DefaultProtocolFilter.java:225)  
+       at 
+com.sun.grizzly.DefaultProtocolChain.executeProtocolFilter(DefaultProtocolChain.java:137)  
+       at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:104)  
+       at com.sun.grizzly.DefaultProtocolChain.execute(DefaultProtocolChain.java:90)  
+       at com.sun.grizzly.http.HttpProtocolChain.execute(HttpProtocolChain.java:79)  
+       at com.sun.grizzly.ProtocolChainContextTask.doCall(ProtocolChainContextTask.java:54)  
+       at com.sun.grizzly.SelectionKeyContextTask.call(SelectionKeyContextTask.java:59)  
+       at com.sun.grizzly.ContextTask.run(ContextTask.java:71)  
+       at com.sun.grizzly.util.AbstractThreadPool$Worker.doWork(AbstractThreadPool.java:532) 
+       at com.sun.grizzly.util.AbstractThreadPool$Worker.run(AbstractThreadPool.java:513)  
+       at java.lang.Thread.run(Thread.java:619) 
+
+    2）、ObjectName支持中文    
+
+
+. 51、Grails的自带的message标签在同台电脑上同一种体系的浏览器同时打开多个语言版本会有问题，它可能是通过cookie 来存储语言信息，所以多个语言信息相互打架. 
+
+     如果使用了，生成静态页面的方式，那么所有的用都会受到影响。  
+
+     如果没有使用生成静态页面的方式，那么自影响当前访问者。    
+
+
+     下面是变通的代替方法，写在项目的标签库里【经测试下面的代码只在开发环境下有效，实际服务器部署环境下无效，说明还是有问题】：   
+
+     def messageSource 
+   
+
+     //本地化，代替自带的message标签。 
+  
+     //自带的message标签在同台电脑上同时打开多个语言版本会有问题，它可能是通过cookie 
+   
+     //来存储语言信息，所以多个语言信息相互打架 
+    
+     //如果使用了，生成静态页面的方式，那么所有的用都会受到影响。     
+     //如果没有使用生成静态页面的方式，那么自影响当前访问者     
+
+     def message2 = { attrs ->  
+      
+         if(!attrs.lang) 
+             attrs.lang = params.lang  
+  
+         def datas = attrs.lang.toString().split()       
+         def locale 
+
+ 
+        if(datas.size() == 1)  
+             locale = new Locale(datas[0])        
+         else 
+             locale = new Locale(datas[0], datas[1]) 
+     
+
+         out << messageSource.getMessage(attrs.code, attrs.args?.toArray(),    
+                         attrs.defaultMessage, locale)
+     }  
+
+. 
+52、判断运行在开发环境，还是已经部署的服务器环境： 
+
+      grails.util.GrailsUtil.isDevelopmentEnv() 【有问题】 
+
+      grailsApplication.isWarDeployed()  【可以。只能在工件里使用】 
+ 
+       
+      org.codehaus.groovy.grails.commons.ApplicationHolder.application.isWarDeployed() 【可以。但在DataSource.groovy里无效】    
+
+. 
+53、并行计算经验： 
+
+    1）、集合并行遍历，下层再并行遍历会出错（找不到eachParallel的方法签名），各个并行遍历的上层必须有GParsPool.withPool，或此集合是并行计算增强的。  
+
+        代码分别如下，建议用第二种方式： 
+
+        方式一：  
+
+          def a =  [1, 2, 3, 4, 5] 
+          def b =  [6,7]  
+          GParsPool.withPool {   
+              a.eachParallel {     
+                   GParsPool.withPool{ 
+                       b.eachParallel{ 
+                            println it 
+                       } 
+ 
+                   }
+              } 
+          }
+
+       
+方式二： 
+
+          def a =  [1, 2, 3, 4, 5]   
+
+          def b =  [6,7]  
+
+          groovyx.gpars.ParallelEnhancer.enhanceInstance(a)  
+          groovyx.gpars.ParallelEnhancer.enhanceInstance(b)   
+
+          a.eachParallel {   
+               b.eachParallel{    
+                    println it   
+               }  
+          } 
+   
+  2）、在视图（模板）页中使用GParsPool.executeAsyncAndWait 并行计算时，里面不能直接调用服务器端标签方法（如g.message）。 
+
+. 54、在grails里记录sql的组件 
+
+    1）、可以在config.grooy开启log4j的日志类别（sql语句里有参数变量无法直接在数据库里执行）   
+
+         debug 'org.hibernate.SQL' //显示hibernate的SQL 
+         trace 'org.hibernate.type' //显示hibernate的SQL的参数值  
+
+    2）、可以在DataSource.grooy的dataSource闭包下设置（sql语句里有参数变量无法直接在数据库里执行） 
+
+         logSql=true //记录SQL，默认false   
+
+    3）、使用P6Spy配置向网络SocketAppender发送sql时：  
+
+         appender=com.p6spy.engine.logging.appender.Log4jLogger  
+         CHAINSAW_CLIENT=org.apache.log4j.net.SocketAppender   
+
+         当输出大量日志时，对系统造成卡壳现象，不能正常往下运行了。所以在服务器环境下慎用  
+
+         只使用appender=com.p6spy.engine.logging.appender.FileLogger，系统运行正常 
+
+    4）、使用P6Spy配置性能监视模块(irontracksql)（只有这个模块没有其他如SocketAppender的场景下测试的） module.ibeam=com.irongrid.ibeam.server.IBeamFactory   
+
+        当输出大量日志时，对系统造成卡壳现象，不能正常往下运行了。所以不能使用  
+
+   5）、使用log4jdbc也会当输出大量日志时，对系统造成卡壳现象，不能正常往下运行了。所以在服务器环境下慎用  
+
+   6）、建议使用P6Spy的appender=com.p6spy.engine.logging.appender.FileLogger模式  
+
+. 
+55、controller里的render使用经验：  
+  
+      1）、response.setStatus(304) 之后还需要  render '' //此处必须写render 否则网页会出错。建议使用 render status:304 
+
+      2）、在action闭包里调用了response.outputStream，那么默认的contentType='text/html' 的属性会被去掉，需要再设置，但不能仍然为'text/html'，   
+
+           如果需要一定要设置contentType='text/html'，建议不要使用response.outputStream，可以直接用 render text:content 或 render content。  
+
+     3）、在render 内容字符串变量。在内容字符串变量里如果还有存在<meta name="layout" content="main_crs"/>的布局，依然有效。  
+     4）、render 二进制类型的文件   
+
+         def getbin = {   
+             response.contentType = 'application/octet-stream'   
+             File file = new File('D:/cd_temp/Discipline.pdf')    
+             file.withInputStream {  response.outputStream << it }  
+
+             //render(contentType:'text/xml', text: file.text)  
+        }  
+
+. 56、DataSource.groovy 经验：
+
+      1）、pooled=true //Grails用户手册记载默认值为true，通过测试证明实际的默认值为false，用户手册此处有描述错误  
+
+      2）、在dataSource闭包里使用dbcp优化配置如下：   
+
+          //以下是 dbcp 重要配置    
+          properties {      
+
+              //针对数据库，不能数据库可能需要做一下调整(默认：空)。经过测试好像没有影响，都会检测数据库链接是否有效      
+              //validationQuery = 'select 1'     
+              initialSize = 5 //初始化连接(默认：0)    
+              maxIdle=20 //最大空闲连接(默认：8)  
+              minIdle=5 //最小空闲连接(默认：0)  
+              maxActive=20 //最大连接数量 (默认：8)   
+              logAbandoned=true //是否在自动回收超时连接的时候，打印连接的超时错误(默认：false)   
+              removeAbandoned=true //是否自动回收超时连接(默认：false) 
+
+              //超时时间(以秒数为单位)   
+              //设置超时时间有一个要注意的地方，超时时间=现在的时间-程序中创建Connection的时间，如果maxActive比较大，比如超过100，那么removeAbandonedTimeout可以设置长一点比如180，也就是三分钟无响应的连接进行回收，当然应用的不同设置长度也不同。 
+                
+              removeAbandonedTimeout=180 //(默认：300)
+              maxWait=5000 //超时等待时间以毫秒为单位,maxWait代表当Connection用尽了，多久之后进行回收丢失连接(默认：空)  }  
+
+    3）、在pool=true的情况下才能配置上面 dbcp优化配置properties，否则启动Grails程序就会报错。即使用properties必须启用了数据库连接池pool=true，从此处也证明了第1）点。
+
+    4）、在配置了DataSource.groovy后，在服务类里可能会切入数据库事务，未证实。 
+
+    5）、bean名称为dataSource的，是已经切入了事务，如果需要原始的，使用bean名称 dataSourceUnproxied  
+
+
+. 57、GSP里自带的remote标签使用经验： 
+
+    1）、<g:form>里<g:submitToRemote>与（<g:actionSubmit>或<g:actionSubmitImage>）不能同时存在，会有冲突。表现在submitToRemote时会把第一个<g:actionSubmit>或   <g:actionSubmitImage>的动作提交给服务器处理，而不是<g:submitToRemote>里的动作。提交的内容类似与_action_actionname，被grails识别为动作名为actionname。
+
+. 
+58、当工程从别的电脑复制过来，自己电脑里之前用过这个工程的，用Grails打成WAR，可能会是旧的，需要先grails clean一下，在 grails war。 
+
+
+. 59、在GSP 或 TagLib 里动态取属性（比如在控制里注入的model,bean等）： 
+
+      pageScope.getProperty(属性名称) 或者 pageScope.getVariable(属性名称) 
+
+      pageScope 是 org.codehaus.groovy.grails.web.pages.GroovyPageBinding 类型 
+
+
+. 60、在conf/UrlMappings.groovy里配置了"/test.htm"(controller:"test") ，那么即使存在静态页面/test.htm ，也会先响应controller:"test" 
+
+. 
+61、动态解析groovy脚本，并实例化调用 
+
+      def parent = getClass().getClassLoader(); 
+      
+def loader = new GroovyClassLoader(parent); 
+      
+Class groovyClass = loader.parseClass(new File('c:/temp/a.groovy')); 
+      def groovyObject = groovyClass.newInstance();// 实例化  
+
+. 
+62、XML使用经验：  
+
+      1）、XmlSlurper实例的parse(路径)，而路径在windows上类似D:\\test/route.xml 会报错误：
+
+           java.net.MalformedURLException: unknown protocol: d  
+
+           建议可以写成parse(new File('D:\\test/route.xml')) 
+
+      2）、GPathResult类型实际存在attributes()方法，但在api doc里没有，不影响使用 
+
+      3）、[GROOVY-5029] - XmlSlurper does not close InputStream, leaks file handles/resources ，此bug在Groovy 1.8.3 才修护  
+      4）、XmlSlurper虽然说使用SAX，但在使用内存释放上还是存在问题，在频繁使用时容易造成内存溢出；
+
+      5）、用Dom4j的SAX模式也是类似会内存溢出，除非自己再实现ElementHandler，并释放内存，代码如下：  
+
+           FileInputStream fis = new FileInputStream(addPath);  
+           SAXReader reader = new SAXReader();   
+
+           ElementHandler addHandler = new MyElementHandler();  //建立 MyElementHandler 的实例   
+           reader.addHandler("/root/test1", addHandler); // 节点   
+           reader.addHandler("/root/test2", addHandler); // 节点   
+           reader.read(fis);   
+
+           class MyElementHandler implements ElementHandler {  
+
+                 public void onStart(ElementPath ep) {}    
+
+                 public void onEnd(ElementPath ep) { 
+
+                     Element e = ep.getCurrent(); // 获得当前节点    
+                     // 对节点进行操作。。。    
+                     e.detach(); // 处理完当前节点后，将其从dom树中剪除    
+                 } 
+           } 
+ 
+ 
+      6）、使用java自带的SAX来频繁解析大的xml也不会出现内存溢出，代码如下：   
+
+           import java.io.File;   
+           import java.io.FileInputStream;   
+           import java.util.*;    
+
+           import javax.xml.parsers.*;  
+           import org.xml.sax.Attributes;  
+           import org.xml.sax.helpers.DefaultHandler;   
+
+           100.times{   
+
+               def  file  = new File("d:/cd_temp/Athlete.xml")      
+
+               SAXParserFactory spf = SAXParserFactory.newInstance();   
+               SAXParser sp = spf.newSAXParser();   
+               MySAXHandler handler = new MySAXHandler();    
+               sp.parse(new FileInputStream(file), handler);  
+           } 
+
+           class MySAXHandler extends DefaultHandler{    
+
+               @SuppressWarnings("unchecked")    
+               public void startElement(String namespace,String localName,String qName,Attributes atts){   
+                   
+                     //System.out.println("qName:"+qName);   
+                     //业务代码    
+
+               }
+
+               public void endElement(String namespace,String localName,String qName){ }    
+
+               public void characters(char[] chs,int start,int length){ }
+           } 
+      7）、使用StAX解析不不会造成内存溢出，代码如下：
+
+           import javax.xml.stream.*;  
+           import javax.xml.stream.events.*;   
+
+           100.times{  
+                def  file  = new File("d:/cd_temp/Athlete.xml")  
+                def  o  = new File("c:/b.txt")  
+
+                file.withInputStream{        
+                     XMLInputFactory factory = XMLInputFactory.newInstance();    
+                     XMLStreamReader r = factory.createXMLStreamReader(it);       
+         
+                     try { 
+                         int event = r.getEventType();    
+                         while (true) {      
+                             switch (event) {    
+                                 case XMLStreamConstants.START_ELEMENT:    
+                                      //println("Start Element: " + r.getName());    
+                                      o <<  r.getName().toString() + '\r\n'      
+                                      break;
+                             } 
+                             if (!r.hasNext())  
+                                 break;       
+                             event = r.next();
+                         } 
+                     } finally {   
+                        r.close(); 
+                     }
+                 }   
+             }  
+
+        8）、测试结果如下：
+
+            单位：s（秒）
+
+                              100KB           1MB              10MB     
+            DOM               0.146s          0.469s           5.876s     
+            SAX               0.110s          0.328s           3.547s    
+            JDOM              0.172s          0.756s           45.447s    
+            DOM4J             0.161s          0.422s           5.103s     
+            StAX Stream       0.093s          0.334s           3.553s     
+            StAX Event        0.131s          0.359s           3.641s      
+
+
+            由上面的测试结果可以看出，性能表现最好的是SAX，其次是StAX Stream和StAX Event，DOM和DOM4J也有着不错的表现。性能最差的是JDOM。
+
+            
+所以，如果你的应用程序对性能的要求很高，SAX当然是首选。如果你需要访问和控制任意数据的功能，DOM是个很好的选择， 
+而对Java开发人员来讲，DOM4J是更好的选择。
+
+            如果只需要做XML文档解析的话，综合性能、易用性、面向对象特征等各方面来衡量， StAX Event无疑是最好的选择。
+
+        9）、高压下频繁使用MarkupBulider来构建大型XML文件，只要第一次不溢出，频繁使用也不会出现内存溢出。
+
+. 
+63、特殊字符乱码问题： 
+
+      1）、groovyConsole里的脚本不支持特殊字符 
+
+      2）、编译好的groovy的class支持特殊字符  
+
+      3）、postgresql支持特殊字符  
+
+      4）、groovy读取microsoft access数据时，不支持特殊字符
+
+. 64、Grails版本升级时，有时会报插件问题升级不了，需要先删除用户主目录下\.grails\projects\项目目录，再执行grails upgrade
+
+. 
+65、Grails使用JSON经验  
+
+      1）、List、Map可以用as JSON 转成 json格式  
+
+      2）、下面多种方法输出JSON格式  
+
+           def json  = {  
+
+               def data2 = "[[id:1,name:'yang'],[id:2,name:'gang']]"  
+               def data = [[id:1,name:'yang',date:new Date()],[id:2,name:'gang',date:new Date()]] 
+
+               println data 
+
+               //方法1   
+               //  render (contentType:'text/json'){ 
+               //     //[[id:1,name:'yang'],[id:2,name:'gang']] 
+               //     data 
+               //  }    
+                
+             
+  def jsonFile = new File(baseDir, 'states.json') //states.json为utf-8无BOM格式，内容里有中文，下面各种方法测试都没有乱码   
+
+               println jsonFile.text   
+               def j = JSON.parse(jsonFile.text)      
+
+               //render (contentType:'text/json',text:jsonFile.text)     //方法2   
+               //render (contentType:'text/json',text:data2)             //方法3   
+               //render (contentType:'text/json',text:data as JSON)      //方法4  
+               //render (contentType:'text/json',text:getMap() as JSON)  //方法5   
+               //render data as JSON                                     //方法5   
+               //render JSON.parse(data2)                                //方法6  
+               //render j                                                //方法7 ontentType:'text/html' 
+               render contentType:'text/json',text:j                     //方法8  
+           }  
+ 
+           def getMap={   
+
+               [  
+                   identifier:"abbreviation",   
+                   label: "name",    i
+                   tems: [    
+                       [name:"Alabama测试2", label:"<img width='97px' height='127px' src='images/Alabama.jpg'/>Alabama",abbreviation:"AL"],    
+                       [name:"Alaska", label:"Alaska",abbreviation:"AK"], 
+                   ] 
+               ]
+           }
+
+. 
+66、使用SpringSource Tool Suite 代替NetBeans 开发Grails，原因如下：
+
+      1）、SpringSource Tool Suite的提示功能相比其他IDE对Grails的支持力度很大  
+
+      2）、SpringSource Tool Suite自动提示的速度快  
+
+      3）、SpringSource Tool Suite是官方的Grails IDE，对Grails的支持比较好，功能随Grails、groovy的更新的升级。       
+
+
+. ***  少编号29、48 
+
+021- 24099099 找李霞   3795
+

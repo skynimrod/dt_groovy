@@ -1,0 +1,3 @@
+. formRemote 是实现Ajax 的一种标签工具. 
+
+  

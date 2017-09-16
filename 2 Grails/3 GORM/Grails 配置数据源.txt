@@ -1,0 +1,127 @@
+. 修改  grails-app\conf 目录下的 DataSource.groovy 文件
+
+  dataSource {
+
+      // 公共配置
+   
+  }
+
+  environments {
+
+     development {
+
+        // 开发环境配置
+
+        // 如 开发库 用户名/密码
+
+     }
+
+    test { ... }
+
+    production {...}
+
+  }
+
+. for Java 的数据库驱动一般都是JAR 的形式发布, 只需要把这些JAR文件放到工程下的lib 目录中即可。
+
+  Grails 数据库配置文件DataSource.groovy ， 该文件出事状态下包括如下选项:
+
+      1. driverClassName  ----  JDBC 驱动的类名
+
+      2. username  -----------  用来创建 JDBC连接的用户名
+
+      3. password ------------  用来创建JDBC 链接的密码
+
+      4. url -----------------  数据库的JDBC URL
+
+      5. dbCreate ------------  是否根据 域模型 类 自动创建数据库
+
+      6. pooling -------------  是否使用数据库连接池(默认设置为true)
+
+      7. logSql --------------  启动 sql 日志记录
+
+    例如:
+
+      dataSource {
+     
+         pooling = true
+
+         dbCreate = "update"
+
+         url = "jdbc:mysql://localhost/yourDB"
+
+         driverClassName = "com.mysql.jdbc.Driver"
+
+         username = "yourUser"
+
+         password = "yourPassword"
+
+      }
+
+. 现在的问题是如何运行 GROM.  配置成功后, 运行的时候就自动启动GORM 机制了, 操作domain 类就是操作 数据库的数据. 
+
+. 运行出现错误:
+
+               url = "jdbc:mysql://127.0.0.1:3307/test_DB"
+
+   参见FAQ
+
+. 问题2 ：
+
+  单独增加domain 类， 运行的时候数据库中没有增加对应的表。
+ 
+  原因可能是Grails 需要知道这个域类要处理。 
+
+  需要增加scaffold 来通知系统自动创建对应的表。 先 创建同名的控制器， 然后再控制器中增加  def scaffold= 域类名
+
+
+Error |
+2015-05-27 14:23:42,328 [localhost-startStop-1] ERROR hbm2ddl.SchemaExport  - HHH000389: Unsuccessful: alter table registration drop foreign key FK_1oi936f0xkehmis7jnvhq1ajx
+
+Error |
+2015-05-27 14:23:42,328 [localhost-startStop-1] ERROR hbm2ddl.SchemaExport  - Table 'test_db.registration' doesn't exist
+
+  虽然有这2个错误， 但是还是正确运行了。 
+
+2015-05-27 14:37:45,125 [http-bio-8080-exec-10] ERROR pages.GroovyPagesTemplateEngine  - Compilation error compiling GSP [E__4_WorkSpace_0_Grails_Grails_OnlyController_grails_app_views_adams_index_gsp]:startup failed:
+E__4_WorkSpace_0_Grails_Grails_OnlyController_grails_app_views_adams_index_gsp: 40: illegal string body character after dollar sign;
+   solution: either escape a literal dollar sign "\$5" or bracket the value expression "${5}" @ line 40, column 94.
+   teTime)"', 20, it) { return "$(race.star
+
+          <g:formatDate date="2015-05-27" format="yyyy-MM-dd HH:mm"/ >
+ 
+  这一句不能正确运行显示， 为什么 ？？ 似乎是获取参数的问题。
+
+Message
+Cannot cast object '18' with class 'java.lang.String' to class 'java.lang.Double'
+
+        <g:formatNumber/>
+        <g:formatNumber number="18"/>
+
+    奇怪， gsp 中如何进行类型转换？  其实就是gsp 中标签如何传送参数的问题？？
+ 
+    这种自定的标签， 可能访问的都是变量， 直接访问常量， 就涉及类型问题了。   
+
+    发现用scaffold 编辑 race 表数据的时候, 无法list 出来已经创建的数据， 为什么？？
+
+    当 Grails 在控制器中碰到 scaffold 属性时, 它会动态的为特定的领域类生成控制逻辑以及必要的试图, 而所有的这些都来自于那一行代码.  def scaffold = Race
+
+    奇怪， 如果没有指定数据源, 那么操作Race 就没有任何问题， 也可以list 出来内容。 现在使用的是内存数据库，如果关闭程序， 那么所有数据都会丢失。 
+
+    需要注意的是jdbc 的jar 包需要拷贝到应用的lib 目录下， 不然会出错。
+
+    P33
+
+    grails 为我们生成的数据库定义。 又一次体现了规约在Grails 中扮演的重要角色. 注意:
+
+    1. 数据库表名跟领域类 名 完全匹配
+
+    2. 字段名 跟 类的属性名 匹配
+
+    3. 对于多个单词组成的属性名字, 字段名中用下划线来分开单词(例如， 属性 maxRunners 跟字段 max_runners 对应)
+
+    4. id 字段是用来做每张表的主键, 它被定义为自增(auto_increment)字段, 从而允许grails 去依赖数据库为新纪录自动产生位移的ID
+
+    5. 对于一对多关系, 子表中将会包含一个字段来保存父表的ID. 该字段是以父领域类名命名的(这个例子中是Race), 并且根据父表声明了一个外键约束. 在这个例子中， 结果是产生了race_id 字段。
+
+    你也许会想, 为什么这里会有id 和 version 字段那

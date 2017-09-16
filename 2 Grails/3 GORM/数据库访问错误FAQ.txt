@@ -1,0 +1,161 @@
+1. 配置好DataSource.groovy
+
+  运行出现下面的错误:
+
+
+|Loading Grails 2.4.2
+|Configuring classpath
+.
+|Environment set to development
+.................................
+|Packaging Grails application
+...........
+|Compiling 1 source files
+.........................
+|Running Grails application
+Error |
+2014-07-24 20:13:56,421 [localhost-startStop-1] ERROR pool.ConnectionPool  - Unable to create initial connections of pool.
+Message: Unknown database 'test_db'
+    Line | Method
+->>  406 | handleNewInstance  in com.mysql.jdbc.Util
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|    381 | getInstance        in     ''
+|   1031 | createSQLException in com.mysql.jdbc.SQLError
+|    957 | createSQLException in     ''
+|   3376 | checkErrorPacket . in com.mysql.jdbc.MysqlIO
+|   3308 | checkErrorPacket   in     ''
+|    894 | checkErrorPacket . in     ''
+|   3808 | secureAuth411      in     ''
+|   1256 | doHandshake . . .  in     ''
+|   2032 | createNewIO        in com.mysql.jdbc.ConnectionImpl
+|    729 | <init> . . . . . . in     ''
+|     46 | <init>             in com.mysql.jdbc.JDBC4Connection
+|    406 | handleNewInstance  in com.mysql.jdbc.Util
+|    302 | getInstance        in com.mysql.jdbc.ConnectionImpl
+|    283 | connect . . . . .  in com.mysql.jdbc.NonRegisteringDriver
+|    262 | run                in java.util.concurrent.FutureTask
+|   1145 | runWorker . . . .  in java.util.concurrent.ThreadPoolExecutor
+|    615 | run                in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run . . . . . . .  in java.lang.Thread
+
+Error |
+2014-07-24 20:13:56,562 [localhost-startStop-1] ERROR pool.ConnectionPool  - Unable to create initial connections of pool.
+Message: Unknown database 'test_db'
+    Line | Method
+->>  406 | handleNewInstance  in com.mysql.jdbc.Util
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|    381 | getInstance        in     ''
+|   1031 | createSQLException in com.mysql.jdbc.SQLError
+|    957 | createSQLException in     ''
+|   3376 | checkErrorPacket . in com.mysql.jdbc.MysqlIO
+|   3308 | checkErrorPacket   in     ''
+|    894 | checkErrorPacket . in     ''
+|   3808 | secureAuth411      in     ''
+|   1256 | doHandshake . . .  in     ''
+|   2032 | createNewIO        in com.mysql.jdbc.ConnectionImpl
+|    729 | <init> . . . . . . in     ''
+|     46 | <init>             in com.mysql.jdbc.JDBC4Connection
+|    406 | handleNewInstance  in com.mysql.jdbc.Util
+|    302 | getInstance        in com.mysql.jdbc.ConnectionImpl
+|    283 | connect . . . . .  in com.mysql.jdbc.NonRegisteringDriver
+|    262 | run                in java.util.concurrent.FutureTask
+|   1145 | runWorker . . . .  in java.util.concurrent.ThreadPoolExecutor
+|    615 | run                in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run . . . . . . .  in java.lang.Thread
+
+Error |
+2014-07-24 20:13:56,671 [localhost-startStop-1] ERROR pool.ConnectionPool  - Unable to create initial connections of pool.
+Message: Unknown database 'test_db'
+    Line | Method
+->>  406 | handleNewInstance  in com.mysql.jdbc.Util
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|    381 | getInstance        in     ''
+|   1031 | createSQLException in com.mysql.jdbc.SQLError
+|    957 | createSQLException in     ''
+|   3376 | checkErrorPacket . in com.mysql.jdbc.MysqlIO
+|   3308 | checkErrorPacket   in     ''
+|    894 | checkErrorPacket . in     ''
+|   3808 | secureAuth411      in     ''
+|   1256 | doHandshake . . .  in     ''
+|   2032 | createNewIO        in com.mysql.jdbc.ConnectionImpl
+|    729 | <init> . . . . . . in     ''
+|     46 | <init>             in com.mysql.jdbc.JDBC4Connection
+|    406 | handleNewInstance  in com.mysql.jdbc.Util
+|    302 | getInstance        in com.mysql.jdbc.ConnectionImpl
+|    283 | connect . . . . .  in com.mysql.jdbc.NonRegisteringDriver
+|    262 | run                in java.util.concurrent.FutureTask
+|   1145 | runWorker . . . .  in java.util.concurrent.ThreadPoolExecutor
+|    615 | run                in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run . . . . . . .  in java.lang.Thread
+
+Error |
+2014-07-24 20:13:56,718 [localhost-startStop-1] ERROR context.GrailsContextLoaderListener  - Error initializing the application: Error creating bean with name 'transactionManagerPostProcessor': Initialization of bean failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'transactionManager': Cannot resolve reference to bean 'sessionFactory' while setting bean property 'sessionFactory'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'sessionFactory': Cannot resolve reference to bean 'hibernateProperties' while setting bean property 'hibernateProperties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'hibernateProperties': Cannot resolve reference to bean 'dialectDetector' while setting bean property 'properties' with key [hibernate.dialect]; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dialectDetector': Invocation of init method failed; nested exception is org.springframework.jdbc.support.MetaDataAccessException: Error while extracting DatabaseMetaData; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown database 'test_db'
+Message: Error creating bean with name 'transactionManagerPostProcessor': Initialization of bean failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'transactionManager': Cannot resolve reference to bean 'sessionFactory' while setting bean property 'sessionFactory'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'sessionFactory': Cannot resolve reference to bean 'hibernateProperties' while setting bean property 'hibernateProperties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'hibernateProperties': Cannot resolve reference to bean 'dialectDetector' while setting bean property 'properties' with key [hibernate.dialect]; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dialectDetector': Invocation of init method failed; nested exception is org.springframework.jdbc.support.MetaDataAccessException: Error while extracting DatabaseMetaData; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown database 'test_db'
+    Line | Method
+->>  262 | run       in java.util.concurrent.FutureTask
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|   1145 | runWorker in java.util.concurrent.ThreadPoolExecutor
+|    615 | run . . . in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run       in java.lang.Thread
+
+Caused by BeanCreationException: Error creating bean with name 'transactionManager': Cannot resolve reference to bean 'sessionFactory' while setting bean property 'sessionFactory'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'sessionFactory': Cannot resolve reference to bean 'hibernateProperties' while setting bean property 'hibernateProperties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'hibernateProperties': Cannot resolve reference to bean 'dialectDetector' while setting bean property 'properties' with key [hibernate.dialect]; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dialectDetector': Invocation of init method failed; nested exception is org.springframework.jdbc.support.MetaDataAccessException: Error while extracting DatabaseMetaData; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown database 'test_db'
+->>  262 | run       in java.util.concurrent.FutureTask
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|   1145 | runWorker in java.util.concurrent.ThreadPoolExecutor
+|    615 | run . . . in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run       in java.lang.Thread
+
+Caused by BeanCreationException: Error creating bean with name 'sessionFactory': Cannot resolve reference to bean 'hibernateProperties' while setting bean property 'hibernateProperties'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'hibernateProperties': Cannot resolve reference to bean 'dialectDetector' while setting bean property 'properties' with key [hibernate.dialect]; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dialectDetector': Invocation of init method failed; nested exception is org.springframework.jdbc.support.MetaDataAccessException: Error while extracting DatabaseMetaData; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown database 'test_db'
+->>  262 | run       in java.util.concurrent.FutureTask
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|   1145 | runWorker in java.util.concurrent.ThreadPoolExecutor
+|    615 | run . . . in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run       in java.lang.Thread
+
+Caused by BeanCreationException: Error creating bean with name 'hibernateProperties': Cannot resolve reference to bean 'dialectDetector' while setting bean property 'properties' with key [hibernate.dialect]; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dialectDetector': Invocation of init method failed; nested exception is org.springframework.jdbc.support.MetaDataAccessException: Error while extracting DatabaseMetaData; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown database 'test_db'
+->>  262 | run       in java.util.concurrent.FutureTask
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|   1145 | runWorker in java.util.concurrent.ThreadPoolExecutor
+|    615 | run . . . in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run       in java.lang.Thread
+
+Caused by BeanCreationException: Error creating bean with name 'dialectDetector': Invocation of init method failed; nested exception is org.springframework.jdbc.support.MetaDataAccessException: Error while extracting DatabaseMetaData; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown database 'test_db'
+->>  262 | run       in java.util.concurrent.FutureTask
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|   1145 | runWorker in java.util.concurrent.ThreadPoolExecutor
+|    615 | run . . . in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run       in java.lang.Thread
+
+Caused by MetaDataAccessException: Error while extracting DatabaseMetaData; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown database 'test_db'
+->>  262 | run       in java.util.concurrent.FutureTask
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|   1145 | runWorker in java.util.concurrent.ThreadPoolExecutor
+|    615 | run . . . in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run       in java.lang.Thread
+
+Caused by MySQLSyntaxErrorException: Unknown database 'test_db'
+->>  406 | handleNewInstance in com.mysql.jdbc.Util
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|    381 | getInstance in     ''
+|   1031 | createSQLException in com.mysql.jdbc.SQLError
+|    957 | createSQLException in     ''
+|   3376 | checkErrorPacket in com.mysql.jdbc.MysqlIO
+|   3308 | checkErrorPacket in     ''
+|    894 | checkErrorPacket in     ''
+|   3808 | secureAuth411 in     ''
+|   1256 | doHandshake in     ''
+|   2032 | createNewIO in com.mysql.jdbc.ConnectionImpl
+|    729 | <init> .  in     ''
+|     46 | <init>    in com.mysql.jdbc.JDBC4Connection
+|    406 | handleNewInstance in com.mysql.jdbc.Util
+|    302 | getInstance in com.mysql.jdbc.ConnectionImpl
+|    283 | connect . in com.mysql.jdbc.NonRegisteringDriver
+|    262 | run       in java.util.concurrent.FutureTask
+|   1145 | runWorker in java.util.concurrent.ThreadPoolExecutor
+|    615 | run       in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run . . . in java.lang.Thread
+
+
+##########上面这么多错误 的主要原因是 url 中指定的test_db 数据库没有创建.  在MySQL 中手动创建了test_db， 然后在运行就可以了.查看 test_db , 就会发现  多了两个表名: hello, user . 表示 通过GORM 直接将表在 数据库中创建好了.  
+
+

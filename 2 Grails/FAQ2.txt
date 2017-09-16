@@ -1,0 +1,192 @@
+. no such property on class grails_onlycontroller
+
+. Compiling 24 source files
+.Error 
+|
+Compilation error: startup failed:
+   SHME_2015_ReportListTbl.where{stockCode 
+                                 ^
+E:\4 WorkSpace\0 Grails\Grails_OnlyController\grails-app\controllers\grails_onlycontroller\FirstController.groovy: 16: Cannot query on property "stockCode" - no such property on class grails_onlycontroller.SHME_2015_ReportListTbl exists.
+
+
+1 error
+
+  [groovyc] org.codehaus.groovy.control.MultipleCompilationErrorsException: startup failed:
+  [groovyc]    SHME_2015_ReportListTbl.where{stockCode 
+  [groovyc]                                  ^
+  [groovyc] E:\4 WorkSpace\0 Grails\Grails_OnlyController\grails-app\controllers\grails_onlycontroller\FirstController.groovy: 16: Cannot query on property "stockCode" - no such property on class grails_onlycontroller.SHME_2015_ReportListTbl exists.
+  [groovyc] 
+  [groovyc] 
+  [groovyc] 1 error
+
+
+  是 firstController.groovy中的写错了字段stockCode, 而不是 firstService , 看错了。
+
+. 2. |Loading Grails 2.4.2
+|Configuring classpath
+.
+|Environment set to development
+.................................
+|Packaging Grails application
+|Installing zip easyui-1.7.zip...
+...
+|Installed plugin easyui-1.7
+..............
+|Installing zip resources-1.2.1.zip...
+...
+|Installed plugin resources-1.2.1
+.....................
+|Compiling 162 source files
+注: E:\4 WorkSpace\0 Grails\Grails_OnlyController\target\work\plugins\easyui-1.7\src\java\org\grails\plugins\easyui\EasyuiDomainClassMarshaller.java使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+.Error 
+|
+Compilation error: startup failed:
+E:\4 WorkSpace\0 Grails\Grails_OnlyController\target\work\plugins\resources-1.2.1\src\groovy\org\grails\plugin\resource\ResourceProcessor.groovy: 6: unable to resolve class org.codehaus.groovy.grails.plugins.PluginManagerHolder
+ @ line 6, column 1.
+   import org.codehaus.groovy.grails.plugins.PluginManagerHolder
+   ^
+
+E:\4 WorkSpace\0 Grails\Grails_OnlyController\target\work\plugins\resources-1.2.1\src\groovy\org\grails\plugin\resource\util\HalfBakedLegacyLinkGenerator.groovy: 3: unable to resolve class org.codehaus.groovy.grails.commons.ConfigurationHolder
+ @ line 3, column 1.
+   import org.codehaus.groovy.grails.commons.ConfigurationHolder
+   ^
+
+2 errors
+
+  [groovyc] org.codehaus.groovy.control.MultipleCompilationErrorsException: startup failed:
+  [groovyc] E:\4 WorkSpace\0 Grails\Grails_OnlyController\target\work\plugins\resources-1.2.1\src\groovy\org\grails\plugin\resource\ResourceProcessor.groovy: 6: unable to resolve class org.codehaus.groovy.grails.plugins.PluginManagerHolder
+  [groovyc]  @ line 6, column 1.
+  [groovyc]    import org.codehaus.groovy.grails.plugins.PluginManagerHolder
+  [groovyc]    ^
+  [groovyc] 
+  [groovyc] E:\4 WorkSpace\0 Grails\Grails_OnlyController\target\work\plugins\resources-1.2.1\src\groovy\org\grails\plugin\resource\util\HalfBakedLegacyLinkGenerator.groovy: 3: unable to resolve class org.codehaus.groovy.grails.commons.ConfigurationHolder
+  [groovyc]  @ line 3, column 1.
+  [groovyc]    import org.codehaus.groovy.grails.commons.ConfigurationHolder
+  [groovyc]    ^
+  [groovyc] 
+  [groovyc] 2 errors
+
+  关键是  unable to resolve class org.codehaus.groovy.grails.plugins.PluginManagerHolder
+
+  分析：  resources-1.2.1 中使用到了 PluginManagerHolder, easyui 1.7 使用了resources-1.2.1, 但是 grails 2.4以后 废弃了PluginManagerHolder.
+
+    参见:
+
+        http://stackoverflow.com/questions/23915441/grails-upgrading-2-4-0-causes-error-compilation-error-startup-failed
+        http://stackoverflow.com/questions/2941216/grails-detect-if-a-plugin-is-installed
+
+         目前有以下插件存在 Grails 2.4.0 后的版本支持问题，而且1年了， 也没有任何进展， 估计是放弃了或有别的更好的产品替代。
+
+         resources
+        
+         mail
+
+         quartz
+
+  The following deprecated classes have been removed from Grails 2.4.x:
+
+  org.codehaus.groovy.grails.commons.ApplicationHolder
+  org.codehaus.groovy.grails.commons.ConfigurationHolder
+  org.codehaus.groovy.grails.plugins.PluginManagerHolder
+  org.codehaus.groovy.grails.web.context.ServletContextHolder  
+  org.codehaus.groovy.grails.compiler.support.GrailsResourceLoaderHolder
+
+  可以用   grails.util.Holders 替代插件中用到的
+
+   For example
+
+application = org.codehaus.groovy.grails.commons.ApplicationHolder.application 
+to
+
+application = Holders.grailsApplication
+
+
+  例如:
+
+  import grails.util.Holders
+
+   if (Holders.pluginManager.hasGrailsPlugin('acegi')) {
+     ...
+   }
+
+  解决办法: 
+
+          ## 修改  resources 中的错误代码，把不被Grails 2.4以后支持的代码替换掉。
+
+          http://www.grails.org/plugins/tag/ui  -> 点击  左下方 “UI”  会显示出最新版本的resources 是1.2.14
+
+
+          用  
+ 
+              runtime ":resources:1.2.14"
+
+     又出现下面的哦错误
+
+2015-07-23 22:39:42,125 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /js/jquery-easyui/themes/icon.css
+
+Error |
+2015-07-23 22:39:42,328 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /js/jquery-easyui/themes/default/easyui.css
+
+Error |
+2015-07-23 22:39:42,562 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /js/jquery-easyui/jquery.min.js
+
+Error |
+2015-07-23 22:39:42,750 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /js/jquery-easyui/jquery.easyui.min.js
+
+Error |
+2015-07-23 22:39:43,218 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /js/jquery-easyui/locale/easyui-lang-en.js
+
+Error |
+2015-07-23 22:39:44,546 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /assets/easyui-scaffold.js
+
+Error |
+2015-07-23 22:39:44,578 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /plugins/easyui-1.7/js/locale/easyui-scaffold-lang-en.js
+
+Error |
+2015-07-23 22:39:44,703 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /assets/easyui-scaffold.css
+
+Error |
+2015-07-23 22:39:44,703 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /plugins/jquery-1.11.1/js/jquery/jquery-1.11.1.min.js
+
+Error |
+2015-07-23 22:39:44,718 [localhost-startStop-1] ERROR resource.ResourceMeta  - Resource not found: /plugins/jquery-1.11.1/js/jquery/jquery-1.11.1.js
+
+|Server running. Browse to http://localhost:8080/Grails_OnlyController
+
+
+即便出现了上面的错误， 仍然可以运行
+
+ 点击 对应AdamsController 后， 下载和处理公告都正确， 不过最后出现了下面的错误
+
+Error |
+2015-07-23 22:50:28,921 [http-bio-8080-exec-8] ERROR resource.ResourceMeta  - Resource not found: /js/easyLib/themes/default/easyui.css
+
+Error |
+2015-07-23 22:50:30,359 [http-bio-8080-exec-8] ERROR [/Grails_OnlyController].[default]  - Servlet.service() for servlet [default] in context with path [/Grails_OnlyController] threw exception
+Message: It looks like you are missing some calls to the r:layoutResources tag. After rendering your page the following have not been rendered: [defer]
+    Line | Method
+->> 1145 | runWorker in java.util.concurrent.ThreadPoolExecutor
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+|    615 | run       in java.util.concurrent.ThreadPoolExecutor$Worker
+^    744 | run . . . in java.lang.Thread
+
+Error |
+2015-07-23 22:50:30,828 [http-bio-8080-exec-10] ERROR resource.ResourceMeta  - Resource not found: /js/js/easyLib/jquery.easyui.min.js
+
+Error |
+2015-07-23 22:50:30,828 [http-bio-8080-exec-4] ERROR resource.ResourceMeta  - Resource not found: /js/js/easyLib/locale/easyui-lang-zh_CN.js
+
+Error |
+2015-07-23 22:50:30,937 [http-bio-8080-exec-5] ERROR resource.ResourceMeta  - Resource not found: /js/js/easyLib/jquery.min.js
+
+Error |
+2015-07-23 22:50:30,968 [http-bio-8080-exec-1] ERROR resource.ResourceMeta  - Resource not found: /js/easyLib/themes/default/easyui.css
+
+......
+|Compiling 1 source files
+ 
+
+插件 资源中用到的 文件(如 .js 文件) 的路径是相对路径， 那么当前路径到底是什么？？？？？用Groovy 在gsp 中打印出 当前路径。打开 "."文件， 然后查询绝对绝对路径。
+ 
+      

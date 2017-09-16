@@ -1,0 +1,16 @@
+十一月 30, 2015 5:56:48 上午 org.apache.catalina.core.ApplicationContext log
+信息: HTMLManager: init: Associated with Deployer 'Catalina:type=Deployer,host=localhost'
+十一月 30, 2015 5:56:48 上午 org.apache.catalina.core.ApplicationContext log
+信息: HTMLManager: init: Global resources are available
+十一月 30, 2015 5:56:48 上午 org.apache.catalina.core.ApplicationContext log
+信息: HTMLManager: list: Listing contexts for virtual host 'localhost'
+十一月 30, 2015 5:56:55 上午 org.apache.catalina.core.ApplicationContext log
+信息: HTMLManager: stop: Stopping web application '/Grails_OnlyController-0.1'
+十一月 30, 2015 5:56:56 上午 org.apache.catalina.core.ApplicationContext log
+信息: HTMLManager: list: Listing contexts for virtual host 'localhost'
+十一月 30, 2015 5:57:05 上午 org.apache.catalina.core.ApplicationContext log
+信息: HTMLManager: undeploy: Undeploying web application at '/Grails_OnlyController-0.1'
+十一月 30, 2015 5:57:07 上午 org.apache.catalina.core.ApplicationContext log
+信息: HTMLManager: list: Listing contexts for virtual host 'localhost'
+十一月 30, 2015 5:58:31 上午 org.apache.catalina.core.ApplicationContext log
+信息: HTMLManager: list: Listing contexts for virtual host 'localhost'

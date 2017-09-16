@@ -1,0 +1,15 @@
+Testsuite: org.grails.shortenurl.IsGdTests
+Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 1.371 sec
+------------- Standard Output ---------------
+--Output from testShorten--
+--Output from testBadUrl--
+An error occurred: http://is.gd/api.php?longurl=IAmNotAValidUrl
+500 : Internal Server Error
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+--Output from testShorten--
+--Output from testBadUrl--
+------------- ---------------- ---------------
+
+Testcase: testShorten took 0.75 sec
+Testcase: testBadUrl took 0.6 sec

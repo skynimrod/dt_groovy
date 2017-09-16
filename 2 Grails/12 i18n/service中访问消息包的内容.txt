@@ -1,0 +1,1 @@
+. 在service 里面不能如同Controller/view 中那样访问message中的内容， 暂时没有找到办法。只能通过折中方式， 从controller/action 中访问message， 然后通过调用传送到service 里面.

@@ -1,0 +1,161 @@
+. 5.1 ¸ÅÊö, ¼ÇÂ¼ID Ë³Ðò
+
+  ---------------------------------------------------------------
+  Record ID     Record name          Occurs in BIFF versions
+                                     2       3      4      5      8
+  ---------------------------------------------------------------
+   0000h        DIMENSION            .
+   0001h        BLANK                .
+   0002h        INTEGER              .
+   0003h        NUMBER               .
+   0004h        LABEL                .
+   0005h        BOOLERR              .
+   0006h        FORMULA              .                     .      .
+   0007h        STRING               .
+   0008h        ROW                  .
+   0009h        BOF                  .
+   000Ah        EOF                  .       .      .      .     .
+   000Bh        INDEX                .
+   000Ch        CALCCOUNT            .       .      .      .     .
+   000Dh        CALCMODE             .       .      .      .     .
+   000Eh        PRECISION            .       .      .      .     .
+   000Fh        REFMODE              .       .      .      .     .
+   0010h        DELTA                .       .      .      .     .
+   0011h        ITERATION            .       .      .      .     .
+   0012h        PROTECT              .       .      .      .     .
+   0013h        PASSWORD             .       .      .      .     .
+   0014h        HEADER               .       .      .      .     .
+   0015h        FOOTER               .       .      .      .     .
+   0016h        EXTERNCOUNT          .       .      .      
+   0017h        EXTERNSHEET          .       .      .      .     .
+   0018h        DEFINEDNAME          .                     .     .
+
+   0019h        WINDOWPROTECT        .       .      .      .     .
+   001Ah        VERTICALPAGEBREAKS   .       .      .      .     .
+   001Bh        HORIZONTALPAGEBREAKS .       .      .      .     .
+   001Ch        NOTE                 .       .      .      .     .
+   001Dh        SELECTION            .       .      .      .     .
+   001Eh        FORMAT               .       .
+   001Fh        BUILTINFMTCOUNT      .
+   0020h        COLUMNDEFAULT        .
+   0021h        ARRAY                .
+   0022h        DATEMODE             .       .      .      .     .
+   0023h        EXTERNALNAME         .                     .     .
+   0024h        COLWIDTH             .
+   0025h        DEFAULTROWHEIGHT     .
+   0026h        LEFTMARGIN           .       .      .      .     .
+   0027h        RIGHTMARGIN          .       .      .      .     .
+   0028h        TOPMARGIN            .       .      .      .     .
+   0029h        BOTTOMMARGIN         .       .      .      .     .
+   002Ah        PRINTHEADERS         .       .      .      .     .
+   002Bh        PRINTGRIDLINES       .       .      .      .     .
+   002Fh        FILEPASS             .       .      .      .     .
+   0031h        FONT                 .                     .     .
+   0032h        FONT2                .
+   0036h        DATATABLE            .
+   0037h        DATATABLE2           .
+   003Ch        CONTINUE             .       .      .      .     .
+   003Dh        WINDOW1              .       .      .      .     .
+   003Eh        WINDOW2              .
+   0040h        BACKUP               .       .      .      .     .
+   0041h        PANE                 .       .      .      .     .
+   0042h        CODEPAGE             .       .      .      .     .
+   0043h        XF                   .
+   0044h        IXFE                 .
+   0045h        FONTCOLOR            .
+   004Dh        PLS                  .       .      .      .     .
+   0051h        DCONREF              .       .      .      .     .
+   0055h        DEFCOLWIDTH          .       .      .      .     .
+   0056h        BUILTINFMTCOUNT              .      .      .     .    
+   0059h        XCT                          .      .      .     .     
+   005Ah        CRN                          .      .      .     .     
+   005Bh        FILESHARING                  .      .      .     .     
+   005Ch        WRITEACCESS                  .      .      .     .     
+   005Eh        UNCALCED                     .      .      .     .     
+   005Fh        SAVERECALC                   .      .      .     .     
+
+   0063h        OBJECTPROTECT                .      .      .     .     
+   
+   007Dh        COLINFO                      .      .      .     .     5.18   P146
+
+   0080h        GUTS                         .      .      .     .     
+   0081h        SHEETPR                      .      .      .     .     
+   0082h        GRIDSET                      .      .      .     .     
+   0083h        HCENTER                      .      .      .     .     
+   0084h        VCENTER                                    .     .     
+   0085h        SHEET                        .      .      .     .      P206     5.95  
+   0086h        WRITEPROT                    .      .      .     .     
+   008Ch        COUNTRY                      .      .      .     .     
+   008Dh        HIDEOBJ                      .      .      .     .     
+
+   0090h        SORT                                       .     .     
+   0092h        PALET                        .      .      .     . 
+   0099h        STANDARDWIDTH                       .      .     .     
+
+   00A0h        SCL                                 .      .     .     
+   00A1h        PAGESETUP                           .      .     .     
+   00ABh        GCW                                 .      .     
+
+   00BDh        MULRK                                      .     .     
+   00BEh        MULBLANK                                   .     .     
+
+   00D6h        RSTRING                                    .     .     
+   00D7h        DBCELL                                     .     .     5.29   P155  
+   00DAh        BOOKBOOL                                   .     .     
+   00DDh        SCENPROTECT                                .     .     
+
+   00E0h        XF                                         .     .     
+   00E5h        MERGEDCELLS                                      .     
+   00E9h        BITMAP                                           .     
+   00EFh        PHONETICPR                                       .     
+
+   00FCh        SST                                              .     4.11 P110    5.100  P210
+   00FDh        LABELSST                                         .     5.65  P188
+   00FFh        EXTSST                                           .     5.42 P167
+
+   015Fh        LABELRANGES                                      .     
+
+   0160h        USESELFS                                         .     
+   0161h        DSF                                              .     
+
+   01AEh        EXTERNALBOOK                                     .     
+
+   01B0h        CFHEADER                                         .     
+   01B2h        DATAVALIDATIONS                                  .     
+   01B8h        HYPERLINK                                        .     
+   01BEh        DATAVALIDATION                                   .     
+
+   0200h        DIMENSION                    .      .      .     .     5.35  P160 
+   0201h        BLANK                        .      .      .     .     
+   0203h        NUMBER                       .      .      .     .     
+   0204h        LABEL                        .      .      .     .     
+   0205h        BOOLERR                      .      .      .     .     
+   0206h        FORMULA                      .      .      .     .     
+   0207h        STRING                       .      .      .     .     
+   0208h        ROW                          .      .      .     .      5.88  P202   
+   0209h        BOF                          .  
+   020Bh        INDEX                        .      .      .     .   	4.7  P90    5.59  P185  
+   0218h        DEFINEDNAME                  .      .      .     .     
+   0221h        ARRAY                        .      .      .     .     
+   0223h        EXTERNALNAME                 .      .   
+   0225h        DEFAULTROWHEIGHT             .      .      .     .     
+   0231h        FONT                         .      .      .     .     
+   0236h        DATATABLE                    .      .      .     .     
+   023Eh        WINDOW2                      .      .      .     .     
+   0243h        XF                           .
+   027Eh        RK                           .      .      .     .     
+   0293h        STYLE                        .      .      .     .     
+
+   0406h        FORMULA                             .  
+   0409h        BOF                                 .  
+   041Eh        FORMAT                              .      .     .     
+   0443h        XF                                  . 
+   04BCh        SHAREDFMLA                                 .     .     
+
+   0800h        QUICKTIP                                         .  
+   0809h        BOF                                        .     .
+   0862h        SHEETLAYOUT                                      .     
+   0867h        SHEETPROTECTION                                  . 
+   0868h        RANGERPROTECTION                                 .     
+   
+.

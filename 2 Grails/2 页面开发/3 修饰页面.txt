@@ -1,0 +1,571 @@
+. 美化页面， 关键是定制相关显示内容的尺寸，颜色等。
+
+   参见: 
+
+        http://www.w3school.com.cn/example/csse_examples.asp
+
+  主要分为2大部分：
+
+      A. 背景的设置；   B. 内容的设置
+
+. 0. 简介
+
+   可以用css 进行修饰。 最直接的方法就是在页面的<head>内定义 css 内容， 使用<style>, 如下：
+
+   <style type="text/css">
+
+        # 设置背景
+        body {background-color: yellow}
+        h1 {background-color: #00ff00}
+        h2 {background-color: transparent}
+        p {background-color: rgb(250,0,255)}
+
+        p.no2 {background-color: gray; padding: 20px;}
+
+        ##=================  文 本 ==================================
+
+        # 设置颜色
+        h1 {color:#00ff00}
+        p.ex {color:rgb(0,0,255)}
+
+        # 设置字间距
+        h1 {letter-spacing: -0.5em}
+        h4 {letter-spacing: 20px}
+
+        # 使用百分比设置行间距
+        p.small {line-height: 90%}
+        p.big {line-height: 200%}
+
+        # 使用像素设置行间距
+        p.small2 { line-height: 10px }
+        p.big { line-height: 30px }
+
+        # 使用数值设置行间距
+        p.small3 { line-height: 0.5 }
+        p.big { line-height: 2 }
+
+        # 对齐文本
+        h1 {text-align: center}
+        h2 {text-align: left}
+        h3 {text-align: right}
+
+        # 修饰文本， 下划线，上划线，删除线，等等
+        h1 {text-decoration: overline}
+        h2 {text-decoration: line-through}
+        h3 {text-decoration: underline}
+        h4 {text-decoration:blink}
+        a {text-decoration: none}
+
+        # 缩进文本
+        p {text-indent: 1cm}
+
+        # 控制文本中的字母， 大小写， 首字母大写等。
+        h1 {text-transform: uppercase}
+        p.uppercase {text-transform: uppercase}
+        p.lowercase {text-transform: lowercase}
+        p.capitalize {text-transform: capitalize}
+
+        # 文本中，禁止文本对折，也就是不让换行
+        p { white-space: nowrap }
+
+        # 调整单词间距
+        p.spread {word-spacing: 30px;}
+        p.tight {word-spacing: -0.5em;}
+
+        # ================  字体 =================================
+
+        # 设置文本字体
+        p.serif{font-family:"Times New Roman",Georgia,Serif}
+        p.sansserif{font-family:Arial,Verdana,Sans-serif}
+
+        # 设置字体尺寸
+        h1 {font-size: 300%}
+        h2 {font-size: 200%}
+        p {font-size: 100%}
+
+        # 设置字体风格 ， 斜体等
+        p.normal {font-style:normal}
+        p.italic {font-style:italic}
+        p.oblique {font-style:oblique}
+
+        # 设置字体的异体 ， 似乎是艺术字之类的
+        p.normal {font-variant: normal}
+        p.small {font-variant: small-caps}
+
+        # 设置字体的粗细， 粗体，或者更粗， 更细等等。
+        p.normal {font-weight: normal}
+        p.thick {font-weight: bold}
+        p.thicker {font-weight: 900}
+
+        # 可以将所有字体的设置放在一起
+        p.ex1 { font:italic arial,sans-serif; }
+
+        p.ex2 { font:italic bold 12px/30px arial,sans-serif; }
+
+        #===================边  框 ====================================
+        # 所有边框属性 的设置放在一起
+        p { border: medium double rgb(250,0,255) }
+
+        # 设置四边框样式, 虚线， 凸起， 凹下等
+        p.dotted {border-style: dotted}
+        p.dashed {border-style: dashed}
+        p.solid {border-style: solid}
+        p.double {border-style: double}
+        p.groove {border-style: groove}
+        p.ridge {border-style: ridge}
+        p.inset {border-style: inset}
+        p.outset {border-style: outset}
+
+        # 设置每一边的不同边框， 可以设置4条边用不同的边框
+        p.soliddouble {border-style: solid double}
+        p.doublesolid {border-style: double solid}
+        p.groovedouble {border-style: groove double}
+        p.three {border-style: solid double groove}
+
+        # 所有边框的属性在一个声明中
+        p.one { border-style: solid;  border-width: 5px }
+        p.two { border-style: solid;  border-width: thick }
+        p.three { border-style: solid; border-width: 5px 10px }
+        p.four { border-style: solid; border-width: 5px 10px 1px }
+        p.five { border-style: solid; border-width: 5px 10px 1px medium }
+
+        # 设置4个边框的颜色
+        p.one { border-style: solid; border-color: #0000ff }
+        p.two { border-style: solid; border-color: #ff0000 #0000ff }
+        p.three { border-style: solid; border-color: #ff0000 #00ff00 #0000ff }
+        p.four { border-style: solid; border-color: #ff0000 #00ff00 #0000ff rgb(250,0,255) }
+
+        # 下边框属性在一个声明中
+        p { border-style:solid; border-bottom:thick dotted #ff0000; }
+ 
+        # 设置下边框的颜色
+        p  { border-style:solid; border-bottom-color:#ff0000; }
+
+        # 设置下边框的样式
+        p {border-style:solid}
+        p.none {border-bottom-style:none}
+        p.dotted {border-bottom-style:dotted}
+        p.dashed {border-bottom-style:dashed}
+        p.solid {border-bottom-style:solid}
+        p.double {border-bottom-style:double}
+        p.groove {border-bottom-style:groove}
+        p.ridge {border-bottom-style:ridge}
+        p.inset {border-bottom-style:inset}
+        p.outset {border-bottom-style:outset}
+
+        # 设置下边框的宽度。"border-bottom-width" 属性如果单独使用是不会起作用的。要先使用 "border-style" 属性来设置边框。
+        p.one  { border-style: solid; border-bottom-width: 15px }
+        p.two { border-style: solid; border-bottom-width: thin }
+
+        # 所有的左边框属性在一个声明中
+        p  { border-style:solid; border-left:thick double #ff0000; }
+
+        # 设置左边框的颜色
+        p { border-style: solid; border-left-color: #ff0000 }
+
+        # 设置左边框的样式
+        p { border-style:solid; }
+        p.none {border-left-style:none}
+        p.dotted {border-left-style:dotted}
+        p.dashed {border-left-style:dashed}
+        p.solid {border-left-style:solid}
+        p.double {border-left-style:double}
+        p.groove {border-left-style:groove}
+        p.ridge {border-left-style:ridge}
+        p.inset {border-left-style:inset}
+        p.outset {border-left-style:outset}
+
+        # 设置左边框的宽度
+        p.one { border-style: solid; border-left-width: 15px }
+        p.two { border-style: solid; border-left-width: thin }
+
+        # 所有的右边框属性在一个声明中
+        p  { border-style:solid; border-right:thick double #ff0000; }
+
+        # 设置右边框的颜色
+        p { border-style: solid; border-right-color: #ff0000 }
+
+        # 设置右边框的样式
+        p { border-style:solid; }
+        p.none {border-right-style:none}
+        p.dotted {border-right-style:dotted}
+        p.dashed {border-right-style:dashed}
+        p.solid {border-right-style:solid}
+        p.double {border-right-style:double}
+        p.groove {border-right-style:groove}
+        p.ridge {border-right-style:ridge}
+        p.inset {border-right-style:inset}
+        p.outset {border-right-style:outset}
+
+        # 设置右边框的宽度
+        p.one { border-style: solid; border-right-width: 15px }
+        p.two { border-style: solid; border-right-width: thin }
+
+        # 所有上边框属性在一个声明中
+        p { border-style:solid; border-top:thick dotted #ff0000; }
+ 
+        # 设置上边框的颜色
+        p  { border-style:solid; border-top-color:#ff0000; }
+
+        # 设置上边框的样式
+        p {border-style:solid}
+        p.none {border-top-style:none}
+        p.dotted {border-top-style:dotted}
+        p.dashed {border-top-style:dashed}
+        p.solid {border-top-style:solid}
+        p.double {border-top-style:double}
+        p.groove {border-top-style:groove}
+        p.ridge {border-top-style:ridge}
+        p.inset {border-top-style:inset}
+        p.outset {border-top-style:outset}
+
+        # 设置上边框的宽度。"border-top-width" 属性如果单独使用是不会起作用的。要先使用 "border-style" 属性来设置边框。
+        p.one  { border-style: solid; border-top-width: 15px }
+        p.two { border-style: solid; border-top-width: thin }
+
+        #================外 边 距 (margin)============================
+        # 设置文本的左外边距
+        p.leftmargin {margin-left: 2cm}
+
+        # 设置文本的右外边距
+        p.leftmargin {margin-right: 8cm}
+
+        # 设置文本的上外边距
+        p.leftmargin {margin-top: 5cm}
+
+        # 设置文本的下外边距
+        p.leftmargin {margin-bottom: 2cm}
+
+        # 所有的外边距属性在一个声明中
+        p.margin {margin: 2cm 4cm 3cm 4cm}
+
+        # ================= 内 边 距(padding) ====主要是表格使用========================
+        # 所有填充属性 在一个声明中
+        td.test1 {padding: 1.5cm}
+        td.test2 {padding: 0.5cm 2.5cm}
+
+        # 设置下内边距， 有下面2种方法
+        td {padding-bottom: 2cm}
+        td {padding-bottom: 10%}
+
+        # 设置左内边距， 有下面2种方法
+        td {padding-left: 2cm}
+        td {padding-left: 10%}
+
+        # 设置右内边距， 有下面2种方法
+        td {padding-right: 5cm}
+        td {padding-right: 10%}
+
+        # 设置上内边距， 有下面2种方法
+        td {padding-top: 2cm}
+        td {padding-top: 10%}
+
+        # ============列表 ==================
+        # 无序列表中 不同类型的 列表标记， 类似于大纲的左侧标记
+        ul.disc {list-style-type: disc}
+        ul.circle {list-style-type: circle}
+        ul.square {list-style-type: square}
+        ul.none {list-style-type: none}
+
+        # 有序 列表中 不同类型的 列表标记, 类似于1，2，3的大纲标记
+        ol.decimal {list-style-type: decimal}
+        ol.lroman {list-style-type: lower-roman}
+        ol.uroman {list-style-type: upper-roman}
+        ol.lalpha {list-style-type: lower-alpha}
+        ol.ualpha {list-style-type: upper-alpha}
+
+        # 所有的列表 样式 类型
+        ul.none {list-style-type: none}
+        ul.disc {list-style-type: disc}
+        ul.circle {list-style-type: circle}
+        ul.square {list-style-type: square}
+        ul.decimal {list-style-type: decimal}
+        ul.decimal-leading-zero {list-style-type: decimal-leading-zero}
+        ul.lower-roman {list-style-type: lower-roman}
+        ul.upper-roman {list-style-type: upper-roman}
+        ul.lower-alpha {list-style-type: lower-alpha}
+        ul.upper-alpha {list-style-type: upper-alpha}
+        ul.lower-greek {list-style-type: lower-greek}
+        ul.lower-latin {list-style-type: lower-latin}
+        ul.upper-latin {list-style-type: upper-latin}
+        ul.hebrew {list-style-type: hebrew}
+        ul.armenian {list-style-type: armenian}
+        ul.georgian {list-style-type: georgian}
+        ul.cjk-ideographic {list-style-type: cjk-ideographic}
+        ul.hiragana {list-style-type: hiragana}
+        ul.katakana {list-style-type: katakana}
+        ul.hiragana-iroha {list-style-type: hiragana-iroha}
+        ul.katakana-iroha {list-style-type: katakana-iroha}
+
+        # 用图像 作为列表 项  标记
+        ul { list-style-image: url('/i/eg_arrow.gif') }
+
+        # 放置 列表 标记
+        ul.inside { list-style-position: inside }
+        ul.outside { list-style-position: outside }
+
+        # 在一个声明中定义所有的列表属性
+        
+        # =========== CSS 表格 ============================
+        # 设置表格 的布局
+        table.one { table-layout: automatic }
+        table.two { table-layout: fixed }
+
+        # 显示表格中的空单元
+        table { border-collapse: separate; empty-cells: hide; }
+
+        # 合并表格边框
+        table {  border-collapse:collapse; }
+        table, td, th  {  border:1px solid black;  }
+
+        # 设置表格边框 之间 的空白
+        table.one { border-collapse: separate;border-spacing: 10px }
+        table.two { border-collapse: separate;border-spacing: 10px 50px }
+
+        # 设置 表格 标题 的位置
+        caption { caption-side:bottom }
+
+        #========================== 轮 廓  outline IE8 以上才支持====================
+        # 在元素周围 画线
+        p { border:red solid thin; outline:#00ff00 dotted thick; }
+
+        # 设置轮廓的颜色
+        p { border:red solid thin;outline-style:dotted; outline-color:#00ff00; }
+
+        # 设置轮廓的样式
+        p { border: red solid thin; }
+        p.dotted { outline-style: dotted }
+        p.dashed { outline-style: dashed }
+        p.solid { outline-style: solid }
+        p.double { outline-style: double }
+        p.groove { outline-style: groove }
+        p.ridge { outline-style: ridge }
+        p.inset { outline-style: inset }
+        p.outset { outline-style: outset }
+
+        # 设置轮廓的宽度
+        p.one { border:red solid thin; outline-style:solid; outline-width:thin; }
+        p.two { border:red solid thin; outline-style:dotted; outline-width:3px; }
+
+        # =================尺寸(Dimension)=================
+        #使用像素值设置图像的高度
+        img.normal { height: auto }
+        img.big { height: 160px }
+        img.small { height: 30px }
+
+        # 使用百分比设置图像的高度， 可能是占整个显示空间的百分比
+        img.normal { height: auto }
+        img.big { height: 50% }
+        img.small { height: 10% }
+
+        # 使用像素值 设置 图像的宽度
+        img { width: 300px }
+
+        # 使用百分比设置 图像的宽度
+        img { width: 50% }
+
+        # 设置元素的最大高度, 有可能会覆盖显示内容中的其他内容
+        p { max-height: 10px }
+
+        # 来设置 元素的最大宽度， 2种方法， 使用像素值 /使用 百分比
+        p { max-width: 300px }
+        p { max-width: 50% }
+
+        # 设置 元素的最小高度, 2种方法， 使用像素值/ 使用百分比
+        p { min-height: 100px }
+        p { min-height: 50% }
+
+        # 来设置 元素的最小宽度， 2种方法， 使用像素值 /使用 百分比
+        p { min-width: 1000px }
+        p { min-width: 200% }
+
+        # 设置 行间距 ， 3种方法， 使用像素值/ 使用百分比 / 使用数值
+        p.small {line-height: 90%}
+        p.big {line-height: 200%}
+
+        p.small {line-height: 10px }
+        p.big {line-height: 30px }
+
+        p.small {line-height: 0.5 }
+        p.big {line-height: 2 }
+
+        #===================分类 Classification ==========================
+        #  如何把元素 显示为 内联元素 ？？ 干嘛用的？？
+        p {display: inline}
+        div {display: none}
+
+        # 如何把 元素 显示 为块级元素, 如果没有下面的设置， span 就不会换行
+        span { display: block }
+
+        # 浮动属性的简单应用， 类似于文本你插图
+        img { float:right }
+
+        # 带有边框和边界的图像 浮动于 段落 的右侧， 复杂的插图设计
+        img { float:right; border:1px dotted black; margin:0px 0px 15px 20px; }
+
+        # 带标题的 图像浮动于右侧， 类似于带标题的插图
+        div { float:right; width:120px; margin:0 0 15px 20px; padding:15px; 
+              border:1px solid black; text-align:center; }
+
+        # 段落的首字母浮动于左侧 ， 类似于首字母大写
+        span { float:left; width:0.7em; font-size:400%; 
+               font-family:algerian,courier; line-height:80%; }
+
+        # 创建水平菜单。 ××××××
+        ul { float:left; width:100%; padding:0;  margin:0; list-style-type:none; }
+        a { float:left; width:7em; text-decoration:none; color:white;
+            background-color:purple; padding:0.2em 0.6em; 
+            border-right:1px solid white; }
+        a:hover {background-color:#ff3300}
+        li {display:inline}     # 这个作用是什么？？？？
+
+        # 创建无表格的首页， 类似于报纸版面的控制
+        div.container { width:100%; margin:0px; border:1px solid gray; line-height:150%; }
+        div.header,div.footer { padding:0.5em; color:white; background-color:gray; clear:left; }
+        h1.header { padding:0; margin:0; }
+        div.left { float:left; width:160px; margin:0; padding:1em; }
+        div.content { margin-left:190px; border-left:1px solid gray; padding:1em; }
+
+        # 相对定位
+        h2.pos_left { position:relative; left:-20px }
+        h2.pos_right { position:relative; left:20px }
+
+        # 固定定位
+        p.one { position:fixed; left:5px; top:5px; }
+        p.two { position:fixed; top:30px; right:5px; }
+
+        # 如何使元素 不可见
+        p.one { position:fixed; left:5px; top:5px; }
+        p.two { position:fixed; top:30px; right:5px; }
+
+        #把表格元素设置为 collapse（请在非 IE 的浏览器中查看）， 干嘛用的？？？
+        tr.coll  {  visibility:collapse  }
+
+        # 改变光标
+        <span style="cursor:auto">Auto</span><br />
+        <span style="cursor:crosshair">Crosshair</span><br />
+        <span style="cursor:default">Default</span><br />
+        <span style="cursor:pointer">Pointer</span><br />
+        <span style="cursor:move">Move</span><br />
+        <span style="cursor:e-resize">e-resize</span><br />
+        <span style="cursor:ne-resize">ne-resize</span><br />
+        <span style="cursor:nw-resize">nw-resize</span><br />
+        <span style="cursor:n-resize">n-resize</span><br />
+        <span style="cursor:se-resize">se-resize</span><br />
+        <span style="cursor:sw-resize">sw-resize</span><br />
+        <span style="cursor:s-resize">s-resize</span><br />
+        <span style="cursor:w-resize">w-resize</span><br />
+        <span style="cursor:text">text</span><br />
+        <span style="cursor:wait">wait</span><br />
+        <span style="cursor:help">help</span>
+
+        # 清除元素的侧面
+        img   {   float:left;   clear:both;  }
+
+        #=============定位 Positioning ===========================
+        # 定位: 相对定位
+        h2.pos_left { position:relative; left:-20px }
+        h2.pos_right { position:relative; left:20px }
+
+        # 定位: 绝对定位
+        h2.pos_abs { position:absolute; left:100px; top:150px }
+ 
+        # 定位: 固定定位
+        p.one { position:fixed; left:5px; top:5px; }
+        p.two { position:fixed; top:30px; right:5px; }
+
+        # 设置元素的形状, 可以剪切图形的一部分
+        img { position:absolute; clip:rect(0px 50px 200px 0px) }
+
+        # 如何使用滚动条来显示元素内溢出的内容
+        div { background-color:#00FFFF; width:150px; height:150px; overflow: scroll }
+
+        # 如何隐藏溢出元素中溢出的内容
+        div { background-color:#00FFFF; width:150px; height:150px; overflow: hidden }
+
+        # 如何设置浏览器来自动地处理溢出
+        div { background-color:#00FFFF; width:150px; height:150px; overflow: auto }
+
+        #垂直排列图像
+        img.top {vertical-align:text-top}
+        img.bottom {vertical-align:text-bottom}
+
+        # Z-index   , 类似于水印， 如果z-index >0 ， 则会覆盖后面的内容
+        img.x { position:absolute; left:0px; top:0px; z-index:-1 }
+
+        # 设置图像的上边缘， 2种方法，使用固定值/ 使用百分比
+        img { position:absolute; top:0px }
+        img { position:absolute; top:5% }
+        
+        # 设置图像的底边缘， 2种方法，使用固定值/ 使用百分比
+        img { position:absolute; bottom:0px }
+        img { position:absolute; bottom:5% }
+        
+        # 设置图像的左边缘， 2种方法，使用固定值/ 使用百分比
+        img { position:absolute; left:0px }
+        img { position:absolute; left:5% }
+        
+        # 设置图像的右边缘， 2种方法，使用固定值/ 使用百分比
+        img { position:absolute; right:0px }
+        img { position:absolute; right:5% }
+
+        #==============伪类 (Pseudo-classes)===========================
+        # 超链接
+        a:link {color: #FF0000}
+        a:visited {color: #00FF00}
+        a:hover {color: #FF00FF}     # 必须在 a:link和 a:visited 之后定义才会生效
+        a:active {color: #0000FF}    #必须在 a:hover之后定义才会生效
+
+        # 更多的超链接设计, 变大，变小， 变色等等
+        a.one:link {color: #ff0000}
+        a.one:visited {color: #0000ff}
+        a.one:hover {color: #ffcc00}
+
+        a.two:link {color: #ff0000}
+        a.two:visited {color: #0000ff}
+        a.two:hover {font-size: 150%}
+
+        a.three:link {color: #ff0000}
+        a.three:visited {color: #0000ff}
+        a.three:hover {background: #66ff66}
+
+        a.four:link {color: #ff0000}
+        a.four:visited {color: #0000ff}
+        a.four:hover {font-family: monospace}
+
+        a.five:link {color: #ff0000; text-decoration: none}
+        a.five:visited {color: #0000ff; text-decoration: none}
+        a.five:hover {text-decoration: underline}
+
+        # 超链接: focus 的使用，点击进入输入框后，会改变输入框的背景色等
+        input:focus { background-color:yellow; }
+
+        <form action="form_action.asp" method="get">
+             First name: <input type="text" name="fname" /><br />
+             Last name: <input type="text" name="lname" /><br />
+             <input type="submit" value="Submit" />
+        </form>
+
+        # :first-child(首个字对象)的使用。 必须声明 DOCTYPE，这样 :first-child 才能在 IE 中生效
+        p:first-child {font-weight: bold;}
+        li:first-child {text-transform:uppercase;}
+
+        # :lang 的使用，这个伪类允许为不同的语言定义特殊的规则
+        q:lang(no) { quotes: "~" "~" }     # no 就是语言名称，这儿重新定义了引号
+        <p>一些文本 <q lang="no">段落中的引用</q> 一些文本。</p>
+
+        #===========伪元素(Pseudo-element)=============================
+        # 制作首字母特效
+        p:first-letter { color: #ff0000; font-size:xx-large }
+
+        # 制作首行特效
+        p:first-line { color: #ff0000; font-variant: small-caps }
+        
+   </style>
+
+   # 注意上面的 p.no2 相当于定义了与p 不一样的修饰方法。 要用如下代码进行设定
+
+   <p class="no2">这个段落设置了内边距。</p>     ./ 这样指定， 就会 使用 p.no2 的css 设定来进行修饰. 
+.1. <tr><td>的显示格式定制
+
+    

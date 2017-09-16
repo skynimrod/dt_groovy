@@ -1,0 +1,59 @@
+. Groovy 版本  :
+ 
+ > groovy --version
+ Groovy Version: 2.4.0-beta-1 JVM: 1.7.0_45 Vendor: Oracle Corporation OS: Windows XP
+
+. 普通线程例子
+
+    for ( def i = 0; i < 3; i ++ ) {
+           Thread.start {
+                
+                println "Inner thread: "+Thread.currentThread().getName();
+                "How are you?".each {
+                    print it;
+                }
+ 
+   } 
+
+. 线程调用闭包变量
+
+  //Thread.start(closure1(i,i+3))
+
+      def closure1 = {param1, param2->
+                        println "Inner thread: "+Thread.currentThread().getName() + "${param1},${param2}";
+                "How are you?".each {
+                    print it;
+                }
+                
+
+    }
+ 
+
+   总结： 这种方法目前groovy 版本支持不好， 实际上没有实现多线程， 看运行结果的线程名称可以发现， 实际上是上一个线程结束后， 才创建下一个线程， 说明， 代码实际运行的顺序是: 先执行闭包代码， 然后再将结果传递给线程， 这样的话， 实际上上一个线程已经结束了， 因为闭包个结果传递给线程的时候， 才创建线程本身没有任何意义。 
+
+.  为了解决上面的问题， 又能向线程传递参数， 可以顶一个一个方法， 然后在方法里面创建线程， 线程的变量直接就是闭包代码， 而不是闭包变量。  
+
+    由于线程变量的闭包传递参数有问题， 直接使用线程外部的变量。  
+
+    需要注意的是， 为了保证线程访问外部变量会出现错误， 因为线程启动是异步的，而这个时间差会造成外部变量可能被改变了， 所以， 最好在线程执行结束后， 进行延迟几毫秒(sleep 2), 从而保证想要传递给线程的外部变量值不会在线程访问之前发生变化。 
+
+     for ( def i=0;i<3;i++) {
+            //Thread.start(closure1(i,i+3))
+            println "i=${i},i+3=${i+3}"
+            
+            Thread.start {
+                def param1 = i
+                def param2 = i+3
+                        println "Inner thread: "+Thread.currentThread().getName() + ":${param1},${param2}"
+                "How are you?".each { a->
+                    print a
+                }
+                sleep 300
+                println "end of  thread: "+Thread.currentThread().getName() + ":${param1},${param2}"
+            }
+            sleep 2
+
+           //Thread.start(threadTest(i, i+3, url) )
+        }
+        
+    如果将上面的线程启动代码封装在函数内部的话， 由于外部参数已经传递给了函数或方法， 那么就不用增加延迟代码了， 因为外部变量传入方法是串行处理的， 只有函数返回才会执行下一句代码， 那么能保证参数没有被改变。 

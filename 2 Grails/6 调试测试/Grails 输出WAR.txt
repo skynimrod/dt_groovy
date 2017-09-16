@@ -1,0 +1,12 @@
+. 进入Grails 工程目录后运行下面的命令
+
+  E:\4 WorkSpace\0 Grails\GrailsApp2_netBeans>Grails war
+
+  然后会生成一个war 文件.
+
+  | Done creating WAR target\GrailsApp2_netBeans-0.1.war
+
+. 验证
+
+  将该war  拷贝到 toomcat webapp 下面或者直接deployment. 看看能不能使用. 
+  

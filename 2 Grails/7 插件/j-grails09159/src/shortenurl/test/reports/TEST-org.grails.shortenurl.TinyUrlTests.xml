@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" hostname="scott-davis2s-macbook-pro.local" name="org.grails.shortenurl.TinyUrlTests" tests="1" time="0.682" timestamp="2009-08-19T19:20:37">
+  <properties />
+  <testcase classname="org.grails.shortenurl.TinyUrlTests" name="testShorten" time="0.681" />
+  <system-out><![CDATA[--Output from testShorten--
+]]></system-out>
+  <system-err><![CDATA[--Output from testShorten--
+]]></system-err>
+</testsuite>

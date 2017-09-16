@@ -1,0 +1,4 @@
+--Output from testTinyUrl--
+--Output from testIsGd--
+--Output from testIsGdWithBadUrl--
+

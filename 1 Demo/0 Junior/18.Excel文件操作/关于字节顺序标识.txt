@@ -1,0 +1,36 @@
+参见:
+
+     http://baike.baidu.com/link?url=ldtCVr-dxCHG0q0bdSP3oZudPnVAZ8BD-zPFc-Sym1pLWg6RFRaTSysxYp5Z8UjlB5BCmlJ_tRoHTtXYWuTHbK
+
+
+. LITTLE-ENDIAN（小字节序、低字节序）。 与之对应的是：BIG-ENDIAN（大字节序、高字节序）
+
+. 在所有的介绍字节序的文章中都会提到字节序分为两类：Big-Endian和Little-Endian，引用标准的Big-Endian和Little-Endian的定义如下：
+
+  a) Little-Endian就是低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。
+
+  b) Big-Endian就是高位字节排放在内存的高地址端，低位字节排放在内存的低地址端。
+
+  c) 网络字节序：TCP/IP各层协议将字节序定义为Big-Endian，因此TCP/IP协议中使用的字节序通常称之为网络字节序。
+
+  比如 int a = 0x05060708
+
+  在BIG-ENDIAN的情况下存放为：
+
+   字节号 0 1 2 3
+
+   数据 05 06 07 08
+
+  在LITTLE-ENDIAN的情况下存放为：
+
+   字节号 0 1 2 3
+
+   数据 08 07 06 05
+
+. BIG-ENDIAN、LITTLE-ENDIAN跟CPU有关，每一种CPU不是BIG-ENDIAN就是LITTLE-ENDIAN。IA架构的CPU中是Little-Endian，而PowerPC 、SPARC和Motorola处理器则是BIG-ENDIAN。这其实就是所谓的主机字节序。而网络字节序是指数据在网络上传输时是大头还是小头的，在Internet的网络字节序是BIG-ENDIAN。所谓的JAVA字节序指的是在JAVA虚拟机中多字节类型数据的存放顺序，JAVA字节序也是BIG-ENDIAN。
+
+  所以在用C/C++写通信程序时，在发送数据前务必用htonl和htons去把整型和短整型的数据进行从主机字节序到网络字节序的转换，而接收数据后对于整型和短整型数据则必须调用ntohl和ntohs实现从网络字节序到主机字节序的转换。如果通信的一方是JAVA程序、一方是C/C++程序时，则需要在C/C++一侧使用以上几个方法进行字节序的转换，而JAVA一侧，则不需要做任何处理，因为JAVA字节序与网络字节序都是BIG-ENDIAN，只要C/C++一侧能正确进行转换即可（发送前从主机序到网络序，接收时反变换）。如果通信的双方都是JAVA，则根本不用考虑字节序的问题了。
+  
+  如果网络上全部是PowerPC,SPARC和Motorola CPU的主机那么不会出现任何问题，但由于实际存在大量的IA架构的CPU，所以经常出现数据传输错误。
+
+. 无独有偶，所有网络协议也都是采用big endian的方式来传输数据的。所以有时我们也会把big endian方式称之为网络字节序。当两台采用不同字节序的主机通信时，在发送数据之前都必须经过字节序的转换成为网络字节序后再进行传输。ANSI C中提供了四个转换字节序的宏。

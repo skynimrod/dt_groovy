@@ -1,0 +1,534 @@
+.  在控制器中进行调用后将处理结果传递给 GSP 
+
+   def mapvar = [param1:value, param2:value]
+   render(view:'',model:mapvar)
+
+   =============
+
+   在GSP 访问上面的参数:
+
+   <g:each in="${r1}" status="i" var="trip1">
+            <tr>
+              <td>${i} | ${trip1.stockcode?.encodeAsHTML()}</td>
+              <td><a href="${prefix}${trip1.reporturl}"  target="view_windows">
+                    ${trip1.reportname?.encodeAsHTML()} | ${trip1.releaseddate}</a></td> <br/><br/>
+            </tr>
+       </g:each>
+
+  或者 
+
+    controller 中：
+
+            retmap = [ret:'false',ret2:false]
+           render(view:"download", model:retmap)
+
+    download.gsp 中：
+
+
+  <h1> hello world ${param1} </h1>
+
+<g:if test="${ret=='true'}">
+            <h2>ok</h2>
+        </g:if>
+        <g:else>
+            <h2>no</h2>
+        </g:else>
+
+   注意： 属性 test 表示 后面的是表达式， 使用传入的参数必须都在${   } 中。
+
+  在javascript 中使用于 上面的使用方法一致， 如下:
+
+ <script>
+                if( ${ret=='true'})
+                    alert('testtttt')
+                alert('successful');
+                    
+                CloseWebPage();
+                window.opener=null;window.open('','_self');window.close();
+            
+        </script>
+
+    下面的部分还可以根据产品不同的阶段显示不同的内容，另外传递的参数还可以不是字符串， 这儿传递的参数ret2是布尔型
+
+            <g:if env="development" test="${ret2}">
+                Dev mode - debug: $someDebug
+           </g:if>
+
+           <g:if env="production" test="${ret2}">
+                $cache.getContent('1234')
+           </g:if>
+
+
+   还有下面的JavaScript 使用后台传入前台数据的例子:
+
+                $("#Aaaa").click( function() {
+                    if ( ${ retcode == 200 } )
+                        alert("i don't know");
+                    alert("really????");
+                    $(this).hide();
+                } );
+
+  注意： ${ retcode == 200 } 是整个if 语句的条件表达式。 
+
+
+. 在 JavaScript 能直接使用 i18n 中的message 内容吗？
+
+  alert( ${message(code: "smms.main.test", args: ['Juan', 'lunes'])} )  这样访问不行。 javascript 需要专门的i18n 的js. 不知道grails 中有没有简便的访问方式.
+
+  由于 JavaScript 中直接访问i18n 的message 需要单独的支持i18n 的js 包， 但是controller 中可以直接访问 message, 那么完全可以将页面中需要的 message 全部在controller 中访问后放到一个哈希表中传递给页面。 而 Javascript 中访问参数的方式是非常简单的。这样也就变相达到了JS 支持 i18n 的目的。
+
+  如下：
+
+        def msgmap = [:]      // 用来存储涉及本页面的i18n 的message
+        
+        msgmap.put( "smms.main.download", message(code: "smms.main.download") )
+        msgmap.put( "smms.main.reportProc", message(code: "smms.main.reportProc") )
+        
+        def retmap=["msg":msgmap]
+        render(view:"reportProc", model:retmap)
+
+=========================================================
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Sample title</title>
+        <script>
+            alert("${msg['smms.main.reportProc']}")
+        </script>
+    </head>
+    <body>
+        <h1>${msg["smms.main.reportProc"]}</h1>
+    </body>
+
+
+. 在controller 中使用 message
+
+   def msg = message(code: "smms.main.test", args: ['Juan', 'lunes'])
+   println msg
+
+. 问题：
+
+      后台传入的哈希表参数， 在前端视图中如何遍历检索？ 特别是后台传入数据较多的情况， 比如Ajax 方式传入处理结果，比如如下：
+
+            def retmap=["msg":msgmap,"test":"just a test",\
+                "shmbRetmap1":shmbRetmap1, "shmbRetmap2":shmbRetmap2,
+                "szseRetmap1":szseRetmap1, "szseRetmap2":szseRetmap2,
+                "smeRetmap1":smeRetmap1, "smeRetmap2":smeRetmap2,
+                "cybRetmap1":cybRetmap1, "cybRetmap2":cybRetmap2
+            ]
+        render(view:"reportListProc", model:retmap)
+
+     处理后面的8个数据， 实际上格式是一致的， 完全可以通过循环来操作， 但是如何动态获取参数？
+
+====================================
+
+. 在 gsp 中访问 params 的内容， 似乎是gsp 传递给 controller/action 参数
+
+  ${params}  
+
+  params 对应的是 request 的参数. 
+
+[myDate_year:2015, myDate_day:30, myDate:date.struct, myDate_month:9, size:, action:reportListProcServ, format:null, controller:homepage] 
+
+  问题是， 那么那个参数可以遍历 action 传递到 gsp 的参数
+
+  在2.4.2 的文档中8.2.1.1 中有GSP 中的全局变量的介绍
+
+  
+
+  在GSP 中如下:
+
+           <g:each in="${[["source":"1"],["source":"2"],["source":"3"]]}" status="i" var="tt">
+               <p>${tt.source?.encodeAsHTML()}</p>
+           </g:each>
+输出是
+
+   1
+
+   2
+
+   3
+  
+  其实上面的是个list , 那么实际问题就是如何遍历 map, 先在 groovy 中进行调试。
+
+
+def map = ["Java":"server", "Groovy":"server", "JavaScript":"web"]
+map.each{ 
+  println it.key
+  println it.value 
+}
+
+map.each{k,v->
+  println k
+  println v
+}
+
+
+==继续测试:==
+
+           <g:each in="${["first":["source":"1","other":2],"second":["source":"2","other":2],"third":["source":"3","other":2]]}" status="i" var="tt">
+               <p>${tt.value?.source?.encodeAsHTML()}</p>
+           </g:each>
+
+
+这个访问没有问题， 跳过了Key值。
+
+. 在引用中有时候只需要后台传入的数据记录中的一个字段， 比如填充下拉框的内容(combobox)，可以使用如下的方式:
+
+  1. action 如下传递数据
+
+    def retmap=["index":ReportKeysTbl.list()]
+        
+    render(view:"reportProc", model:retmap)
+
+  2. gsp 中如下访问其中的一个字段
+
+     <g:currencySelect name="keysList" from="${index?.reportkeys}" /> <br />
+
+     上面就将其中一个字段的内容填充到下拉框中
+     
+. Javascript 访问后台传入的数组有点问题，如果下标为变量， 总是出错
+
+  实际上就是访问下面的类似数组的问题。 （下面省略了中间的数据。。。）
+
+  var  ttt = [{stockcode=600862, reportname=南通科技：关于中国证监会上市公司并购重组审核委员会审核公司重大资产出售及发行股份购买资产并募集配套资金暨关联交易相关事项的停牌公告, reporturl=finalpage/2015-09-09/1201571301.PDF, releaseddate=2015-09-09},。。。。{stockcode=300439, reportname=美康生物：关于副总经理辞职的公告, reporturl=finalpage/2015-09-09/1201567132.PDF, releaseddate=2015-09-09}]
+
+
+  上面这一句是，通过下面的JavaScript 实现的:
+
+            var  j = 2;
+
+            if ( ${ retcode == 200 } ) {
+                var  ttt = ${searchResult};
+                alert(ttt[j].stockcode});
+            }
+
+
+  但是 alert() 没有执行， 应该是ttt[j] .stockcode 有问题。  或者应该先转换为JSon 然后访问。。。。
+
+  从上面的数据可以看出， .stockcode 的访问方式是有问题的？？？后台传入的时候实际上是JSON 格式， 但是为什么JavaScript访问的时候就不是JSON格式了？？
+
+  而且， 由于这条语句过长， 会产生错误。 应该将 searchResult 的内容转化为 JSON 对象。。。。
+
+下面的访问方式就没有问题：
+
+ alert( ${searchResult[2].stockcode});
+
+但是如果加上下面这一句，就会出错
+
+                alert(${searchResult});
+
+还是访问结果集的问题。。。。
+
+===============
+
+参见:
+
+   http://www.ibm.com/developerworks/cn/web/wa-lo-json/
+
+ 我们先讨论如何在 Web 页面中用 JavaScript 处理 JSON 数据。我们通过一个简单的 JavaScript 方法就能看到客户端如何将 JSON 数据表示给用户：
+
+function handleJson() { 
+  var j={"name":"Michael","address":
+      {"city":"Beijing","street":" Chaoyang Road ","postcode":100025}
+  }; 
+  document.write(j.name); 
+  document.write(j.address.city); 
+ }
+
+假定服务器返回的 JSON 数据是上文的：
+
+{"name":"Michael","address":
+    {"city":"Beijing","street":" Chaoyang Road ","postcode":100025}
+}
+
+只需将其赋值给一个 JavaScript 变量，就可以立刻使用该变量并更新页面中的信息了，相比 XML 需要从 DOM 中读取各种节点而言，JSON 的使用非常容易。我们需要做的仅仅是发送一个 Ajax 请求，然后将服务器返回的 JSON 数据赋值给一个变量即可。有许多 Ajax 框架早已包含了处理 JSON 数据的能力，例如 Prototype（一个流行的 JavaScript 库：http://prototypejs.org）提供了 evalJSON() 方法，能直接将服务器返回的 JSON 文本变成一个 JavaScript 变量：
+
+new Ajax.Request("http://url", { 
+  method: "get", 
+  onSuccess: function(transport) { 
+    var json = transport.responseText.evalJSON(); 
+    // TODO: document.write(json.xxx); 
+  } 
+ });
+
+
+参见: 
+
+     http://api.jquery.com/jQuery.parseJSON/
+
+Parse a JSON string.
+
+var obj = jQuery.parseJSON( '{ "name": "John" }' );
+alert( obj.name === "John" );
+
+但是如果用下面的语句
+
+                        var ooob = jQuery.parseJSON(${searchResult});
+                        alert("before gTest");
+
+又会直接将${searchResult} 转换为上面的数据格式， 即不再是JSON 格式的。
+
+===============
+
+参见:
+
+     http://justjavac.iteye.com/blog/702174
+
+
+Returning the Model
+
+一个model本质上就是一个map，在视图渲染时使用。map中的keys转化为变量名，用于视图的获取。第一种方式是明确的return一个model:
+
+ 
+
+def show = {
+ 	[ book : Book.get( params.id ) ]
+}
+
+如果没有明确的 model被return，控制器(Controller)的属性将会被视为 model。 所以允许你这样编写代码:
+
+ 
+
+class BookController {
+    List books
+    List authors
+    def list = {
+           books = Book.list()
+           authors = Author.list()
+    }
+}
+
+ 
+
+    这可能由于实际上控制器(Controller)是 prototype（原型）范围。换句话说，每个请求都会创建一个新的控制器(Controller)。 否则，像上面的代码，就不会是线程安全的。
+
+上面示例中，books 和 authors属性在视图中都是可用的。 
+
+一个更高级的方式就是 return一个 Spring ModelAndView 类的实体:
+
+ 
+
+import org.springframework.web.servlet.ModelAndView
+
+def index = {
+    def favoriteBooks = … // get some books just for the index page, perhaps your favorites
+
+
+
+    // forward to the list view to show them
+    return new ModelAndView("/book/list", [ bookList : favoriteBooks ])
+}
+
+ 
+选择View
+
+在之前的2个示例中，都没有指定哪个 view 用于渲染。因此，Grails怎么知道哪个 view被选取?答案在于规约。对于action:
+
+ 
+
+class BookController {
+	def show = {
+	 	[ book : Book.get( params.id ) ]
+	}	
+}
+
+Grails 会自动查找位于 grails-app/views/book/show.gspview (事实上， Grails 会首先查找JSP，因为，Grails同样可以与 JSP一起使用).
+
+假如，你想渲染其他view, render 方法在这里就能帮助你:
+
+ 
+
+def show = {
+  	def map = [ book : Book.get( params.id ) ]
+    render(view:"display", model:map)
+}
+
+这种情况下，Grails将会尝试渲染位于 grails-app/views/book/display.gsp的view。注意，Grails自动描述位于book文件夹中的 grails-app/views路径位置的视图。很方便，但是，如果你拥有某些共享的视图需要存取，作为替代使用:
+
+ 
+
+def show = {
+  	def map = [ book : Book.get( params.id ) ]
+    render(view:"/shared/display", model:map)
+}
+
+在这种情况下，Grails将尝试渲染grails-app/views/shared/display.gsp位置上的视图。 
+
+=====================
+
+似乎传递的不是哈希表数组， 而是一个list , list 的元素是哈希表？？
+
+        def person[]=[{"name":"tom","age":23},{"name":"mike","age":25}] 
+
+这样的语句是错误的。
+
+
+
+jQuery.parseJSON()[1]  函数用于将格式完好的JSON字符串转为与之对应的JavaScript对象。
+所谓"格式完好"，就是要求指定的字符串必须符合严格的JSON格式，例如：属性名称必须加双引号、字符串值也必须用双引号。
+
+必须用双引号(不能用单引号)
+
+JSON标准不允许字符串中出现"控制字符"，例如：一个Tab或换行符。
+
+==========下面是 JSON 转化是成功 的一个例子 =======
+
+                        var aaa = $.parseJSON('{"name":"Tom","age":23}');
+
+                        alert(aaa.name);
+
+如果是数组， 则按照下面的方式访问:
+
+                        var aaa = $.parseJSON('[{"name":"Tom","age":23},{"name":"Mike","age":25}]');
+
+                        alert(aaa[1].name);
+
+遍历数组的方式
+
+                        var aaa = $.parseJSON('[{"name":"Tom","age":23},{"name":"Mike","age":25}]');
+
+                        for (var i = 0; i < aaa.length; i ++ )
+                            alert(aaa[i].name);
+
+
+====
+
+用下面这条语句
+
+var ttt = ${searchResult.toString}
+
+结果出现下面的错误:
+
+Class
+    groovy.lang.MissingPropertyException
+Message
+    No such property: toString for class: groovy.sql.GroovyRowResult
+
+哈哈， 终于知道传送过来的参数的类型了。。。“groovy.sql.GroovyRowResult”
+
+通过百度可知， 就是 Map 类型，  Map.Entry<K,V>
+
+http://docs.groovy-lang.org/latest/html/api/groovy/sql/GroovyRowResult.html
+
+  有详细的说明， 包含对应的方法及属性。
+
+用下面的语句:
+
+                        var ttt = ${searchResult.getAt(2).stockcode.encodeAsHTML()}
+
+执行后变成:
+
+                             var ttt = 600145
+
+实际上， 核心问题就是 ${}里面不能访问外面的变量，实际上 searchResult 已经是一个JSON 类型了（哈希表），问题是如何遍历？？
+
+或者直接在传递数据之前，就把map 转换为JSON字符串, 这样到了页面后，就可以转换为JSON对象进行使用了。
+
+
+                        var abc = ${searchResult.toString()}
+
+会发现 变成如下结果: (中间数据省略了)
+
+var abc = [[stockcode:600862, reportname:南通科技：关于中国证监会上市公司并购重组审核委员会审核公司重大资产出售及发行股份购买资产并募集配套资金暨关联交易相关事项的停牌公告, reporturl:finalpage/2015-09-09/1201571301.PDF, releaseddate:2015-09-09], [stockcode:600280, reportname:中央商场：重大事项公告, reporturl:finalpage/2015-09-09/1201571216.PDF, releaseddate:2015-09-09], [stockcode:600145, reportname:*ST新亿：控股股东回复函, reporturl:finalpage/2015-09-09/1201569175.PDF, releaseddate:2015-09-09]]
+
+这种字符串是无法JSON 成功的。。。。
+
+参见:
+
+ http://550516671-qq-com.iteye.com/blog/818214
+
+其实哈希对象可以直接转换为JSON的， prototype 直接支持。
+
+  //将Hash对象转换成JSON字符串  
+            document.write("Hash对象的JSON字符串为：" + hash.toJSON() + "<br>");  
+
+
+==============
+
+在Grails 中可以将 map 转换为 JSON 字符串
+
+   def a23 =  resultmap as JSON
+
+但是，传递到页面的时候， 字符串变成如下格式:
+
+     retmap["strJSON"] = a23
+
+   ------
+
+     var bbb = $.parseJSON('${strJSON}');
+
+运行后， 变成: (省略中间数据)
+
+   var bbb = $.parseJSON('[{&quot;stockcode&quot;:&quot;600862&quot;,&quot;reportname&quot;:&quot;南通科技：关于中国证监会上市公司并购重组审核委员会审核公司重大资产出售及发行股份购买资产并募集配套资金暨关联交易相关事项的停牌公告&quot;,&quot;reporturl&quot;:&quot;finalpage/2015-09-09/1201571301.PDF&quot;,&quot;releaseddate&quot;:&quot;2015-09-09&quot;},。。。{&quot;stockcode&quot;:&quot;300439&quot;,&quot;reportname&quot;:&quot;美康生物：关于副总经理辞职的公告&quot;,&quot;reporturl&quot;:&quot;finalpage/2015-09-09/1201567132.PDF&quot;,&quot;releaseddate&quot;:&quot;2015-09-09&quot;}]'); 
+
+
+  这个问题就是双引号的问题，这儿使用$quot; 来代替的， 应该是为了在页面上显示而准备的。。。。
+
+def a23 =  resultmap as JSON
+        
+        println "JSON" + a23.toString()
+        def a22 = a23.toString()
+        
+        println "a22" + a22
+        
+        retmap["strJSON"] = a22
+
+----------
+
+                        var aaa = $.parseJSON('[{"name":"Tom","age":23},{"name":"Mike","age":25}]');
+
+                        for (var i = 0; i < aaa.length; i ++ )
+                            alert(aaa[i].name);
+                        
+                                                
+                        var bbb = $.parseJSON('${strJSON}');
+                        var a22 = params.strJSON;
+                        alert(a22);
+                        
+这几句话有问题，获取strJSON 不是太正确， 由于JSON转换对字符串要求很高， 所以，这儿有点问题， 明天解决。。。
+
+实际上就是传递的参数含有双引号的问题， 如果是字符串含有双引号， 从后台传递到前端页面后，双引号 也会转变为&quot; 因为 双引号在页面中是需要单独处理的。
+
+只能把 &quot; 转换替换为 \", 如下：
+                $("#Aaaa").click( function() {
+                    if ( ${ retcode == 200 } ) {
+                        
+                        var a22 = '${Person}';
+                        var bas = a22.replace(/&quot;/g,"\"");
+                        var json = $.parseJSON(bas);
+                        
+                        
+                        alert(a22);
+                        alert(bas);
+                        alert( json[1].name);
+                        alert("${prefix}");
+
+                        alert("before gTest");
+                       
+                    }
+                } );
+  上面的代码测试通过。
+ 
+
+那么下面的代码就可以正确解析对应的数据
+
+   controller:
+
+        def a23 =  resultmap as JSON
+        
+        println "JSON" + a23.toString()
+        def a22 = a23.toString()
+        
+        println "a22" + a22
+        
+        retmap["strJSON"] = a22
+        render(view:"reportProc", model:retmap)
+
+   页面中的Jquery :
+
+                        var js23 = '${strJSON}'.replace(/&quot;/g,"\"");
+                        var json2 = $.parseJSON(js23);
+                        for ( var i = 0; i < 10; i ++)
+                            alert(json2[i].stockcode);
+

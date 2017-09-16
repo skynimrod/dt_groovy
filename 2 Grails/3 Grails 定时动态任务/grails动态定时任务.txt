@@ -1,0 +1,47 @@
+参见:
+
+     http://xiaosa.blog.51cto.com/665033/1198756/
+
+     http://blog.csdn.net/wangyongwyk/article/details/5586231
+
+. 安装两个插件：grails install-plugin quartz, grails install-plugin quartz-monitor
+我对quartz-monitor做了简单汉化（取消i18n，增加jquery.js，汉化直接在js文件中完成，附件有下载）
+创建动态任务
+
+def myTrigger = new CronTriggerImpl()
+myTrigger.setName("myTrigger_test")
+myTrigger.setCronExpression('2 * * * * ?')
+Test1Job.schedule(myTrigger)
+
+创建任务：grails create-job Test1
+
+class Test1Job {
+    static triggers = {
+    }
+    def execute() {
+        // execute job
+        println('hello quartz!')
+    }
+}
+
+上面的方法，是可以添加简单定时任务，若要给Test1Job传参数，那么写法变成
+Test1Job.schedule("cronExpression", Map)
+
+Test1Job {
+  execute(context)
+}
+但这种方法，还不清楚如何注入triggerName，因为triggerName是quartz的唯一标记。
+查找triggerName
+
+def listJobGroups = quartzScheduler.getJobGroupNames()
+        listJobGroups?.each { jobGroup ->
+            quartzScheduler.getJobKeys(jobGroupEquals(jobGroup))?.each { jobKey ->
+                def jobName = jobKey.name
+                List<Trigger> triggers = quartzScheduler.getTriggersOfJob(jobKey)
+                if (triggers) {
+                    triggers.each { trigger ->
+                        println("name:" + trigger.key.name)
+                    }
+                }
+            }
+        }

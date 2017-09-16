@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" hostname="scott-davis2s-macbook-pro.local" name="org.grails.shortenurl.IsGdTests" tests="2" time="1.371" timestamp="2009-08-19T19:20:35">
+  <properties />
+  <testcase classname="org.grails.shortenurl.IsGdTests" name="testShorten" time="0.75" />
+  <testcase classname="org.grails.shortenurl.IsGdTests" name="testBadUrl" time="0.599" />
+  <system-out><![CDATA[--Output from testShorten--
+--Output from testBadUrl--
+An error occurred: http://is.gd/api.php?longurl=IAmNotAValidUrl
+500 : Internal Server Error
+]]></system-out>
+  <system-err><![CDATA[--Output from testShorten--
+--Output from testBadUrl--
+]]></system-err>
+</testsuite>

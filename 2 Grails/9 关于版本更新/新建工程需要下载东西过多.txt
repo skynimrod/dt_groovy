@@ -1,0 +1,36 @@
+. 类似如下信息：
+
+ Download https://repo.grails.org/grails/core/org/grails/grails-plugin-filters/3.
+0.3/grails-plugin-filters-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-gsp/3.0.3/
+grails-plugin-gsp-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-services/3
+.0.3/grails-plugin-services-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-url-mappin
+gs/3.0.3/grails-plugin-url-mappings-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-intercepto
+rs/3.0.3/grails-plugin-interceptors-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-async/3.0.
+3/grails-plugin-async-3.0.3.jar
+Download https://repo.grails.org/grails/core/com/h2database/h2/1.3.176/h2-1.3.17
+6.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-common/3.0.3/
+grails-web-common-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm-hi
+bernate4/4.0.4.RELEASE/grails-datastore-gorm-hibernate4-4.0.4.RELEASE.jar
+Download https://repo.grails.org/grails/core/com/googlecode/concurrentlinkedhash
+map/concurrentlinkedhashmap-lru/1.4/concurrentlinkedhashmap-lru-1.4.jar
+Download https://repo.grails.org/grails/core/org/jboss/logging/jboss-logging/3.1
+.3.GA/jboss-logging-3.1.3.GA.jar
+Download https://repo.grails.org/grails/core/org/hibernate/hibernate-core/4.3.10
+.Final/hibernate-core-4.3.10.Final.jar
+
+关键是有很多jar 还下载不下来， 停在中间，如何让这些jar 直接在本地拷贝即可？？
+
+通过查看上面下载的jar , 发现， 都是下载到 Grails-3.0.3\dist 目录中， 即不是project 目录中， 可能是project 需要的。 
+
+不是， hibernate-core-4.3.10.Final.jar 就没有放在dist 目录中， 应该是应用需要的。 不过奇怪的是， 也没有放到应用所在目录或子目录中， 不知道放哪儿去了？  C:\Documents and Settings\Administrator\.gradle
+
+这应该是gradle 的构建机制， 将用到的 jar 统一存放到指定的路径中。 比如上面的hibernate-core-4.3.10.Final.jar 就存放在下面的目录中:
+
+    C:\Documents and Settings\Administrator\.gradle\caches\modules-2\files-2.1

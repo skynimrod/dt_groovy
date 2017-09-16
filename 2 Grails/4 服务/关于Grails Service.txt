@@ -1,0 +1,70 @@
+. 参见：
+
+     《Grails 基础教程》- 7.2
+
+      http://justjavac.iteye.com/blog/703965
+
+.  用命令行创建 Service
+
+   grails create-service com.grailsinaction.post
+
+   还可以在netbeans 创建。 new->Grails Service
+
+. 《Grails技术精解与Web开发实践》 P185
+
+   Web Service 本质上是要实现远程的程序调用. SOA,SOAP, REST等， 本质上是基于某种通用的远程调用技术
+
+   REST - Representational State Transfer   表述性状态转移
+
+   REST 是一种设计风格而不是一个技术, 它通常基于HTTP、URI、XML以及HTML 这些现有的广泛流行的协议和标准。
+
+   REST 从资源的角度来跟团茶整个网络, 分布在各处的资源由URI 确定， 而客户端的应用通过URI 来获取资源的表形。  随着不断获取资源
+
+. static transactional = false
+
+  所有的服务缺省都是 事物化的。
+
+. 关于服务的使用
+
+  关键是实例化。 在Grails 中 Service 类的实例化是规约方式， 例如 Service 为 DownLoadProcService， 那么可以按照如下来实例化
+
+  def downLoadProcService
+
+  即将第一个字母小写即可。  因为创建service 的时候第一个字母自动会变成大写。
+  如果 不用这种方式实例化， 那么运行的时候就会提示空指针错误。 其实就是实例化失败。
+  
+
+  也可以如下进行实例化
+
+  DownLoadProcService downLoadProcService
+
+  本质上作用一样。
+
+  ============================
+
+  上面的实例化过程， 本质上是使用了Spring 容器的注入功能， 来将service 注入到Controller 中。 通常是通过名字注入的，不支持类型注入。
+
+  另外， 如果用   DownLoadProcService downLoadProcService  方式来注入， 存在副作用， 在开发模式下， 如果  DownLoadProcService发生改变， 那么加载的时候会抛出一个错误。 
+
+
+.service 中注入  service
+
+  class AuthorService {
+	def bookService
+}
+
+. Domain 类中注入 service
+
+  用于帮助开发各种丰富的domain
+
+  class Book {	
+	…
+	def bookService
+	def buyBook() {
+		bookService.buyBook(this)
+	}
+}
+
+. 从 Java 中使用 service
+
+  

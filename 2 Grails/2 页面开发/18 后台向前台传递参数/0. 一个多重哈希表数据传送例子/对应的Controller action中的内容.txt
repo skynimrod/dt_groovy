@@ -1,0 +1,21 @@
+        def morereportMap = reportListProcService.getPeriodReportList( 
+                    startDateMap.dateStr2, endDateMap.dateStr2, report_dir )
+                
+        println "========================"
+        println morereportMap
+        println "========================"
+
+        def reportMap = reportListProcService.getSpecDateAllReportList( 
+                                    startDateMap.dateStr2, report_dir )
+        
+        def retmap=["test":"just a test", "reportMap":reportMap, "mostMap": morereportMap ]
+        render(view:"reportListProc", model:retmap)
+
+
+说明:
+
+    morereportMap 中是多个reportMap 类型的哈希表类容， reportMap 中又包含多个哈希表， 比如首条公告信息，最后一条公告信息等等。
+  
+    所以， 上面是3重哈希表结构数据。
+
+   这种数据的处理非常复杂， 所以在对应GSP 中处理起来就需要非常注意。 关键是.value 才是内层哈希表的内容.

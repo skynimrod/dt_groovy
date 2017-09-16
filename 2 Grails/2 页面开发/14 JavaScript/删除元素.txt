@@ -1,0 +1,17 @@
+删除一个父元素下面的所有子元素:
+document.getElementById("ok").innerHTML = "";
+删除其中的一个：
+document.getElementById("ok").remove(document.getElementById("ok").children(i));
+//删除id为"ok"下的第i-1个子元素 
+
+                document.getElementById("omgtest").innerHTML = "";
+
+
+alert(document.getElementById("Baaa").innerHTML);
+                        document.getElementById("omgtest").innerHTML = "";
+
+上面这两句都不能执行， 奇怪？？？？？？
+
+原因是这两句是放在<javascript></javascript>的最前面， 而这个时候文档是没有创建成功的，应该放在JQuery 的里面， 这样能保证文档已经创建成功了。  
+
+另外， .value 是不能成功执行的。。

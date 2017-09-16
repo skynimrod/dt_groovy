@@ -1,0 +1,19 @@
+. 参见:
+
+     http://baike.baidu.com/link?url=8l2Y66nNm3lNlt23Cjt6fB2b2unBMZNZOAIKAjRjzAmPYhp2xqOYJcDM9XBx4_pIc729JT424plNGk0F2yIliK
+
+  设置->通用->功能->通讯录同步助手      通讯录安全助手 （直接搜索）
+
+  githum.com        skydefence/1a   xinren_2002@yahoo.com
+
+. torrent文件
+
+   装有BT(BitTorrent) 下载必须的文件信息, 作用相当于HTTP 下载里的URL 连接
+
+   一个用户要利用BitTorrent 协议下载文件之前， 先要从某个网站下载一个包含该文件相关信息的“.Torrent”文件。
+
+   该种子文件包含一个称为“追踪器(tracker)”的服务器节点(英特网上有很多追踪器)的地址, 该追踪器负责维护参与一个特定文件分发的所有对等方的信息.
+
+. BT原理普通的HTTP/FTP下载使用TCP/IP协议，BitTorrent协议是架构于TCP/IP协议之上的一个P2P文件传输协议，处于TCP/IP结构的应用层。BitTorrent协议本身也包含了很多具体的内容协议和扩展协议，并在不断扩充中。
+根据BitTorrent协议，文件发布者会根据要发布的文件生成提供一个.torrent文件，即种子文件，也简称为“种子”。
+torrent文件本质上是文本文件，包含Tracker信息和文件信息两部分。Tracker信息主要是BT下载中需要用到的Tracker服务器的地址和针对Tracker服务器的设置，文件信息是根据对目标文件的计算生成的，计算结果根据BitTorrent协议内的B编码规则进行编码。它的主要原理是需要把提供下载的文件虚拟分成大小相等的块，块大小必须为2k的整数次方（由于是虚拟分块，硬盘上并不产生各个块文件），并把每个块的索引信息和Hash验证码写入.torrent文件中；所以，.torrent文件就是被下载文件的“索引”。

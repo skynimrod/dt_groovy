@@ -1,0 +1,573 @@
+. 1. Netbeans 8.0.2 + groovy 2.4.7 + grails 3.1.11   无法成功创建项目,也无法运行老的项目的问题?
+
+   运行SMMS 的时候出现下面的问题 (无论在netbeans中运行, 还是在命令行下运行, 都出现下面的错误)
+
+| Error Error occurred running Grails CLI: null (Use --stacktrace to see the ful
+l trace)
+
+   然后再命令行下面添加运行参数  --stacktrace 来查看错误原因.
+
+ F:\F_3_test\1_Groovy\SMMS>grails run-app --stacktrace
+| Error Error occurred running Grails CLI: null (NOTE: Stack trace has been filt
+ered. Use --verbose to see entire trace.)
+
+java.lang.NullPointerException
+        at org.grails.cli.GrailsCli.initializeProfile(GrailsCli.groovy:511)
+        at org.grails.cli.GrailsCli.initializeApplication(GrailsCli.groovy:310)
+        at org.grails.cli.GrailsCli.execute(GrailsCli.groovy:273)
+        at org.grails.cli.GrailsCli.main(GrailsCli.groovy:163)
+| Error Error occurred running Grails CLI: null  
+
+   按照提示, 应该用 --verbose 参数， 继续在命令行下面运行来查看错误原因.
+
+F:\F_3_test\1_Groovy\SMMS>grails run-app --verbose
+| Error Error occurred running Grails CLI: null
+java.lang.NullPointerException
+        at org.grails.cli.GrailsCli.initializeProfile(GrailsCli.groovy:511)
+        at org.grails.cli.GrailsCli.initializeApplication(GrailsCli.groovy:310)
+        at org.grails.cli.GrailsCli.execute(GrailsCli.groovy:273)
+        at org.grails.cli.GrailsCli.main(GrailsCli.groovy:163)
+| Error Error occurred running Grails CLI: null
+
+
+  与--stacktrace 参数反馈的错误信息相同.
+  
+
+  分析:
+
+      a. 尝试在smms目录下面运行grails  
+
+F:\F_3_test\1_Groovy\SMMS>grails
+| Error Error occurred running Grails CLI: null (Use --stacktrace to see the ful
+l trace)
+
+        那么在其他项目目录下面运行grails 如何哪?
+
+F:\F_3_test\1_Groovy\GrailsApplication5>grails
+
+| Enter a command name to run. Use TAB for completion:
+grails>
+
+完全没有问题.
+
+        由此可以看出, 应该是SMMS 的项目设置有问题.  因为 SMMS 是老版本的groovy 2.4.4 + Grails 3.0.3. 那么把设置修改回老版本(path, 以及grails ) 
+
+     b. 尝试netbeans 8.0 下面创建
+
+        创建不成功
+
+     c. 卸载netbeans 8.0, 下载netbeans 8.1 并安装
+
+        运行之前的app. 在netbeans 8.1运行出现下面的问题.
+
+|Resolving Dependencies. Please wait...
+Error |
+Error initializing classpath: peer not authenticated (Use --stacktrace to see the full trace)
+
+
+         在命令行下面带 --stackstrace  参数运行后, 出现下面的错误提示信息:
+
+| Resolving Dependencies. Please wait...
+| Error Error initializing classpath: peer not authenticated (NOTE: Stack trace
+has been filtered. Use --verbose to see entire trace.)
+javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated
+        at org.apache.http.conn.ssl.AbstractVerifier.verify(AbstractVerifier.jav
+a:128)
+        at org.apache.http.conn.ssl.SSLSocketFactory.connectSocket(SSLSocketFact
+ory.java:572)
+        at org.apache.http.impl.conn.DefaultClientConnectionOperator.openConnect
+ion(DefaultClientConnectionOperator.java:180)
+        at org.apache.http.impl.conn.ManagedClientConnectionImpl.open(ManagedCli
+entConnectionImpl.java:294)
+        at org.apache.http.impl.client.DefaultRequestDirector.tryConnect(Default
+RequestDirector.java:640)
+        at org.apache.http.impl.client.DefaultRequestDirector.execute(DefaultReq
+uestDirector.java:479)
+        at org.apache.http.impl.client.AbstractHttpClient.execute(AbstractHttpCl
+ient.java:906)
+        at org.apache.http.impl.client.DecompressingHttpClient.execute(Decompres
+singHttpClient.java:137)
+        at org.apache.http.impl.client.DecompressingHttpClient.execute(Decompres
+singHttpClient.java:118)
+        at org.gradle.internal.resource.transport.http.HttpClientHelper.performH
+ttpRequest(HttpClientHelper.java:111)
+        at org.gradle.internal.resource.transport.http.HttpResourceAccessor.getR
+awResource(HttpResourceAccessor.java:74)
+        at org.gradle.plugin.use.resolve.service.internal.HttpPluginResolutionSe
+rviceClient.request(HttpPluginResolutionServiceClient.java:81)
+        at org.gradle.plugin.use.resolve.service.internal.HttpPluginResolutionSe
+rviceClient.queryPluginMetadata(HttpPluginResolutionServiceClient.java:60)
+        at org.gradle.plugin.use.resolve.service.internal.PersistentCachingPlugi
+nResolutionServiceClient$1.create(PersistentCachingPluginResolutionServiceClient
+.java:60)
+        at org.gradle.plugin.use.resolve.service.internal.PersistentCachingPlugi
+nResolutionServiceClient$1.create(PersistentCachingPluginResolutionServiceClient
+.java:58)
+        at org.gradle.plugin.use.resolve.service.internal.PersistentCachingPlugi
+nResolutionServiceClient.fetch(PersistentCachingPluginResolutionServiceClient.ja
+va:110)
+        at org.gradle.plugin.use.resolve.service.internal.PersistentCachingPlugi
+nResolutionServiceClient.maybeFetch(PersistentCachingPluginResolutionServiceClie
+nt.java:103)
+        at org.gradle.plugin.use.resolve.service.internal.PersistentCachingPlugi
+nResolutionServiceClient.maybeFetch(PersistentCachingPluginResolutionServiceClie
+nt.java:91)
+        at org.gradle.plugin.use.resolve.service.internal.PersistentCachingPlugi
+nResolutionServiceClient.queryPluginMetadata(PersistentCachingPluginResolutionSe
+rviceClient.java:67)
+        at org.gradle.plugin.use.resolve.service.internal.InMemoryCachingPluginR
+esolutionServiceClient$1.create(InMemoryCachingPluginResolutionServiceClient.jav
+a:47)
+        at org.gradle.plugin.use.resolve.service.internal.InMemoryCachingPluginR
+esolutionServiceClient$1.create(InMemoryCachingPluginResolutionServiceClient.jav
+a:45)
+        at org.gradle.plugin.use.resolve.service.internal.InMemoryCachingPluginR
+esolutionServiceClient.getResponse(InMemoryCachingPluginResolutionServiceClient.
+java:76)
+        at org.gradle.plugin.use.resolve.service.internal.InMemoryCachingPluginR
+esolutionServiceClient.queryPluginMetadata(InMemoryCachingPluginResolutionServic
+eClient.java:42)
+        at org.gradle.plugin.use.resolve.service.internal.DeprecationListeningPl
+uginResolutionServiceClient.queryPluginMetadata(DeprecationListeningPluginResolu
+tionServiceClient.java:48)
+        at org.gradle.plugin.use.resolve.service.internal.PluginResolutionServic
+eResolver.resolve(PluginResolutionServiceResolver.java:84)
+        at org.gradle.plugin.use.resolve.internal.CompositePluginResolver.resolv
+e(CompositePluginResolver.java:33)
+        at org.gradle.plugin.use.resolve.internal.NotNonCorePluginOnClasspathChe
+ckPluginResolver.resolve(NotNonCorePluginOnClasspathCheckPluginResolver.java:42)
+
+        at org.gradle.plugin.use.internal.DefaultPluginRequestApplicator.resolve
+ToFoundResult(DefaultPluginRequestApplicator.java:182)
+        at org.gradle.plugin.use.internal.DefaultPluginRequestApplicator.access$
+000(DefaultPluginRequestApplicator.java:46)
+        at org.gradle.plugin.use.internal.DefaultPluginRequestApplicator$1.trans
+form(DefaultPluginRequestApplicator.java:70)
+        at org.gradle.plugin.use.internal.DefaultPluginRequestApplicator$1.trans
+form(DefaultPluginRequestApplicator.java:68)
+        at org.gradle.util.CollectionUtils.collect(CollectionUtils.java:151)
+        at org.gradle.util.CollectionUtils.collect(CollectionUtils.java:146)
+        at org.gradle.plugin.use.internal.DefaultPluginRequestApplicator.applyPl
+ugins(DefaultPluginRequestApplicator.java:68)
+        at org.gradle.configuration.DefaultScriptPluginFactory$ScriptPluginImpl.
+apply(DefaultScriptPluginFactory.java:137)
+        at org.gradle.configuration.project.BuildScriptProcessor.execute(BuildSc
+riptProcessor.java:39)
+        at org.gradle.configuration.project.BuildScriptProcessor.execute(BuildSc
+riptProcessor.java:26)
+        at org.gradle.configuration.project.ConfigureActionsProjectEvaluator.eva
+luate(ConfigureActionsProjectEvaluator.java:34)
+        at org.gradle.configuration.project.LifecycleProjectEvaluator.evaluate(L
+ifecycleProjectEvaluator.java:59)
+        at org.gradle.api.internal.project.AbstractProject.evaluate(AbstractProj
+ect.java:492)
+        at org.gradle.api.internal.project.AbstractProject.evaluate(AbstractProj
+ect.java:86)
+        at org.gradle.execution.TaskPathProjectEvaluator.configureHierarchy(Task
+PathProjectEvaluator.java:42)
+        at org.gradle.configuration.DefaultBuildConfigurer.configure(DefaultBuil
+dConfigurer.java:35)
+        at org.gradle.initialization.DefaultGradleLauncher.doBuildStages(Default
+GradleLauncher.java:129)
+        at org.gradle.initialization.DefaultGradleLauncher.doBuild(DefaultGradle
+Launcher.java:106)
+        at org.gradle.initialization.DefaultGradleLauncher.getBuildAnalysis(Defa
+ultGradleLauncher.java:97)
+        at org.gradle.launcher.exec.InProcessBuildActionExecuter$DefaultBuildCon
+troller.configure(InProcessBuildActionExecuter.java:84)
+        at org.gradle.tooling.internal.provider.ClientProvidedBuildAction.run(Cl
+ientProvidedBuildAction.java:43)
+        at org.gradle.tooling.internal.provider.ClientProvidedBuildAction.run(Cl
+ientProvidedBuildAction.java:31)
+        at org.gradle.tooling.internal.provider.ConfiguringBuildAction.run(Confi
+guringBuildAction.java:119)
+        at org.gradle.launcher.exec.InProcessBuildActionExecuter.execute(InProce
+ssBuildActionExecuter.java:36)
+        at org.gradle.launcher.exec.InProcessBuildActionExecuter.execute(InProce
+ssBuildActionExecuter.java:26)
+        at org.gradle.tooling.internal.provider.DaemonBuildActionExecuter.execut
+e(DaemonBuildActionExecuter.java:42)
+        at org.gradle.tooling.internal.provider.DaemonBuildActionExecuter.execut
+e(DaemonBuildActionExecuter.java:29)
+        at org.gradle.tooling.internal.provider.LoggingBridgingBuildActionExecut
+er.execute(LoggingBridgingBuildActionExecuter.java:62)
+        at org.gradle.tooling.internal.provider.LoggingBridgingBuildActionExecut
+er.execute(LoggingBridgingBuildActionExecuter.java:34)
+        at org.gradle.tooling.internal.provider.ProviderConnection.run(ProviderC
+onnection.java:107)
+        at org.gradle.tooling.internal.provider.ProviderConnection.run(ProviderC
+onnection.java:101)
+        at org.gradle.tooling.internal.provider.DefaultConnection.run(DefaultCon
+nection.java:171)
+        at org.gradle.tooling.internal.consumer.connection.CancellableConsumerCo
+nnection$CancellableActionRunner.run(CancellableConsumerConnection.java:112)
+        at org.gradle.tooling.internal.consumer.connection.AbstractConsumerConne
+ction.run(AbstractConsumerConnection.java:64)
+        at org.gradle.tooling.internal.consumer.DefaultBuildActionExecuter$1.run
+(DefaultBuildActionExecuter.java:59)
+        at org.gradle.tooling.internal.consumer.connection.LazyConsumerActionExe
+cutor.run(LazyConsumerActionExecutor.java:79)
+        at org.gradle.tooling.internal.consumer.connection.CancellableConsumerAc
+tionExecutor.run(CancellableConsumerActionExecutor.java:45)
+        at org.gradle.tooling.internal.consumer.connection.ProgressLoggingConsum
+erActionExecutor.run(ProgressLoggingConsumerActionExecutor.java:58)
+        at org.gradle.tooling.internal.consumer.connection.RethrowingErrorsConsu
+merActionExecutor.run(RethrowingErrorsConsumerActionExecutor.java:38)
+        at org.gradle.tooling.internal.consumer.async.DefaultAsyncConsumerAction
+Executor$1$1.run(DefaultAsyncConsumerActionExecutor.java:55)
+        at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.
+onExecute(ExecutorPolicy.java:54)
+        at org.gradle.internal.concurrent.StoppableExecutorImpl$1.run(StoppableE
+xecutorImpl.java:40)
+| Error Error initializing classpath: peer not authenticated
+
+    似乎是 下载gradle 超时引起的. 查阅网上
+
+    d. 尝试 使用老版本groovy + grails,  具体为: netbeans 8.1 + groovy 2.4.4 + grails 3.0.3, 并修改对应的环境变量  GroovyHome,  GRAIL_HOME, 然后创建Project  成功。 继续创建 Controller， 第一次创建, 结果下载很多Jar包和poe 文件. 这么看来, 之前的版本应该也可以, 可能是下载不成功？？？
+
+Download https://repo.grails.org/grails/core/org/grails/grails-gradle-plugin/3.0.3/grails-gradle-plugin-3.0.3.pom
+Download https://repo.grails.org/grails/core/com/bertramlabs/plugins/asset-pipeline-gradle/2.1.1/asset-pipeline-gradle-2.1.1.pom
+Download https://repo.grails.org/grails/core/io/spring/gradle/dependency-management-plugin/0.5.2.RELEASE/dependency-management-plugin-0.5.2.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy/2.4.3/groovy-2.4.3.pom
+Download https://repo.grails.org/grails/core/org/slf4j/slf4j-api/1.7.10/slf4j-api-1.7.10.pom
+Download https://repo.grails.org/grails/core/org/slf4j/slf4j-parent/1.7.10/slf4j-parent-1.7.10.pom
+Download https://repo.grails.org/grails/core/org/slf4j/jcl-over-slf4j/1.7.10/jcl-over-slf4j-1.7.10.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-gradle-model/3.0.3/grails-gradle-model-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-bootstrap/3.0.3/grails-bootstrap-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-gradle-plugin/1.2.5.RELEASE/spring-boot-gradle-plugin-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-tools/1.2.5.RELEASE/spring-boot-tools-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-parent/1.2.5.RELEASE/spring-boot-parent-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-dependencies/1.2.5.RELEASE/spring-boot-dependencies-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-framework-bom/4.1.7.RELEASE/spring-framework-bom-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/data/spring-data-releasetrain/Evans-SR3/spring-data-releasetrain-Evans-SR3.pom
+Download https://repo.grails.org/grails/core/org/springframework/data/build/spring-data-build/1.5.3.RELEASE/spring-data-build-1.5.3.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/integration/spring-integration-bom/4.1.5.RELEASE/spring-integration-bom-4.1.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/security/spring-security-bom/3.2.7.RELEASE/spring-security-bom-3.2.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/com/bertramlabs/plugins/asset-pipeline-core/2.1.1/asset-pipeline-core-2.1.1.pom
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-xml/2.4.3/groovy-xml-2.4.3.pom
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-ant/2.4.3/groovy-ant-2.4.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-loader-tools/1.2.5.RELEASE/spring-boot-loader-tools-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-dependency-tools/1.2.5.RELEASE/spring-boot-dependency-tools-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/com/google/javascript/closure-compiler/v20141023/closure-compiler-v20141023.pom
+Download https://repo.grails.org/grails/core/com/google/javascript/closure-compiler-parent/v20141023/closure-compiler-parent-v20141023.pom
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-groovydoc/2.4.3/groovy-groovydoc-2.4.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-core/4.1.7.RELEASE/spring-core-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/com/google/javascript/closure-compiler-externs/v20141023/closure-compiler-externs-v20141023.pom
+Download https://repo.grails.org/grails/core/args4j/args4j/2.0.26/args4j-2.0.26.pom
+Download https://repo.grails.org/grails/core/args4j/args4j-site/2.0.26/args4j-site-2.0.26.pom
+Download https://repo.grails.org/grails/core/org/kohsuke/pom/6/pom-6.pom
+Download https://repo.grails.org/grails/core/com/google/protobuf/protobuf-java/2.5.0/protobuf-java-2.5.0.pom
+Download https://repo.grails.org/grails/core/com/google/google/1/google-1.pom
+Download https://repo.grails.org/grails/core/com/google/code/gson/gson/2.2.4/gson-2.2.4.pom
+Download https://repo.grails.org/grails/core/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.pom
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-templates/2.4.3/groovy-templates-2.4.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-gradle-plugin/3.0.3/grails-gradle-plugin-3.0.3.jar
+Download https://repo.grails.org/grails/core/com/bertramlabs/plugins/asset-pipeline-gradle/2.1.1/asset-pipeline-gradle-2.1.1.jar
+Download https://repo.grails.org/grails/core/io/spring/gradle/dependency-management-plugin/0.5.2.RELEASE/dependency-management-plugin-0.5.2.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy/2.4.3/groovy-2.4.3.jar
+Download https://repo.grails.org/grails/core/org/slf4j/slf4j-api/1.7.10/slf4j-api-1.7.10.jar
+Download https://repo.grails.org/grails/core/org/slf4j/jcl-over-slf4j/1.7.10/jcl-over-slf4j-1.7.10.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-gradle-model/3.0.3/grails-gradle-model-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-bootstrap/3.0.3/grails-bootstrap-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-gradle-plugin/1.2.5.RELEASE/spring-boot-gradle-plugin-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/com/bertramlabs/plugins/asset-pipeline-core/2.1.1/asset-pipeline-core-2.1.1.jar
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-xml/2.4.3/groovy-xml-2.4.3.jar
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-ant/2.4.3/groovy-ant-2.4.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-loader-tools/1.2.5.RELEASE/spring-boot-loader-tools-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-dependency-tools/1.2.5.RELEASE/spring-boot-dependency-tools-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/com/google/javascript/closure-compiler/v20141023/closure-compiler-v20141023.jar
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-groovydoc/2.4.3/groovy-groovydoc-2.4.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-core/4.1.7.RELEASE/spring-core-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/com/google/javascript/closure-compiler-externs/v20141023/closure-compiler-externs-v20141023.jar
+Download https://repo.grails.org/grails/core/args4j/args4j/2.0.26/args4j-2.0.26.jar
+Download https://repo.grails.org/grails/core/com/google/protobuf/protobuf-java/2.5.0/protobuf-java-2.5.0.jar
+Download https://repo.grails.org/grails/core/com/google/code/gson/gson/2.2.4/gson-2.2.4.jar
+Download https://repo.grails.org/grails/core/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-templates/2.4.3/groovy-templates-2.4.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-bom/3.0.3/grails-bom-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/springloaded/1.2.3.RELEASE/springloaded-1.2.3.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/springloaded/1.2.3.RELEASE/springloaded-1.2.3.RELEASE.jar
+
+BUILD SUCCESSFUL
+
+Total time: 2 mins 57.524 secs
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter-logging/1.2.5.RELEASE/spring-boot-starter-logging-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starters/1.2.5.RELEASE/spring-boot-starters-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter-actuator/1.2.5.RELEASE/spring-boot-starter-actuator-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-autoconfigure/1.2.5.RELEASE/spring-boot-autoconfigure-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter-tomcat/1.2.5.RELEASE/spring-boot-starter-tomcat-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-dependencies/3.0.3/grails-dependencies-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-boot/3.0.3/grails-web-boot-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/plugins/hibernate/4.3.10.4/hibernate-4.3.10.4.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-bom/3.0.1/grails-bom-3.0.1.pom
+Download https://repo.grails.org/grails/core/org/grails/plugins/cache/3.0.1/cache-3.0.1.pom
+Download https://repo.grails.org/grails/core/org/hibernate/hibernate-ehcache/4.3.10.Final/hibernate-ehcache-4.3.10.Final.pom
+Download https://repo.grails.org/grails/core/org/grails/plugins/asset-pipeline/3.0.3/asset-pipeline-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/plugins/scaffolding/3.0.3/scaffolding-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-testing/3.0.3/grails-plugin-testing-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/plugins/geb/1.0.0/geb-1.0.0.pom
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-htmlunit-driver/2.44.0/selenium-htmlunit-driver-2.44.0.pom
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-parent/2.44.0/selenium-parent-2.44.0.pom
+Download https://repo.grails.org/grails/core/org/slf4j/jcl-over-slf4j/1.7.12/jcl-over-slf4j-1.7.12.pom
+Download https://repo.grails.org/grails/core/org/slf4j/slf4j-parent/1.7.12/slf4j-parent-1.7.12.pom
+Download https://repo.grails.org/grails/core/org/slf4j/jul-to-slf4j/1.7.12/jul-to-slf4j-1.7.12.pom
+Download https://repo.grails.org/grails/core/org/slf4j/log4j-over-slf4j/1.7.12/log4j-over-slf4j-1.7.12.pom
+Download https://repo.grails.org/grails/core/ch/qos/logback/logback-classic/1.1.3/logback-classic-1.1.3.pom
+Download https://repo.grails.org/grails/core/ch/qos/logback/logback-parent/1.1.3/logback-parent-1.1.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter/1.2.5.RELEASE/spring-boot-starter-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-actuator/1.2.5.RELEASE/spring-boot-actuator-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot/1.2.5.RELEASE/spring-boot-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-core/8.0.23/tomcat-embed-core-8.0.23.pom
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-el/8.0.23/tomcat-embed-el-8.0.23.pom
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-logging-juli/8.0.23/tomcat-embed-logging-juli-8.0.23.pom
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-websocket/8.0.23/tomcat-embed-websocket-8.0.23.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-rest/3.0.3/grails-plugin-rest-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-databinding/3.0.3/grails-plugin-databinding-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-i18n/3.0.3/grails-plugin-i18n-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-filters/3.0.3/grails-plugin-filters-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-gsp/3.0.3/grails-plugin-gsp-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-services/3.0.3/grails-plugin-services-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-url-mappings/3.0.3/grails-plugin-url-mappings-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-interceptors/3.0.3/grails-plugin-interceptors-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-async/3.0.3/grails-plugin-async-3.0.3.pom
+Download https://repo.grails.org/grails/core/com/h2database/h2/1.3.176/h2-1.3.176.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-common/3.0.3/grails-web-common-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm-hibernate4/4.0.4.RELEASE/grails-datastore-gorm-hibernate4-4.0.4.RELEASE.pom
+Download https://repo.grails.org/grails/core/com/googlecode/concurrentlinkedhashmap/concurrentlinkedhashmap-lru/1.4/concurrentlinkedhashmap-lru-1.4.pom
+Download https://repo.grails.org/grails/core/com/bertramlabs/plugins/asset-pipeline-core/2.3.8/asset-pipeline-core-2.3.8.pom
+Download https://repo.grails.org/grails/core/org/grails/plugins/fields/2.0.2/fields-2.0.2.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-controllers/3.0.3/grails-plugin-controllers-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-domain-class/3.0.3/grails-plugin-domain-class-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-mimetypes/3.0.3/grails-plugin-mimetypes-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-converters/3.0.3/grails-plugin-converters-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-codecs/3.0.3/grails-plugin-codecs-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-test/3.0.3/grails-test-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter-test/1.2.5.RELEASE/spring-boot-starter-test-1.2.5.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/gebish/geb-spock/0.10.0/geb-spock-0.10.0.pom
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-support/2.43.1/selenium-support-2.43.1.pom
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-parent/2.43.1/selenium-parent-2.43.1.pom
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-remote-driver/2.44.0/selenium-remote-driver-2.44.0.pom
+Download https://repo.grails.org/grails/core/net/sourceforge/htmlunit/htmlunit/2.15/htmlunit-2.15.pom
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpclient/4.3.4/httpclient-4.3.4.pom
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpcomponents-client/4.3.4/httpcomponents-client-4.3.4.pom
+Download https://repo.grails.org/grails/core/ch/qos/logback/logback-core/1.1.3/logback-core-1.1.3.pom
+Download https://repo.grails.org/grails/core/com/fasterxml/jackson/core/jackson-databind/2.4.6/jackson-databind-2.4.6.pom
+Download https://repo.grails.org/grails/core/com/fasterxml/jackson/jackson-parent/2.4/jackson-parent-2.4.pom
+Download https://repo.grails.org/grails/core/com/fasterxml/oss-parent/16/oss-parent-16.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web/3.0.3/grails-web-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-datasource/3.0.3/grails-plugin-datasource-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-core/3.0.3/grails-core-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-logging/3.0.3/grails-logging-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-gsp-taglib/3.0.3/grails-web-gsp-taglib-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-events/3.0.3/grails-plugin-events-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-validation/3.0.3/grails-validation-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-databinding/3.0.3/grails-databinding-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-encoder/3.0.3/grails-encoder-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-gsp/3.0.3/grails-gsp-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-webmvc/4.1.7.RELEASE/spring-webmvc-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-context-support/4.1.7.RELEASE/spring-context-support-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm-hibernate-core/4.0.4.RELEASE/grails-datastore-gorm-hibernate-core-4.0.4.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-async/3.0.3/grails-async-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-validation/3.0.3/grails-plugin-validation-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-spring/3.0.3/grails-spring-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm/4.0.4.RELEASE/grails-datastore-gorm-4.0.4.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-core/4.0.4.RELEASE/grails-datastore-core-4.0.4.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-simple/4.0.4.RELEASE/grails-datastore-simple-4.0.4.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-test/2.4.3/groovy-test-2.4.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-test/4.1.7.RELEASE/spring-test-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/gebish/geb-core/0.10.0/geb-core-0.10.0.pom
+Download https://repo.grails.org/grails/core/xalan/xalan/2.7.1/xalan-2.7.1.pom
+Download https://repo.grails.org/grails/core/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.pom
+Download https://repo.grails.org/grails/core/org/apache/commons/commons-parent/33/commons-parent-33.pom
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpmime/4.3.3/httpmime-4.3.3.pom
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpcomponents-client/4.3.3/httpcomponents-client-4.3.3.pom
+Download https://repo.grails.org/grails/core/net/sourceforge/htmlunit/htmlunit-core-js/2.15/htmlunit-core-js-2.15.pom
+Download https://repo.grails.org/grails/core/net/sourceforge/nekohtml/nekohtml/1.9.21/nekohtml-1.9.21.pom
+Download https://repo.grails.org/grails/core/net/sourceforge/cssparser/cssparser/0.9.14/cssparser-0.9.14.pom
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-websocket/8.1.15.v20140411/jetty-websocket-8.1.15.v20140411.pom
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-project/8.1.15.v20140411/jetty-project-8.1.15.v20140411.pom
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-parent/20/jetty-parent-20.pom
+Download https://repo.grails.org/grails/core/com/fasterxml/jackson/core/jackson-annotations/2.4.0/jackson-annotations-2.4.0.pom
+Download https://repo.grails.org/grails/core/com/fasterxml/jackson/core/jackson-core/2.4.6/jackson-core-2.4.6.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-aop/4.1.7.RELEASE/spring-aop-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-expression/4.1.7.RELEASE/spring-expression-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-aspects/4.1.7.RELEASE/spring-aspects-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/aspectj/aspectjrt/1.8.5/aspectjrt-1.8.5.pom
+Download https://repo.grails.org/grails/core/org/aspectj/aspectjweaver/1.8.5/aspectjweaver-1.8.5.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-gsp/3.0.3/grails-web-gsp-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-databinding/3.0.3/grails-web-databinding-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-url-mappings/3.0.3/grails-web-url-mappings-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-jsp/3.0.3/grails-web-jsp-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-mvc/3.0.3/grails-web-mvc-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-sitemesh/3.0.3/grails-web-sitemesh-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-logging-log4j/7.0.55/tomcat-embed-logging-log4j-7.0.55.pom
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-sql/2.4.3/groovy-sql-2.4.3.pom
+Download https://repo.grails.org/grails/core/org/apache/tomcat/tomcat-jdbc/7.0.55/tomcat-jdbc-7.0.55.pom
+Download https://repo.grails.org/grails/core/io/projectreactor/spring/reactor-spring-context/2.0.3.RELEASE/reactor-spring-context-2.0.3.RELEASE.pom
+Download https://repo.grails.org/grails/core/io/projectreactor/reactor-bus/2.0.3.RELEASE/reactor-bus-2.0.3.RELEASE.pom
+Download https://repo.grails.org/grails/core/commons-validator/commons-validator/1.4.0/commons-validator-1.4.0.pom
+Download https://repo.grails.org/grails/core/org/apache/commons/commons-parent/23/commons-parent-23.pom
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-json/2.4.3/groovy-json-2.4.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/spring-web/4.1.7.RELEASE/spring-web-4.1.7.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-taglib/3.0.3/grails-taglib-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm-plugin-support/4.0.4.RELEASE/grails-datastore-gorm-plugin-support-4.0.4.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/hibernate/hibernate-commons-annotations/3.2.0.Final/hibernate-commons-annotations-3.2.0.Final.pom
+Download https://repo.grails.org/grails/core/io/projectreactor/reactor-core/2.0.3.RELEASE/reactor-core-2.0.3.RELEASE.pom
+Download https://repo.grails.org/grails/core/io/projectreactor/reactor-stream/2.0.3.RELEASE/reactor-stream-2.0.3.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/gebish/geb-ast/0.10.0/geb-ast-0.10.0.pom
+Download https://repo.grails.org/grails/core/org/gebish/geb-waiting/0.10.0/geb-waiting-0.10.0.pom
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-util/8.1.15.v20140411/jetty-util-8.1.15.v20140411.pom
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-io/8.1.15.v20140411/jetty-io-8.1.15.v20140411.pom
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-http/8.1.15.v20140411/jetty-http-8.1.15.v20140411.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-web-taglib/3.0.3/grails-web-taglib-3.0.3.pom
+Download https://repo.grails.org/grails/core/org/apache/tomcat/tomcat-juli/7.0.55/tomcat-juli-7.0.55.pom
+Download https://repo.grails.org/grails/core/com/jayway/jsonpath/json-path/0.9.0/json-path-0.9.0.pom
+Download https://repo.grails.org/grails/core/com/jayway/jsonpath/json-path-parent/0.9.0/json-path-parent-0.9.0.pom
+Download https://repo.grails.org/grails/core/io/projectreactor/spring/reactor-spring-core/2.0.3.RELEASE/reactor-spring-core-2.0.3.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-web/4.0.4.RELEASE/grails-datastore-web-4.0.4.RELEASE.pom
+Download https://repo.grails.org/grails/core/org/gebish/geb-implicit-assertions/0.10.0/geb-implicit-assertions-0.10.0.pom
+Download https://repo.grails.org/grails/core/net/minidev/json-smart/1.2/json-smart-1.2.pom
+Download https://repo.grails.org/grails/core/net/minidev/parent/1.2/parent-1.2.pom
+Download https://repo.grails.org/grails/core/org/slf4j/slf4j-api/1.7.12/slf4j-api-1.7.12.pom
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-api/2.44.0/selenium-api-2.44.0.pom
+Download https://repo.grails.org/grails/core/org/apache/commons/commons-exec/1.1/commons-exec-1.1.pom
+Download https://repo.grails.org/grails/core/net/java/dev/jna/jna/3.4.0/jna-3.4.0.pom
+Download https://repo.grails.org/grails/core/net/java/dev/jna/platform/3.4.0/platform-3.4.0.pom
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2.pom
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpcomponents-core/4.3.2/httpcomponents-core-4.3.2.pom
+Download https://repo.grails.org/grails/core/commons-codec/commons-codec/1.9/commons-codec-1.9.pom
+Download https://repo.grails.org/grails/core/org/apache/commons/commons-parent/32/commons-parent-32.pom
+Download https://repo.grails.org/grails/core/org/aspectj/aspectjweaver/1.8.6/aspectjweaver-1.8.6.pom
+Download https://repo.grails.org/grails/core/com/google/code/gson/gson/2.3/gson-2.3.pom
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter-logging/1.2.5.RELEASE/spring-boot-starter-logging-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter-actuator/1.2.5.RELEASE/spring-boot-starter-actuator-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-autoconfigure/1.2.5.RELEASE/spring-boot-autoconfigure-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter-tomcat/1.2.5.RELEASE/spring-boot-starter-tomcat-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-boot/3.0.3/grails-web-boot-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/plugins/hibernate/4.3.10.4/hibernate-4.3.10.4.jar
+Download https://repo.grails.org/grails/core/org/grails/plugins/cache/3.0.1/cache-3.0.1.jar
+Download https://repo.grails.org/grails/core/org/hibernate/hibernate-ehcache/4.3.10.Final/hibernate-ehcache-4.3.10.Final.jar
+Download https://repo.grails.org/grails/core/org/grails/plugins/asset-pipeline/3.0.3/asset-pipeline-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/plugins/scaffolding/3.0.3/scaffolding-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-testing/3.0.3/grails-plugin-testing-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/plugins/geb/1.0.0/geb-1.0.0.jar
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-htmlunit-driver/2.44.0/selenium-htmlunit-driver-2.44.0.jar
+Download https://repo.grails.org/grails/core/org/slf4j/jcl-over-slf4j/1.7.12/jcl-over-slf4j-1.7.12.jar
+Download https://repo.grails.org/grails/core/org/slf4j/jul-to-slf4j/1.7.12/jul-to-slf4j-1.7.12.jar
+Download https://repo.grails.org/grails/core/org/slf4j/log4j-over-slf4j/1.7.12/log4j-over-slf4j-1.7.12.jar
+Download https://repo.grails.org/grails/core/ch/qos/logback/logback-classic/1.1.3/logback-classic-1.1.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter/1.2.5.RELEASE/spring-boot-starter-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-actuator/1.2.5.RELEASE/spring-boot-actuator-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot/1.2.5.RELEASE/spring-boot-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-core/8.0.23/tomcat-embed-core-8.0.23.jar
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-el/8.0.23/tomcat-embed-el-8.0.23.jar
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-logging-juli/8.0.23/tomcat-embed-logging-juli-8.0.23.jar
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-websocket/8.0.23/tomcat-embed-websocket-8.0.23.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-rest/3.0.3/grails-plugin-rest-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-databinding/3.0.3/grails-plugin-databinding-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-i18n/3.0.3/grails-plugin-i18n-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-filters/3.0.3/grails-plugin-filters-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-gsp/3.0.3/grails-plugin-gsp-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-services/3.0.3/grails-plugin-services-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-url-mappings/3.0.3/grails-plugin-url-mappings-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-interceptors/3.0.3/grails-plugin-interceptors-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-async/3.0.3/grails-plugin-async-3.0.3.jar
+Download https://repo.grails.org/grails/core/com/h2database/h2/1.3.176/h2-1.3.176.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-common/3.0.3/grails-web-common-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm-hibernate4/4.0.4.RELEASE/grails-datastore-gorm-hibernate4-4.0.4.RELEASE.jar
+Download https://repo.grails.org/grails/core/com/googlecode/concurrentlinkedhashmap/concurrentlinkedhashmap-lru/1.4/concurrentlinkedhashmap-lru-1.4.jar
+Download https://repo.grails.org/grails/core/com/bertramlabs/plugins/asset-pipeline-core/2.3.8/asset-pipeline-core-2.3.8.jar
+Download https://repo.grails.org/grails/core/org/grails/plugins/fields/2.0.2/fields-2.0.2.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-controllers/3.0.3/grails-plugin-controllers-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-domain-class/3.0.3/grails-plugin-domain-class-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-mimetypes/3.0.3/grails-plugin-mimetypes-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-converters/3.0.3/grails-plugin-converters-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-codecs/3.0.3/grails-plugin-codecs-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-test/3.0.3/grails-test-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/boot/spring-boot-starter-test/1.2.5.RELEASE/spring-boot-starter-test-1.2.5.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/gebish/geb-spock/0.10.0/geb-spock-0.10.0.jar
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-support/2.43.1/selenium-support-2.43.1.jar
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-remote-driver/2.44.0/selenium-remote-driver-2.44.0.jar
+Download https://repo.grails.org/grails/core/net/sourceforge/htmlunit/htmlunit/2.15/htmlunit-2.15.jar
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpclient/4.3.4/httpclient-4.3.4.jar
+Download https://repo.grails.org/grails/core/ch/qos/logback/logback-core/1.1.3/logback-core-1.1.3.jar
+Download https://repo.grails.org/grails/core/com/fasterxml/jackson/core/jackson-databind/2.4.6/jackson-databind-2.4.6.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web/3.0.3/grails-web-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-datasource/3.0.3/grails-plugin-datasource-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-core/3.0.3/grails-core-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-logging/3.0.3/grails-logging-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-gsp-taglib/3.0.3/grails-web-gsp-taglib-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-tx/4.1.7.RELEASE/spring-tx-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-events/3.0.3/grails-plugin-events-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-validation/3.0.3/grails-validation-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-databinding/3.0.3/grails-databinding-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-encoder/3.0.3/grails-encoder-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-gsp/3.0.3/grails-gsp-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-webmvc/4.1.7.RELEASE/spring-webmvc-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-context-support/4.1.7.RELEASE/spring-context-support-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm-hibernate-core/4.0.4.RELEASE/grails-datastore-gorm-hibernate-core-4.0.4.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-async/3.0.3/grails-async-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-plugin-validation/3.0.3/grails-plugin-validation-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-spring/3.0.3/grails-spring-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm/4.0.4.RELEASE/grails-datastore-gorm-4.0.4.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-core/4.0.4.RELEASE/grails-datastore-core-4.0.4.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-simple/4.0.4.RELEASE/grails-datastore-simple-4.0.4.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-test/2.4.3/groovy-test-2.4.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-test/4.1.7.RELEASE/spring-test-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/gebish/geb-core/0.10.0/geb-core-0.10.0.jar
+Download https://repo.grails.org/grails/core/xalan/xalan/2.7.1/xalan-2.7.1.jar
+Download https://repo.grails.org/grails/core/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpmime/4.3.3/httpmime-4.3.3.jar
+Download https://repo.grails.org/grails/core/net/sourceforge/htmlunit/htmlunit-core-js/2.15/htmlunit-core-js-2.15.jar
+Download https://repo.grails.org/grails/core/net/sourceforge/nekohtml/nekohtml/1.9.21/nekohtml-1.9.21.jar
+Download https://repo.grails.org/grails/core/net/sourceforge/cssparser/cssparser/0.9.14/cssparser-0.9.14.jar
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-websocket/8.1.15.v20140411/jetty-websocket-8.1.15.v20140411.jar
+Download https://repo.grails.org/grails/core/com/fasterxml/jackson/core/jackson-annotations/2.4.0/jackson-annotations-2.4.0.jar
+Download https://repo.grails.org/grails/core/com/fasterxml/jackson/core/jackson-core/2.4.6/jackson-core-2.4.6.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-aop/4.1.7.RELEASE/spring-aop-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-beans/4.1.7.RELEASE/spring-beans-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-expression/4.1.7.RELEASE/spring-expression-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-aspects/4.1.7.RELEASE/spring-aspects-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/aspectj/aspectjrt/1.8.5/aspectjrt-1.8.5.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-gsp/3.0.3/grails-web-gsp-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-databinding/3.0.3/grails-web-databinding-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-url-mappings/3.0.3/grails-web-url-mappings-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-jsp/3.0.3/grails-web-jsp-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-mvc/3.0.3/grails-web-mvc-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-sitemesh/3.0.3/grails-web-sitemesh-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/apache/tomcat/embed/tomcat-embed-logging-log4j/7.0.55/tomcat-embed-logging-log4j-7.0.55.jar
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-sql/2.4.3/groovy-sql-2.4.3.jar
+Download https://repo.grails.org/grails/core/org/apache/tomcat/tomcat-jdbc/7.0.55/tomcat-jdbc-7.0.55.jar
+Download https://repo.grails.org/grails/core/io/projectreactor/spring/reactor-spring-context/2.0.3.RELEASE/reactor-spring-context-2.0.3.RELEASE.jar
+Download https://repo.grails.org/grails/core/io/projectreactor/reactor-bus/2.0.3.RELEASE/reactor-bus-2.0.3.RELEASE.jar
+Download https://repo.grails.org/grails/core/commons-validator/commons-validator/1.4.0/commons-validator-1.4.0.jar
+Download https://repo.grails.org/grails/core/org/codehaus/groovy/groovy-json/2.4.3/groovy-json-2.4.3.jar
+Download https://repo.grails.org/grails/core/org/springframework/spring-web/4.1.7.RELEASE/spring-web-4.1.7.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-taglib/3.0.3/grails-taglib-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-gorm-plugin-support/4.0.4.RELEASE/grails-datastore-gorm-plugin-support-4.0.4.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/hibernate/hibernate-commons-annotations/3.2.0.Final/hibernate-commons-annotations-3.2.0.Final.jar
+Download https://repo.grails.org/grails/core/io/projectreactor/reactor-core/2.0.3.RELEASE/reactor-core-2.0.3.RELEASE.jar
+Download https://repo.grails.org/grails/core/io/projectreactor/reactor-stream/2.0.3.RELEASE/reactor-stream-2.0.3.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/gebish/geb-ast/0.10.0/geb-ast-0.10.0.jar
+Download https://repo.grails.org/grails/core/org/gebish/geb-waiting/0.10.0/geb-waiting-0.10.0.jar
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-util/8.1.15.v20140411/jetty-util-8.1.15.v20140411.jar
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-io/8.1.15.v20140411/jetty-io-8.1.15.v20140411.jar
+Download https://repo.grails.org/grails/core/org/eclipse/jetty/jetty-http/8.1.15.v20140411/jetty-http-8.1.15.v20140411.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-web-taglib/3.0.3/grails-web-taglib-3.0.3.jar
+Download https://repo.grails.org/grails/core/org/apache/tomcat/tomcat-juli/7.0.55/tomcat-juli-7.0.55.jar
+Download https://repo.grails.org/grails/core/com/jayway/jsonpath/json-path/0.9.0/json-path-0.9.0.jar
+Download https://repo.grails.org/grails/core/io/projectreactor/spring/reactor-spring-core/2.0.3.RELEASE/reactor-spring-core-2.0.3.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/grails/grails-datastore-web/4.0.4.RELEASE/grails-datastore-web-4.0.4.RELEASE.jar
+Download https://repo.grails.org/grails/core/org/gebish/geb-implicit-assertions/0.10.0/geb-implicit-assertions-0.10.0.jar
+Download https://repo.grails.org/grails/core/net/minidev/json-smart/1.2/json-smart-1.2.jar
+Download https://repo.grails.org/grails/core/org/slf4j/slf4j-api/1.7.12/slf4j-api-1.7.12.jar
+Download https://repo.grails.org/grails/core/org/seleniumhq/selenium/selenium-api/2.44.0/selenium-api-2.44.0.jar
+Download https://repo.grails.org/grails/core/org/apache/commons/commons-exec/1.1/commons-exec-1.1.jar
+Download https://repo.grails.org/grails/core/net/java/dev/jna/jna/3.4.0/jna-3.4.0.jar
+Download https://repo.grails.org/grails/core/net/java/dev/jna/platform/3.4.0/platform-3.4.0.jar
+Download https://repo.grails.org/grails/core/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2.jar
+Download https://repo.grails.org/grails/core/commons-codec/commons-codec/1.9/commons-codec-1.9.jar
+Download https://repo.grails.org/grails/core/org/aspectj/aspectjweaver/1.8.6/aspectjweaver-1.8.6.jar
+Download https://repo.grails.org/grails/core/com/google/code/gson/gson/2.3/gson-2.3.jar
+|Created grails-app/controllers/sdasd/NewController.groovy
+|Created src/test/groovy/sdasd/NewControllerSpec.groovy

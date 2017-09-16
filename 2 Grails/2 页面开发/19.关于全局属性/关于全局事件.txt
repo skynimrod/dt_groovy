@@ -1,0 +1,115 @@
+. 参见:
+
+      http://www.w3.org/TR/2014/REC-html5-20141028/dom.html#global-attributes
+
+. 下面的事件句柄可以指定到任意的HTML元素
+
+   1. onabort
+
+   2. onblur*
+
+   3. oncancel
+
+   4. oncanplay
+
+   5. oncanplaythrough
+
+   6. onchange
+
+   7. onclick
+
+   8. oncuechange  ??
+
+   48. ondblclick
+
+   49. ondurationchange ??  时长， 涉及媒体操作的
+
+   9. onemptied 
+
+   10. onended
+
+   11. onerror*
+
+   12. onfocus*
+
+   13. oninput
+
+   14. oninvalid
+
+   15. onkeydown
+
+   16. onkeypress
+
+   17. onkeyup
+
+   18. onload*
+
+   19. onloadeddata
+
+   20. onloadedmetadata
+
+   21. onloadstart
+
+   22. onmousedown
+
+   23. onmouseenter
+
+   24. onmouseleave
+
+   25. onmousemove
+
+   26. onmouseout
+
+   27. onmouseover
+
+   28. onmouseup
+
+   29. onmousewheel
+
+   30. onpause
+
+   31. onplay
+
+   32. onplaying
+
+   33. onprogress
+
+   34. onratechange
+
+   35. onreset
+
+   36. onresize*
+
+   37. onscroll*
+
+   38. onseeked
+
+   50. onseeking
+
+   39. onselect
+
+   40. onshow
+
+   41. onstalled
+
+   42. onsubmit
+
+   43. onsuspend
+
+   44. ontimeupdate
+
+   45. ontoggle
+
+   46. onvolumechange
+
+   47. onwaiting
+
+
+
+   7. onclick
+
+   8. oncuechange
+
+   9. ondblclick
+
+   10. 

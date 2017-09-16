@@ -1,0 +1,179 @@
+
+  参见:
+
+      《Grails 权威指南.pdf》 "自定义标签库" 章节。P55
+
+. 标签库
+
+  Grails 自带的标签库 可以查阅gsp 相关文档。 
+
+  像 Java Server Pages(JSP) 一样, GSP支持定制tag 库的概念. 不同于JSP,  Grails  标签库 机制 是简单的, 优雅的, 在运行时完全可重载的.
+
+  创建一个标签库 是相当简单的, 创建一个以 规约 TagLib 结尾的一个Groovy 类, 并 把它放置于 grails-app/taglib 目录里.
+  class SimpleTagLib {
+  }
+
+  
+下面是创建按一个标签的例子:
+
+  class SimpleTagLib {
+      def emoticon = { attrs, body ->
+          out << body() << attrs.happy == 'true' ? ":-)" : ":-("
+      }
+  }
+
+  这里有个隐式的out变量, 引用了输出write, 可以用来附加内容到响应中.  
+
+  然后， 可以在gsp 中 简单的引用这个标签而不需要任何导入
+
+  <g:emoticon happy="true">Hi John</g:emoticon>
+
+  注:  netbeans  中似乎不能通过 标签文件 模板来创建标签文件。 可以创建 Groovy 类 文件， 然后起名字的时候按照标签约定的名称来起类名即可。 
+
+       奇怪的实现在上面的例子似乎运行不正确， 没有出现预期的 :-) 或 :-(  而是 true 和 false. 
+
+. 例子2 :
+
+class RaceTrackTagLib {
+    
+    def formatDate = {attrs ->
+        def date = attrs.get('date')
+        if ( !date ) {
+             date = new Date()
+        }
+     
+        def format = attrs.get('format')
+        if ( !format ) {
+             format = "yyyy-MM-dd HH:mm:ss z"
+        }
+    
+        out << new java.text.SimpleDateFormat(format).format(date)
+    }
+    
+    def formatNumber = { attrs ->
+        def number = attrs.get('number')
+        if (!number) {
+            number = new Double(0)
+        }
+        
+        def format = attrs.get('format')
+        if ( !format ) {
+            format = "0"
+        }
+        
+        out << new java.text.DecimalFormat(format).format((Double)number)
+    }
+} 
+
+  Grails 不需要任何 TLD（Tag Library Descriptor）.  TLD 代表了配置, 而 Grails 选择了规约. 关键是命名与存放地址. 
+
+. 使用自定标签
+
+  在gsp 文件中用<g:formatDate> 或 <g:formatNumber>
+
+  <g:formatDate/>
+  <g:formatNumber/>
+
+  上面使用了缺省的配置.  如果要使用参数， 可以用下面的方式
+
+  <g:formatDate date="$(race.startDateTime)" format="yyyy-MM-dd HH:mm">
+  <g:formatNumber number="${race.distance}" format="##0.1 mi">
+  
+  上面访问参数总是出错。
+
+. siteMesh 标签库参见:
+
+  siteMesh 部分的文档。 
+
+. import java.text.SimpleDateFormat  
+  
+class FormatTagLib {  
+   static namespace = "topca"  
+   def dateFormat={attr,body->  
+       if(attr.dateString){  
+            if(attr.dateString==~/^\d{14}$/){  
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");  
+                try{  
+                    out<<sdf.parse(attr.dateString).format("yyyy年MM月dd日 HH:mm:ss");  
+                }catch(Exception e){  
+                    out<<attr.dateString;  
+                }  
+            }else{  
+                out<<attr.dateString;  
+            }  
+       }  
+   }  
+}  
+
+说明:
+
+    1. namespace：命名空间，可以不写，默认的是
+    2. dateFormat:标签名称，如我的就是
+    3. attr：标签属性的集合，attr.xxxxxx
+    4. body：标签的身体，比如下面代码
+
+<</span>g:if test="${1==1}">  
+    <</span>div>  
+        dispay  
+    </</span>div>  
+</</span>g:if>       
+ 
+    上面的html 代码就是body
+
+     5. out:相当于response.getWriter().print()就是向页面中输出内容
+
+     6、标签的使用：直接在gsp页面中写即可，不用再像jsp，不用写标签库的引用
+
+        <</span>topca:dataFormat dateString="20121221000000"/>
+
+
+================
+
+http://www.thinksaas.cn/group/topic/93946/
+
+class LuguaTagLib{
+    //指定命名空间
+    static namespace="lg"
+   
+    //指定标签的返值为object
+    static returnObjectForTags = ['now']
+
+    def now = { attr->
+        new Date()
+    }
+
+    def jsMap = [core:"<script type='text/javascript' src='/lugua/js/jquery.js'></script>",
+                 ui:"<script type='text/javascript' src='/lugua/js/jquery.ui.js'></script>"]
+
+    //js引用助手
+    def js = { attr ->
+        def includeList = attr.include.tokenize(',')
+        out << includeList.collect{ jsMap[it] }.join('n')
+    }
+
+}
+
+标签调用方式:<lg:js include='core,ui'/>或者lg.js(include:'core')
+lg.now
+在grails的控制器，和页面中都可以直接调用自定义标签。
+
+=============
+
+class SimpleTagLib {
+	def emoticon = { attrs, body ->
+            def tt = attrs.get('happy')
+            out << "获取的属性类型："+ tt.getClass().getName()
+            def t2 = body()
+      
+            out << t2
+	   out << body() << (attrs.get('happy') == "true" ? " :-)" : " :-(")	
+
+           // 注意， 后面一个"<<"后面如果不用"()"包含起来， 则输出的是attrs.get('happy')的内容, 而不是？运算符结果
+        }
+	
+}
+
+========================================
+
+.  1. <g:example>
+

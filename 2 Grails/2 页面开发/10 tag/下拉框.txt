@@ -1,0 +1,66 @@
+. 用currencySelect
+
+  例如:
+
+ <g:currencySelect name="myCurrency" value="${currency}" />
+
+  有2个参数
+
+  from : 可选，  是下拉框里的可选内容。 如果没有指定, 缺省用major ones。 好像是货币单位
+
+  value : 可选， 是下拉框中当前的值。 如果没有指定， 则是current locale 值， 当前货币单位. 
+
+. 通用的 checkbox 标签使用例子如下: 
+
+  参见:
+
+        http://zhidao.baidu.com/link?url=BGVxjTINAi-p51Nb8vXVu2I_AV1g1GRdIqlp_OrKjN1R52hiwr64S8ZNKI2dg0Dm-unVpc7veBSEmKk87FhW9_
+
+        <script language="javascript" type="text/javascript">
+            function bigChange(obj) {
+                if (obj.checked == false) {
+                    var smObj = document.getElementsByName("smallclassauthorize");
+                    for (var i = 0; i < smObj.length; i++)
+                        smObj[i].checked = false;
+                }
+            }
+            function smallChange(obj) {
+                var smObj = document.getElementsByName("smallclassauthorize");
+                var bigObj = document.getElementById("bigclassauthorize");
+            
+                if (obj.checked == true)
+                    bigObj.checked = true;
+                else {
+                    b = true;
+                
+                for (var i = 0; i < smObj.length; i++) {
+                    if (smObj[i].checked == true)
+                        b = false;
+                }
+                
+                if (b == true)
+                    bigObj.checked = false;
+                }
+            }
+        </script> 
+
+            <input name="bigclassauthorize" id="bigclassauthorize" type="checkbox" onclick="bigChange(this)"/>big
+            <div class="aaa">
+            <input name="smallclassauthorize" type="checkbox" onclick="smallChange(this)" value="small1"/>small1<br />
+            <input name="smallclassauthorize" type="checkbox" onclick="smallChange(this)" value="small2"/>small2<br />
+            <input name="smallclassauthorize" type="checkbox" onclick="smallChange(this)" value="small3"/>small3
+            </div>
+
+上面的例子经测试是可以使用的。
+  
+. 上面的例子中有一点需要注意：
+
+  判断选择框是否选中的时候， 应该用:
+  
+                if (obj.checked == true)
+
+  而不是
+
+       if ( obj.checked )   ...
+
+  否则虽然不会提示错误， 但似乎不会执行正确

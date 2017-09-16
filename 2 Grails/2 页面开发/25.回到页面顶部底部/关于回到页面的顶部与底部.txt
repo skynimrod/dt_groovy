@@ -1,0 +1,7 @@
+. 参见:
+
+      http://jingyan.baidu.com/article/7082dc1ca6b928e40a89bd1a.html
+
+. 1. 在顶部或底部， 放一个锚(<a>) 然后其他地方放一个转到这个锚的锚。
+
+     其实就是页面内跳转。

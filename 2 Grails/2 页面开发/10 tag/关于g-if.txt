@@ -1,0 +1,45 @@
+. 关于g:if
+
+  参见:
+
+      http://grails.github.io/grails-doc/2.4.2/ref/Tags/if.html
+
+. 如何判断某个页面元素的值？？？
+
+  比如判断checkBox
+
+  <g:checkBox name="myCheckbox" value="${true}" />
+
+  <g:if test="${myCheckbox}"
+
+. 如何判断传递到页面的某个参数是否为空？
+
+  通过判断某个特定参数来变相实现这个功能
+
+<g:if test="${report?.value?.retcode == 200 }">
+                    <div>
+                        <tr>
+                          <td>source : ${report?.value?.source?.encodeAsHTML()} |
+                                total : ${report?.value?.total?.encodeAsHTML()} , date1: 
+                                ${report?.value?.date1Total?.encodeAsHTML()} , date2: 
+                                ${report?.value?.date2Total?.encodeAsHTML()} </td>
+                          <td>
+                              <p>first Report </p>
+                              <p>${report?.value?.first?.stockcode?.encodeAsHTML()} |
+                                ${report?.value?.first?.reportname?.encodeAsHTML()} | 
+                                ${report?.value?.first?.releaseddate?.encodeAsHTML()}</p>
+                              <p>${report?.value?.first?.reporturl?.encodeAsHTML()}</p>
+                          </td> 
+                          <td>
+                              <p>last Report</p>
+                              <p>${report?.value?.last?.stockcode?.encodeAsHTML()} |
+                                ${report?.value?.last?.reportname?.encodeAsHTML()} | 
+                                ${report?.value?.last?.releaseddate?.encodeAsHTML()} </p>
+                              <p>${report?.value?.last?.reporturl?.encodeAsHTML()}</p>
+                          </td> 
+                        </tr>
+                    </div>
+                </g:if>
+                <g:else>
+                    
+                </g:else>

@@ -1,0 +1,84 @@
+. 参见:
+
+      http://www.w3.org/TR/2014/REC-html5-20141028/forms.html#the-input-element
+
+. demo 1
+
+<form id="AnnoucementsQueryForm" method="post" name="AnnoucementsQueryForm" action="/cninfo-new/announcement/show" enctype="multipart/form-data" target="_blank">
+<input type="hidden" id="stock_hidden_input" name="stock" />
+<input type="hidden" id="searchkey_hidden_input" name="searchkey" />
+<input type="hidden" id="plate_hidden_input" name="plate" />
+<input type="hidden" id="category_hidden_input" name="category" />
+<input type="hidden" id="trade_hidden_input" name="trade" />
+<input type="hidden" id="column_hidden_input" name="column" value='szse'/>
+<input type="hidden" id="columnTitle_hidden_input" name="columnTitle" value='深市公告'/>
+<input type="hidden" id="pageNum_hidden_input" name="pageNum" value="1"/>
+<input type="hidden" id="pageSize_hidden_input" name="pageSize" value="30"/>
+<input type="hidden" id="tabName_hidden_input" name="tabName" value="latest"/>
+<input type="hidden" id="sortName_hidden_input" name="sortName" value=""/>
+<input type="hidden" id="sortType_hidden_input" name="sortType" value=""/>
+<input type="hidden" id="limit_hidden_input" name="limit" value=""/>
+<input type="hidden" id="showTitle_hidden_input" name="showTitle" value=""/>
+
+上面的代码中， input 有点类似于定义页面中的变量的意思. 
+
+. input 元素的type 属性有以下值:
+ 
+  hidden : 也就是页面不显示， 但是可以通过js 赋值或者用缺省值，并通过form可以提交给后台进行处理.
+
+  placeholder :
+
+        placeholder顾名思义是一个占位符。在你的value为空的时候他才会显示出来，但是他本身并不是value，也不会被表单提交。 
+
+  class 属性：
+
+       可以给 HTML 元素赋予多个 class，例如：<span class="left_menu important">。这么做可以把若干个 CSS 类合并到一个 HTML 元素。
+
+  checkbox: 可选框
+
+        参见: http://www.w3.org/TR/2014/REC-html5-20141028/forms.html#checkbox-state-%28type=checkbox%29
+
+        checked标了就表示选中了，没标就是没有选中. 似乎只要有checked 属性， 就会显示是选中？？？？
+
+        value是用于action提交到服务器端的，没标的话如果选中，提交到服务器是on
+
+        在javascript 中判断 obj.checked == true,  好像仅仅是判断是否有这个属性？？？？ 有就是选中， 没有就不选中？？
+
+        jquery 判断选中:  if ( $("#chkbox_all").value != "" ) {...}
+  
+        JQuery 添加属性(选中) : 有2种方式
+
+                 $("#chkbox_all").checked = true
+                 // $("#chkbox_all").attr("checked", "checked");
+
+
+        JQuery 删除属性(不选中), 也有2种方式
+
+        checked 的保留数据有点问题， 总是不太稳定。
+                var ck = document.getElementById("chkbox_all")
+                
+                if ( ck.checked ) {
+                    alert( " falg_all checked");
+                    ck.checked = false;
+                } else {
+                    alert( " falg_all not checked");
+                    ck.checked = true;
+                }
+                /*
+                if ( $("#chkbox_all").checked ) {
+                    alert("i can't believe it!")
+                    $("#chkbox_all").checked = false
+                    //$("#chkbox_all").removeAttr("checked");
+                } else {
+                    alert("no no no");
+                    //$("#chkbox_all").attr("checked", "checked");
+                    $("#chkbox_all").checked = true
+                }
+                */
+
+         以上代码运行结果结果总是出问题。
+
+         放弃 对checkbox 的ajax 操作。 未来考虑类似淘宝检索功能。
+
+ 
+                                  

@@ -1,0 +1,5 @@
+.
+
+              <g:actionSubmit value="${message(code:'smms.reportListProc.label.date')}" action="reportProc" />
+            <g:actionSubmit value="Delete" />
+            <g:actionSubmit value="DeleteAll" onclick="return confirm('Are you sure???')" />      

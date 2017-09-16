@@ -1,0 +1,61 @@
+. 参见:
+
+      http://chinacq.iteye.com/blog/1164203
+
+      http://blog.csdn.net/bzray/article/details/5804543
+
+      http://www.cnblogs.com/xiziyin/archive/2010/04/02/1703280.html
+
+. Grails 自带了一些查询方法， 或者使用HSQL 语句来进行查询, 但是有些时候我们需要执行原生态的sql 语句查询, 不管该查询是否能进行， 执行原生态sql 语句还是有他的好处的. 
+
+  有人建议在程序里面直接创建一个数据库连接, 然后执行查询, 其实可以直接使用默认的数据源:
+
+  需要导入包:
+
+  import groovy.sql.Sql
+  import org.codehaus.groovy.grails.commons.ApplicationHolder
+  import org.springframework.context.ApplicationContext
+
+  查询代码:
+
+  ApplicationContext ctx = (ApplicationContext)ApplicationHolder.getApplication().getMainContext();
+  def dataSource = ctx.getBean('dataSource');
+  def sql = new Sql(dataSource);
+
+   String strSql = "select count( a.controll_plane_id) , palne_time from (select id, palne_time,controll_plane_id FROM  plane_time  where true group by palne_time, controll_plane_id,palne_time_status) a group by palne_time"; 
+
+  sql.eachRow( strSql ) {
+     println it
+  }
+
+这样就能直接输出结果了.
+[count( a.controll_plane_id):2, palne_time:2011-08-01]
+[count( a.controll_plane_id):2, palne_time:2011-08-02]
+[count( a.controll_plane_id):2, palne_time:2011-08-03]
+[count( a.controll_plane_id):4, palne_time:2011-08-04]
+[count( a.controll_plane_id):1, palne_time:2011-08-05]
+[count( a.controll_plane_id):1, palne_time:2011-08-06]
+[count( a.controll_plane_id):1, palne_time:2011-08-12]
+[count( a.controll_plane_id):1, palne_time:2011-08-18] 
+
+. 另一种方式， 经验中可用  Groovy 2.4.4/Grails 2.4.2
+
+  在类的方法之外顶一个 dataSource
+
+  def dataSource
+
+  否则下面的语句会出异常。
+
+        def db = new groovy.sql.Sql(dataSource)
+
+	def sqlstr = "select reportkeys from report_keys_tbl"
+        
+        List list =  db.rows(sqlstr)
+        println list
+        
+        db.eachRow (sqlstr){
+            println it  //这里的it是不要我们定义的
+        }
+
+        sqlstr = "delete from self_selected_tbl"
+        db.execute( sqlstr )

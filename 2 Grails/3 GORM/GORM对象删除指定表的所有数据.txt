@@ -1,0 +1,55 @@
+. 一般在初始化系统数据的时候需要这个功能.
+
+  Hibernate 持久化对象 的类似代码如下:
+
+  import org.hibernate.*
+
+	protected SessionFactory sessionFactory;
+
+	
+
+        public void setSessionFactory(SessionFactory sessionFactory) {
+		
+            
+              this.sessionFactory = sessionFactory;
+	
+        }
+
+
+
+	protected Session getSession() {
+	
+		return sessionFactory.getCurrentSession();
+	
+	}
+
+	
+	
+	public void delete(T entity) {
+	
+		Assert.notNull(entity);
+		
+		getSession().delete(entity);
+	
+	}
+
+
+
+	public T deleteById(Serializable id) {
+	
+		Assert.notNull(id);
+		
+		T entity = load(id);
+	
+	
+		if(entity!=null) 
+			getSession().delete(entity);
+		
+	
+		return entity;
+	
+	}
+
+  参见Hibernate 的 delete :
+
+   http://www.ourlove520.com/grails-doc-1.0/

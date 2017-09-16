@@ -1,0 +1,781 @@
+. GSP 的开发
+
+  GSP 不过是标准 HTML 加上一些提供动态内容的 Grails 标记而已。
+
+  参见:
+
+      https://grails.github.io/grails-doc/latest/guide/theWebLayer.html#gsp      官网
+ 
+      http://www.grails.org/single-page-documentation.html      官网 文档
+
+      http://www.grails.org/api.html                  官网  API 参考手册
+
+      http://blog.csdn.net/netdevgirl/article/details/3720890
+
+      http://www.blogjava.net/yangxc/archive/2009/12/29/307632.html
+
+      http://www.ibm.com/developerworks/cn/java/j-grails03118/
+
+      http://www.ibm.com/developerworks/cn/java/j-grails02128/   关于GORM 的非常好的介绍文章，有助于理解一些概念
+
+. GSP 存放于 Grails 的grails-app/views 目录中, 它们通常会自动渲染(通过规约), 或者像这样通过render方法：
+
+      render(view:"index")
+
+  一个GSP 是典型的混合标签 和 GSP 指令 来帮助视图渲染.  一个GSP 通常拥有一个"model", 它是变量集  被用于视图渲染.  通过一个控制器model 被传送到GSP 视图。 （这一句话非常关键 ××××××××××××××）
+
+   GSP 支持使用<% %> 来嵌入groovy 代码(这是不推荐的): 同样， 你可以使用<%= %> 语法来输出值: GSP 同样支持服务器端 JSP 样式注释。 
+
+   GSP 中存在着一些预先定义的变量, 包括:
+     application  - javax.servlet.ServletContext 实例
+
+
+     applicationContext - Spring ApplicationContext 实例
+
+     flash - flash 对象
+
+     grailsApplication - GrailsApplication 实例
+
+     out - 响应输出流
+ 
+     params - params 对象用于检索请求参数
+
+     request - HttpServletRequest 实例
+
+     response - HttpServletResponse 实例
+
+     session - HttpSession 实例
+
+     webRequest - GrailsWebRequest 实例
+
+     GSP 的表达式  跟JSP EL表达式很相似的, 跟Groovy String 的${expr}用法也很像，跟JSP EL不同的是, 你可以在${..}括号中使用Groovy 表达式. ${..}中的变量缺省情况下是不被转义的, 因此变量的任何HTML 字符串内容被直接输出到页面, 要减少这种 Cross-site-scripting(XSS)攻击的风险, 你可以设置grails-app/conf/Config.groovy 中的grails.views.default.codec 为 HTML转化方式.
+
+     grails.views.default,codec = 'html'
+
+. GSP 标签
+
+    所有GSP内置标签以前缀 g: 开始。不像JSP, 你不需要指定任何标签库的导入. 假如 一个标签以g:开始 它被自动认为是一个GSP标签
+
+    变量可以被放置于下列的范围内:  选择变量被放入的范围可以使用scope 属性,
+
+    GSP同样支持迭代逻辑标签, 逻辑上通过使用if, else 和elseif来支持典型的 分支情形.  GSP 用each 和while 标签来处理迭代。
+
+    假如你拥有对象集合, 你经常需要使用一些方法来排序和过滤他们. GSP 支持findAll 和grep 来做这些工作. 
+  
+    Stephen King's BooKs:
+    <g:findAll in="${books}" expr="it.author=='Stephen King'">
+         <p>Title:${it.title}</p>
+    </g:findAll>
+
+    expr 属性包含了一个Groovy 表达式, 它可以被当作一个过滤器来使用. 谈到过滤器, grep 标签通过类来完成于过滤器类似的工作:
+
+    <g:grep in="${books}" filter=NonFictionBooks.class">
+          <p>Title:${it.title}</p>
+    </g:grep>
+  
+    配对的名字, 并基于URL映射来自动完成连接. 即使你去改变! 一些link 的示例如下:
+
+    <g:link action="show" id="1">Book 1</g:link>
+    <g:link action="show" id="${currentBook.id}">${currentBook.name}</g:link>
+    <g:link controller="book">Book Home</g:link>
+    <g:link controller="book" action="list">Book List</g:link>
+    <g:link url="[action:'list',controller:'book']">Book List</g:link>
+    <g:link action="list" params="[sort:'title',order:'asc',author:currentBook.author]">
+        Book List
+    </g:link>
+
+    GSP 支持如下不同字段类型的定制:  每一个都允许GSP 表达式作为值: 被当作任意的正规标签 或者 当作 方法 被调用.  被当作任意的正规标签 或者 当作方法被调用.
+
+        textField --- 'text' 类型输入字段
+
+        checkBox ---- 'checkbox' 类型输入字段
+
+        radio ------- 'radio' 类型输入字段
+
+        hiddenField - 'hidden'类型输入字段
+
+        select ------ 处理HTML 选择框
+
+   处理多样的提交按钮 这样由来已久的问题, 同样可以通过Grails 的actionSubmit 标签优雅的处理.    它就像一个正规提交, 但是， 允许你指定一个可选的操作来提交.
+
+   在控制器和标签库中的模板
+
+       可以使用控制器 render 方法 渲染模板控制器中, 它对 Ajax 引用很有用.  在控制器中的render 方法最普遍的行为是直接写入响应. 假如, 你需要获得模板作为一个String 的结果作为替代, 你可以使用render 标签:
+
+       Grails 利用了 Sitemesh, 一个装饰引擎, 来支持视图布局.  布局位于 grails-app/views/layouts 目录中. 一个典型的布局如下:
+
+            <html>
+                <head>
+                     <title><g:layoutTitle default="An example decorator" /></title>
+                     <g:layoutHead />
+                </head>
+                <body onload="${pageProperty(name:'body.onload')}">
+                     <div class="menu"><!--my common menu goes here--></menu>
+                          <div class="body">
+                               <g:layoutBody />
+                          </div>
+                     </div>
+               </body>
+           </html>
+
+   关键的元素是  layoutHead, layerTitle 和 layoutBody 标签的用法, 这里是他们所作的:
+
+       layoutTitle --- 输出目标页面的 title
+
+       layoutHead ---- 输出目标页面head标签内容
+
+       layoutBody ---- 输出目标页面body 标签内容
+
+   早前的示例也证明了 pageProperty 标签 能被用去 检查 和返回目标页面的方向。
+
+   简单的在视图中添加meta标签来启动布局:  在这种情况下, 一个名为 grails-app/views/layouts/main.gsp 将被用于布局这个页面
+
+   <html>
+       <head>
+           <title>An Example Page</title>
+           <meta name="layout" content="main"></meta>
+       </head>
+       <body>This is my content!</body>
+   </html>
+
+   Grails 标签库机制 是简单的, 优雅的, 在运行时 完全可重载的.
+
+   创建一个标签库 是相当简单的, 创建一个以 规约 TagLib 结尾的一个 Groovy 类, 并把它 放置于 grails-app/taglib目录里.
+
+   变量 可以在 GSP 中 使用 set 标签来定义.
+
+       page ---- 当前页面范围(默认)
+
+       request - 当前请求范围.
+
+       flash --- flash 作用域, 因此它可以在下一次请求中有效
+
+       session - 用户 session 范围
+
+       application - 全距范围.
+
+. 1. Grails 标记
+
+  <g:each> 是 常用的 Grails 标记. 它 将遍历 列表中的每个项. 要查看它的效果， 看下面的例子:
+
+   <g:each in="${tripList}" status="i" var="trip">
+      <tr class="${ (i % 2) == 0 ? 'even' : 'odd'}">
+
+          <td><g:link action="show" id="${trip.id}">${trip.id?.encodeAsHTML()}</g:link></td>
+          <td>${trip.airline?.encodeAsHTML()}</td>
+          <td>${trip.name?.encodeAsHTML()}</td>
+          <td>${trip.city?.encodeAsHTML()}</td>
+          <td>${trip.startDate?.encodeAsHTML()}</td>
+          <td>${trip.endDate?.encodeAsHTML()}</td>
+      </tr>
+   </g:each>
+
+  <g:each>标记的status 属性 是个简单的计数器字段( 注意 这个值 用在下一行的 ternary 语句(三元运算符语句)中, 用来将css 样式设为even 或 odd ).  var 属性允许 命名用来保存当前项的值的变量。
+     
+  ?. 操作符  是 Groovy 用来避免 NullPointerException 的方法。 它可以 快捷的表示"只有在airline不为null 时 才调用 encodeAsHTML()方法, 否则返回空字符串"
+
+  另一个常用的Grails 标记是 <g:link>. 顾名思义, 它的作用 是构建一个HTML <a href> 链接。  当然也可以直接使用<a href> 标记, 但是这个方便的标记还接受属性, 例如 action、id 和 controller. 如果只考虑 href 的值 而 不考虑 它前后的 anchor 标记, 那么可以 改用<g:createLink>. 这个标记接受 dir 和 file 属性 而不是 controller、action 和 id属性.  如下例所示:
+
+  <div class="nav">
+      <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
+      <span class="menuButton"><g:link class="create" action="create">New Trip</g:link></span>
+  </div>
+
+  注意， 上面清单中， 可以交替使用 两种不同的形式 调用 Grails 标记。   一种是在尖括号内包含标记,  一种是仿效方法 调用在大括号内包含标记.  当在另一个标记的属性中调用方法时, 大括号表示法(正式名称为 表达式语言  或 EL 语法) 更合适.
+
+  另一个流行的Grails 标记 是 <g:if>.  如下例：
+
+  
+. 2. 在GSP 中访问 GORM 对象的数据
+
+    a. 创建 GORM 对象
+
+    b. 然后在 Controller 的 action  中创建对应的数据变量personList，存储访问的GORM 中的数据, 例如
+
+       [persons:Person.list()]
+
+       等同于：
+
+        /*
+         * 上面这条语句的作用等同于下面的2条语句
+         * def map = [persons: Person.get(params.id)]
+         * render(view: "display", model: map)    --------### 注意， 如果目标view 不是display.gsp， 那么就不能用上面的缺省映射方式，而是用render() 来进行渲染。
+        */
+
+       这里可以映射多个数据库表的结果， 也可以是访问结果
+
+       Querying with GORM   参见  官方文档  6.4 。 上面的list()是GORM的访问方式之一。 可以用HSQL 来定制查询。
+
+       def query = Person.where {
+           firstName == "Michael"
+       }
+       [bart:query]
+
+       等同于
+       def map = [bart:query]
+       render(view:"display", model:map)     // --> 这种渲染方式传递参数似乎是错误的。  view 必须是 要接受参数的gsp 名称，不然传递就会失败，解雇就是访问数据为空（却不提示错误）。 这儿应该改为:
+           render(view:"index", model:map)
+
+     
+
+       上面就是定制查询的方式。
+
+       ×××××××××××
+
+       需要注意的是， 如果多次传递参数， 那么后面的会覆盖前面的， 即前面的渲染会失效。
+
+       奇怪， 以前似乎传递GORM 数据变量成功过，现在总是失败(主要是没有任何显示？？？？)
+
+
+       参见:
+
+           http://www.ibm.com/developerworks/cn/java/j-grails03118/
+         
+       ========================
+  
+       在这里起作用的是 “约定优于配置”。当访问 http://localhost:9090/trip-planner/trip/list 时，就是要求 TripController 填充域模型对象 Trip 的列表，并将列表传递给 trip/list.gsp 视图。请在文本编辑器中查看 TripController.groovy，如下 所示：
+
+       class TripController{
+             ...
+            def list = {
+                if(!params.max) params.max = 10
+                [ tripList: Trip.list( params ) ]
+            }
+            ...
+        }
+
+       这个简单的闭包从数据库中检索到 10 条 Trip 记录，将它们转换为 POGO，并将它们保存在名为 tripList 的 ArrayList 内。list.gsp 页面随后将遍历列表，逐行构建 HTML 表格。
+
+       注意： 只有和 GORM 类同名的Controller 才会用这种约定优于配置， 其他controller由于已经名字不一致了， 破坏了约定，所以也不再一句约定来创建 POGO， 需要用render() 来详细定义要传送给那个gsp ,以及需要传送的 map (哈希表)
+
+      =====================下面是可用的 传递多个参数的代码=============
+        def query = Person.where {
+           firstName == "Peter"
+        }
+        def reportname= params.get("reportName")
+        
+        if (! reportname ) reportname = "All Right" 
+        
+        def mapab = [bart:query.find(),persons:Person.list(),rep:reportname]
+        render(view:"index", model: mapab)
+ 
+       ====================下面是index.gsp 中访问上面的参数的代码===================
+       <g:each in="${bart}" status="i" var="trip">
+            <h1>hello World, ${rep}</h1>
+            <tr>
+              <td>${trip.firstName?.encodeAsHTML()}</td>
+              <td>${trip.lastName?.encodeAsHTML()}</td>
+            </tr>
+       </g:each>
+
+    c. 然后在GSP 中访问上面的 变量 persons
+       (注意， GSP文件名称应该是按规约与对应的controller /Action 同名， 不然访问不到同名controller/Action 中的GORM数据)
+
+       <h1>${personList.firstName</h1>
+
+<g:each in="${persons}" status="i" var="trip">
+            <tr>
+             <td><link action="show" id="${trip.id}">${trip.id?.encodeAsHTML()}</g:link></td>
+             <td>${trip.firstName?.encodeAsHTML()}</td>
+             <td>${trip.lastName?.encodeAsHTML()}</td>
+            </tr>
+        </g:each>
+
+Error |
+2015-07-04 16:50:05,734 [http-bio-8080-exec-5] ERROR errors.GrailsExceptionResolver  - GrailsTagException occurred when processing request: [GET] /Grails_OnlyController/adams/index
+Grails tag [g:each] was not closed. Stacktrace follows:
+
+  这个错误的原因是??  关键还是没有访问到 controller 中对应的action 中的Gorm 变量persons没有定义。
+
+      =========================================
+
+        查看 GORM 查询结果集的内容：
+
+        def mapss = [persons:Person.list()]
+        println mapss['persons'].first().firstName
+        println mapss['persons'].first().lastName
+        println mapss['persons'].first().age
+        
+        // next() 不行, previous() 也不行
+        /*
+        println mapss['persons'].next().firstName
+        println mapss['persons'].next().lastName
+        println mapss['persons'].next().age
+        */
+        println mapss['persons'].last().firstName
+        println mapss['persons'].last().lastName
+        println mapss['persons'].last().age
+
+        =============获得查询结果集的数量====
+
+下载的时候出现下面的错误：
+    java.io.IOException: Invalid Http response
+
+    d. 如何访问定制SQL 查询结果的GORM 对象的变量
+
+    e. 删除修改GROM 对象对应的哦数据库表的内容
+
+      Person.executeUpdate("Delete Person where firstName=:fName",[fName:"Peter"])
+
+    f. 添加 记录
+
+    g. 传送多个查询集给GSP 
+
+       [bart:query.find(),persons:Person.list()]
+
+       增加 map 的内容即可. 
+
+    h. GSP的数据传回 controller 中处理
+
+       通过 param.get("参数名称")来获取gsp 传回来的数据.
+
+       也可以通过session 来进行处理.   一般作用域的作用非常大。
+
+      
+
+
+. GSP  基础
+
+  <% out << "hello GSP!" %>
+
+  <%="Hello GSP!" %>
+
+  注释， 类 JSP的注释方式
+
+  <%-- This is my comment --%>
+
+ 1. 变量和作用域
+
+    在<% %> 中可以定义变量
+
+    <% now = new Date() %>
+
+    如下进行访问
+
+    <%=now%>
+
+    在GSP 作用域中, 有些预定义的变量
+
+     application ---------  javax.servlet.SrevletContext 实例(instance)
+ 
+     applicationContext --  Spring ApplicationContext 实例
+
+     flash  --------------  flash 对象
+
+     grailsApplication ---  GrailsApplication 实例
+
+     out -----------------  response writer for writing to the output stream
+
+     params --------------  参数对象, 用来接收请求参数
+
+     request -------------  HttpServletRequest 实例
+
+     reponse -------------  HttpServletResponse 实例
+
+     session -------------  HttpSession 实例
+
+     webRequest ----------  GrailsWebRequest 实例
+
+ 2. 逻辑和遍历(Iteration)
+
+      <% [1,2,3,4].each { num -> %>
+         <p><%="Hello ${num}!" %></p>
+      <%}%>
+
+      <% if (params.hello == 'true')%>
+      <%="Hello!"%>
+      <% else %>
+      <%="Goodbye!"%>
+
+ 3. 也定向  Page directive
+
+    <%@ page import="java.awt.*" %>
+  
+    <%@ page contentType="application/json" %>
+
+ 4. 表达式
+
+    使用GString
+
+     Hello ${params.name}
+
+ 5. GSP 标签(Tags)
+
+    表达式可以作为标签的属性, 例如
+
+    <g:example attr="${new Date()}">
+         Hello world
+    </g:example>
+
+    Maps (映射) 可以传递给GSP 标签属性, 一般用来做命名参数。 例如
+
+    <g:example attr="${new Date()}" attr2="[one:1, two:2, three:3]">
+        Hello world
+    </g:example>
+
+ 5.1 . 变量和作用域
+
+  在GSP 中, 变量可以定义在 set 标签内.
+
+  <g:set var="now" value="${new Date()}" />
+
+  也可以用body 来赋值
+
+  <g:set var="myHTML">
+      Some re-usable code on:${new Date()}
+  </g:set>
+  
+  赋值内容可以是一个bean
+
+  <g:set var="bookService" bean="bookService">
+
+  变量还可以放置在下面的作用域
+
+     page --------- 作用域为当前页 (缺省)
+
+     request ------ 作用域为当前请求
+
+     flash -------- 在flash 作用域, 可以孵化可用的给下一个请求
+
+     session ------ 作用域为用户的对话session
+
+     application -- 应用级作用域
+
+  指定作用域, 可以用scope 属性. 例如:
+
+  <g:set var="now" value="${new Date()}" scope="request"/>
+
+  5.2 逻辑和遍历
+
+      用if,  else, elseif  来进行逻辑分支判断
+
+     <g:if test="${session.role == 'admin'}">
+         <%-- show administrative functions --%>
+     </g:if>
+     <g:else>
+         <%-- show basic functions --%>
+     </g:else>
+
+     用 each 和while  标签来遍历
+
+     <g:each in="${[1,2,3]}" var="num">
+         <p>Number ${num}</p>
+     </g:each>
+     <g:set var="num" value="${1}" />
+     <g:while test="${num < 5 }">
+         <p>Number ${num++}</p>
+     </g:while>
+  
+  5.3 查找和过滤 (Search and Filter)
+
+      如果需要排序并过滤, 可以使用 findAll和 grep 标签
+
+      Stephen King's Books:
+      <g:findAll in="${books}" expr="it.author == 'Stephen King'">
+           <p>Title: ${it.title}</p>
+      </g:findAll>
+
+      表达式属性可以包含一个groovy 类来作为一个过滤器(filter)， grep 标签做类似的工作, 例如，用类来过滤
+
+      <g:grep in="${books}" filter="NonFictionBooks.class">
+          <p>Title: ${it.title}</p>
+      </g:grep>
+
+      或者用正则表达式来过滤
+
+      <g:grep in="${books.title}" filter="~/.*?Groovy.*?/">
+         <p>Title: ${it}</p>
+      </g:grep>
+
+      GPath 类似于 XPath , 也可以使用.
+
+  5.4.   Link 和 Resources
+     
+      用link 标签来指定 controller 和 action. 主要是基于 URL Mappings （后面有描述）
+
+      <g:link action="show" id="1">Book 1</g:link>
+
+      <g:link action="show" id="${currentBook.id}">${currentBook.name}</g:link>
+
+      <g:link controller="book">Book Home</g:link>
+
+      <g:link controller="book" action="list">Book List</g:link>
+
+      <g:link url="[action: 'list', controller: 'book']">Book List</g:link>
+
+      <g:link params="[sort: 'title', order: 'asc', author: currentBook.author]"
+        action="list">Book List</g:link>
+
+  5.5  Forms  和  Fields  (表格和字段)
+
+       Form 基础.
+
+       GSP 支持很多不同的标签 用于 HTML 的form 和 fields. 最基础的是 form标签， url 属性让你指定那个controller 和 action 被映射
+
+       <g:form name="myForm" url="[controller:'book',action:'list']">...</g:form>     
+
+      这个案例 中， 创建了一个叫myForm的form， 提交执行的是 BookController的list 动作(action)。 
+ 
+       Form Fields ( 表格字段)
+
+       textField ------  输入 类型为 text 的 字段
+
+       passwordField --  输入类型为 password 的字段
+
+       checkBox -------  类型为 checkbox 的输入字段
+
+       radio ----------  类型为 radio 的输入字段
+
+       hiddenField ----  类型为 hidden 的输入字段  ？？？？
+
+       select ---------  用来处理 HTML 选择框
+
+  如下例:
+
+      <g:textField name="myField" value="${myValue}" />
+
+. <img src="<g:createLinkTo dir="images" file="logo.jpg" />" />
+
+  可以执行， 其中， dir="images" 对应的是 应用目录下的web-app\images
+
+. 响应结果是 XML或JSON
+
+  如果在controller 执行 render
+
+  render(contentType: "application/json") {
+    hello = "world"
+}
+
+  那么直接输出的是Json 数据
+
+    {"hello":"world"}
+
+  而不再执行 GSP 文件
+
+. 上载文件  Uploading Files
+
+  Grails 支持 文件上载， 使用的是Spring的 MultipartHttpServletRequest接口.
+
+  第一步是， 先创建一个multipart  表格， 用下面的代码:  (经测试可用)
+
+Upload Form: <br />
+    <g:uploadForm action="upload">
+        <input type="file" name="myFile" />
+        <input type="submit" />
+    </g:uploadForm>
+
+  第二步，  在controller 增加一个action  upload 来进行处理
+
+  def upload() {
+    def f = request.getFile('myFile')
+    if (f.empty) {
+        flash.message = 'file cannot be empty'
+        render(view: 'uploadForm')
+        return
+    }
+
+    f.transferTo(new File('/tmp/tmp/tmp/myfile.txt'))
+    response.sendError(200, 'Done')
+}
+
+   上面代码经过测试也是可用， 其中  
+
+     f.transferTo(new File('/tmp/myfile.txt')) 
+
+   中的路径是当前应用所在分区的绝对路径， 如果目录不存在， 页面会出现下面的错误
+
+    RI
+    /GrailsApplication5/newController1/upload
+Class
+    java.io.FileNotFoundException
+Message
+    \tmp\tmp\myfile.txt (系统找不到指定的路径。)
+
+    则不会创建对应的文件。   例如: D:/tmp/myfile.txt   对应的应该是 /tmp/myfile.txt
+
+    这部分代码应该用try..catch... 来捕捉异常， 防止错误信息在页面中显示。
+
+. 命令对象  command object 
+
+  没有细看， 似乎可以用来进行校验， 传入 controller
+
+. 处理多个 Form 的提交  (Handling Duplicate Form Submissions)
+
+  使用 g:form  标签， 如下:
+
+  <g:form useToken="true" ...>
+
+  然后在controller 代码中， 可以用 withForm 方法来处理 合法或非法的请求:
+
+  withForm {
+   // good request
+  }.invalidToken {
+   // bad request
+  }
+
+  如果不提供 .invalidToken , 那么会用缺省的机制进行处理， 。。。。
+
+. 简单类型转换   Simple Type Converters
+
+  def total = params.int('total')
+
+  因为参数传递的都是字符串类型的
+
+  def total = params.int('total', 42)
+
+  这儿增加了一个缺省值42， 即转换失败的话(比如没有该参数， 等其他原因)就返回该值
+
+. 处理多个参数
+
+  for (name in params.list('name')) {
+    println name
+  }
+
+. 声明 Controller 的异常处理( Declarative Controler Exception Handling)
+
+  // grails-app/controllers/demo/DemoController.groovy
+package demo
+class DemoController {
+
+    def someAction() {
+        // do some work
+    }
+
+    def handleSQLException(SQLException e) {
+        render 'A SQLException Was Handled'
+    }
+
+    def handleBatchUpdateException(BatchUpdateException e) {
+        redirect controller: 'logging', action: 'batchProblem'
+    }
+
+    def handleNumberFormatException(NumberFormatException nfe) {
+        [problemDescription: 'A Number Was Invalid']
+    }
+}
+
+也就是try...catch... 中的内容 相当于外移了？？？
+
+// grails-app/controllers/demo/DemoController.groovy
+package demo
+class DemoController {
+
+    def someAction() {
+        try {
+            // do some work
+        } catch (BatchUpdateException e) {
+            return handleBatchUpdateException(e)
+        } catch (SQLException e) {
+            return handleSQLException(e)
+        } catch (NumberFormatException e) {
+            return handleNumberFormatException(e)
+        }
+    }
+
+    def handleSQLException(SQLException e) {
+        render 'A SQLException Was Handled'
+    }
+
+    def handleBatchUpdateException(BatchUpdateException e) {
+        redirect controller: 'logging', action: 'batchProblem'
+    }
+
+    def handleNumberFormatException(NumberFormatException nfe) {
+        [problemDescription: 'A Number Was Invalid']
+    }
+}
+
+公用的异常处理可以像下面的代码， 作为一个 trait 类进行处理
+
+// src/groovy/com/demo/DatabaseExceptionHandler.groovy
+package com.demo
+trait DatabaseExceptionHandler {
+    def handleSQLException(SQLException e) {
+        // handle SQLException
+    }
+
+    def handleBatchUpdateException(BatchUpdateException e) {
+        // handle BatchUpdateException
+    }
+}
+
+然后应用中的controller 可以按照下面来实现异常的捕获
+
+ // grails-app/controllers/com/demo/DemoController.groovy
+package com.demo
+class DemoController implements DatabaseExceptionHandler {
+
+    // all of the exception handler methods defined
+    // in DatabaseExceptionHandler will be added to
+    // this class at compile time
+}
+
+. 变量和范围
+
+  <g:set var="now" value="${new Date()}" />
+
+  <g:set var="myHTML">
+   Some re-usable code on: ${new Date()}
+</g:set>
+
+   甚至一个bean 也可以定义为一个变量
+
+    <g:set var="bookService" bean="bookService" />
+
+. 执行 JavaScript 脚本
+
+<html>
+   <head>
+      <title>Testing r:script magic!</title>
+   </head>
+   <body>
+      <r:script disposition="head">
+         window.alert('This is at the end of <head>');
+      </r:script>
+      <r:script disposition="defer">
+         window.alert('This is at the end of the body, and the page has loaded.');
+      </r:script>
+   </body>
+</html>
+
+上面这个例子中JavaScript 根本不执行
+
+<g:javascript>alert('hello')</g:javascript>
+
+这儿的JavaScript 反而执行， 虽然Grail 不推荐使用这种方式.   上面的 r:script 全部改成 g:javascript, 然后 ， 上面的例子中的javaScript 也都全部执行了. 
+
+. 执行指定js 文件
+
+
+<link id="easyuiTheme" rel="stylesheet" href="${createLinkTo(dir:'_js/easyLib/themes/default/',file:'easyui.css')}" type="text/css"></link>
+  <g:javascript src="_js/easyLib/jquery.min.js" charset="UTF-8" />
+  <g:javascript src="_js/easyLib/jquery.easyui.min.js" charset="UTF-8" />
+  <g:javascript src="_js/easyLib/locale/easyui-lang-zh_CN.js" charset="UTF-8" />
+
+注意，  实际访问的js 文件应该位于 web-app/js/_js/.....
+
+  ${createLinkTo(dir:'_js/easyLib/themes/default/',file:'easyui.css')}"  对应的就是web-app/_js/easyLib/..../easyui.css
+
+  对于css, 下面的代码可能无效， 
+
+  <link id="easyuiTheme" rel="stylesheet" href="_js/easyLib/themes/default/easyui.css" type="text/css"></link>
+
+  根本原因就是 路径问题，  grails 的路径映射似乎不是太清晰， 文档描述也不清楚， 造成只能用 GString 来进行映射。 
+
+. img 元素的 src 也是同样的路径问题， 如果用
+
+  <img id="myimage" onclick="changeImage()" src="/i/eg_bulboff.gif" />">
+
+  就执行失败， 找不到文件
+
+  如果用
+
+  <img id="myimage" onclick="changeImage()" src="<g:createLinkTo dir="images/i" file="eg_bulboff.gif" />">
+
+   。。 。
+  
+  element.src="<g:createLinkTo dir="images/i" file="eg_bulboff.gif" />";
+
+  那么就可以找到文件.
+
+. 核心原因就是 Grails 项目的当前根目录到底在什么目录？？ 是 web-app, 还是 Grails-app...?????还是其他？？？

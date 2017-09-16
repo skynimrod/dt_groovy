@@ -1,0 +1,12 @@
+. 规约是  /controller/action/id.
+
+  但是这个规约并没有在 grails-app/conf/UrlMappings.groovy 中.
+
+  UrlMappings 类中只包含了一条属性 mappings, 如下:
+
+  class UrlMappings {
+    static mappings = {
+    }
+  }
+
+. 

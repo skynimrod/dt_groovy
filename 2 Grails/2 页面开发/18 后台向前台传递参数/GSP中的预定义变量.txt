@@ -1,0 +1,37 @@
+. ²Î¼û: Grails 2.4.2 
+
+  8.2.1.1 Variables and Scopes
+
+. Within the scope of a GSP there are a number of pre-defined variables, including:
+
+    application - The javax.servlet.ServletContext instance
+
+    applicationContext The Spring ApplicationContext instance
+
+    flash - The flash object
+
+    grailsApplication - The GrailsApplication instance
+
+    out - The response writer for writing to the output stream
+
+    params - The params object for retrieving request parameters
+
+    request - The HttpServletRequest instance
+
+    response - The HttpServletResponse instance
+
+    session - The HttpSession instance
+
+    webRequest - The GrailsWebRequest instance
+
+
+. Àý×Ó£º
+
+<html>
+   <body>
+      <% if (params.hello == 'true')%>
+      <%="Hello!"%>
+      <% else %>
+      <%="Goodbye!"%>
+   </body>
+</html>

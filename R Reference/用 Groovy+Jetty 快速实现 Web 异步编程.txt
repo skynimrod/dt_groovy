@@ -1,0 +1,5 @@
+参见:
+
+     用 Groovy+Jetty 快速实现 Web 异步编程
+     http://www.ibm.com/developerworks/cn/java/j-lo-groovyjetty/?cmp=dwnpr&cpb=dw&ct=dwcon&cr=cn_51CTO_dl&ccy=cn
+

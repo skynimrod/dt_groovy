@@ -1,0 +1,21 @@
+. netbeans 中提供的是zip的打包， 估计改名为war 也可以.
+
+. 常用的打包方式:
+  
+  命令行进入目标项目的目录。运行一下命令:
+
+  e:\..\smms\grails war
+
+  然后会提示一系列的打包过程。最后产生war 文件.
+
+  需要注意的是， war 文件的位置: 
+
+    | Done creating WAR target\SMMS-0.1.war
+
+  即 在target 子目录下
+
+.   e:\..\smms\grails war SMMS.war
+
+  这个命令在当前目录中创建 SMMS.war . 
+
+  需要注意的是, 大小写一定要一致。

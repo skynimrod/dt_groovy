@@ -1,0 +1,46 @@
+. <!--
+  To change this license header, choose License Headers in Project Properties.
+  To change this template file, choose Tools | Templates
+  and open the template in the editor.
+-->
+
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Sample title</title>
+        
+        
+        <script type="text/javascript" src="/js/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript"> 
+$(document).ready(function(){
+  $("button").click(function(){
+    var div=$("div");
+    div.animate({height:'300px',opacity:'0.4'},"slow");
+    div.animate({width:'300px',opacity:'0.8'},"slow");
+    div.animate({height:'100px',opacity:'0.4'},"slow");
+    div.animate({width:'100px',opacity:'0.8'},"slow");
+  });
+});
+</script> 
+    </head>
+    <body>
+        <r:script disposition="head">
+         window.alert('This is at the end of <head>');
+      </r:script>
+      <r:script disposition="defer">
+         window.alert('This is at the end of the body, and the page has loaded.');
+      </r:script>
+        
+        <h1>Sample line</h1>
+        <p>I like this memory!</p>
+        <p>i will disappear, if u click me</p>
+        <p>click me, i will disappear</p>
+        <p>me,too</p>
+        <button>start</button>
+    </body>
+</html>
+
+
+虽然是GSP 文件， 但是应该是支持HTML中的所有功能， 但是为什么不执行代码中的JavaScript 部分？？？页面中直接把 JavaScript 代码部分显示出来， 而不是执行代码。

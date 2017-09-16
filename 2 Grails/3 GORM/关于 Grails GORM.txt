@@ -1,0 +1,15 @@
+. 对GROM的操作分为以下部分:
+
+  1. 在 controller 里面访问 GORM  对象
+
+  2. 在 Service 里面访问 GORM 对象
+
+  3. 在 gsp 里面访问GORM 对象
+
+. 参见:
+
+    http://www.ibm.com/developerworks/cn/java/j-grails02128/ 
+
+    使用 Grails 可以实现简化的另一领域：使用 Grail 对象关系映射（Grails Object Relational Mapping，GORM）API 进行持久化。我将首先介绍什么是对象关系映射器（object-relational mapper，ORM），以及如何创建一对多关系。然后将学习数据验证（确保应用程序不会出现无用信息输入/无用信息输出（garbage in/garbage out）问题）。然后将看到如何使用 Grails ORM 的领域特定语言（domain-specific language，DSL），使用 DSL 语句能够在幕后对普通的旧 Groovy 对象（plain old Groovy objects，POGO）的持久化方式进行微调。最后，将看到能够轻松地切换到另一个关系数据库。任何有 JDBC 驱动程序和 Hibernae 方言的数据库都受支持。
+
+   GORM 是在 Hibernate 上的一层薄薄的 Groovy 层。 这意味着现有的所有 Hibernate 技巧仍然有用 — 例如，HBM 映射文件和标注得到全面支持 
